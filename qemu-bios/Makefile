@@ -34,11 +34,13 @@ $(SEABIOS): $(SEABIOS).tar.gz
 
 ## Compile
 
+.NOTPARALLEL: .build/a20on/bios.bin
 .build/a20on/bios.bin: $(SEABIOS)
 	$(MAKE) -C $(SEABIOS) CROSS_PREFIX=i386-elf- defconfig
 	cd $(SEABIOS) && ./scripts/kconfig/merge_config.sh -m .config ../configs/a20on
 	$(MAKE) -C $(SEABIOS) CROSS_PREFIX=i386-elf- EXTRAVERSION="-skrunix-a20on" OUT=../.build/a20on/
 
+.NOTPARALLEL: .build/a20off/bios.bin
 .build/a20off/bios.bin: $(SEABIOS)
 	$(MAKE) -C $(SEABIOS) CROSS_PREFIX=i386-elf- defconfig
 	cd $(SEABIOS) && ./scripts/kconfig/merge_config.sh -m .config ../configs/a20off
