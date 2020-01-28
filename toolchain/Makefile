@@ -19,7 +19,7 @@ GCC := gcc-9.2.0
 
 .PHONY: all
 all:
-	@echo Done!
+	@echo "\033[0;32mDone!\033[0m"
 
 .PHONY: clean
 clean:
@@ -33,6 +33,7 @@ clean-all: clean
 
 
 ## Source code
+
 $(BINUTILS).tar.gz:
 	wget https://ftpmirror.gnu.org/binutils/$(BINUTILS).tar.gz
 
@@ -83,6 +84,7 @@ SENTINELS += .gcc-x86_64-elf.sentinel
 	@touch $@
 
 all: $(SENTINELS)
+
 
 ## Generic compile
 

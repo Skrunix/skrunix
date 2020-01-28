@@ -9,10 +9,8 @@ export PATH := $(TOOLCHAIN_BIN):$(PATH)
 SEABIOS := seabios-rel-1.13.0
 
 .PHONY: all
-all:
-	$(MAKE) bin/a20on.bin
-	$(MAKE) bin/a20off.bin
-	@echo Done!
+all: bin/a20on.bin bin/a20off.bin
+	@echo "\033[0;32mDone!\033[0m"
 
 .PHONY: clean
 clean:
