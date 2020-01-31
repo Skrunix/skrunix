@@ -22,15 +22,8 @@ $(1)/.build/%.o: $(1)/%.S
 endef
 
 
-SRC_FOLDERS = \
-	stage1 \
-	stage2 \
-	common16 \
-
-BINS = \
-	bin/stage1.bin \
-	bin/stage2.bin \
-
+SRC_FOLDERS = src
+BINS = bin/kernel.bin
 
 .PHONY: all
 all: $(BINS)
@@ -49,17 +42,7 @@ $(foreach _folder, $(SRC_FOLDERS), \
 
 ## Link
 
-bin/stage1.bin: $(stage1_OBJ) $(common16_OBJ)
+bin/kernel.bin: $(src_OBJ)
 	mkdir -p bin/
 	i386-elf-ld --script link.ld -o $@ $^
-	@if [[ $$((`wc -c <"$@"` +0)) -gt 446 ]]; then \
-		echo "\033[0;31mERROR: stage1 too large: "$$((`wc -c <"$@"` +0))"/446 bytes\033[0m"; \
-		exit 1; \
-	else \
-		echo "\033[0;32mStage1 size: "$$((`wc -c <"$@"` +0))"/446 bytes\033[0m"; \
-	fi
-
-bin/stage2.bin: $(stage2_OBJ) $(common16_OBJ)
-	mkdir -p bin/
-	i386-elf-ld --script link.ld -o $@ $^
-	echo "\033[0;32mStage2 size: "$$((`wc -c <"$@"` +0))" bytes\033[0m"
+	echo "\033[0;32mKernel size: "$$((`wc -c <"$@"` +0))" bytes\033[0m"
