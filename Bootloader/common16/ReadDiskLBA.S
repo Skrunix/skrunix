@@ -8,7 +8,7 @@
 ///  - `DL`: Drive index
 ///  - `AX`: LBA of first sector to read
 ///  - `BX`: Number of sectors to read
-///  - `DS:SI`: String start address
+///  - `CX:SI`: Where to load the sectors
 /// Output:
 ///  - `Carry bit`: clear if successful
 .global ReadDiskLBA
@@ -17,12 +17,12 @@ ReadDiskLBA:
 
 	MOVW %AX, .DAPTargetSector
 	MOVW %BX, .DAPSectors
-	MOVW %DS, .DAPTargetPointerSegment
+	MOVW %CX, .DAPTargetPointerSegment
 	MOVW %SI, .DAPTargetPointerOffset
 	MOVB $0x42, %AH
 	LEAW .DiskAddressPacket, %SI
 	INT $0x13
-	
+
 	# TODO: Handle return code on error (in AH)
 
 	POPA

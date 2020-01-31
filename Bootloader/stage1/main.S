@@ -62,14 +62,12 @@ Stage1:
 
 	# Load stage 2
 	MOVW $BOOT_SEGMENT, %AX
-	MOVW %AX, %DS
+	MOVW %AX, %CX
 	MOVW $0, %AX
 	MOVW %AX, %SI
 	MOVW $LBA_TO_LOAD, %AX
 	MOVW $SECTORS_TO_LOAD, %BX
 	CALL ReadDiskLBA
-	MOVW $RELOCATE_SEGMENT, %AX
-	MOVW %AX, %DS
 	JC DiskReadError
 	LEAW strDiskRead, %SI
 	CALL PrintString
