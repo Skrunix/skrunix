@@ -12,7 +12,7 @@
 .set WORDS_TO_RELOCATE, BYTES_PER_SECTOR >> 1
 
 # End of free space
-.set STACK_SEGMENT, 0x9FC0
+.set STACK_SEGMENT, 0x6FFF
 # Where the MBR is loaded
 .set BOOT_SEGMENT, 0x07C0
 # Offset by one sector
@@ -40,11 +40,12 @@ Relocate:
 Segmentation:
 	# Point `DS` to the new code location
 	MOVW %AX, %DS
-
 	# Prepare the stack
-	MOVW $STACK_SEGMENT, %AX
+	MOVW $0, %AX
 	MOVW %AX, %BP
 	MOVW %AX, %SP
+	MOVW $STACK_SEGMENT, %AX
+	MOVW %AX, %SS
 
 	# Enable interrupts
 	STI
