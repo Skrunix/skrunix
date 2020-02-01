@@ -36,6 +36,9 @@ Start:
 	CALL A20Status
 	CALL EnableA20
 	CALL A20Status
+	
+	# Get memory map
+	CALL DetectMemory
 
 	# Call kernel
 	JMP $LOAD_SEGMENT, $Start

@@ -10,4 +10,5 @@ A larger block of code that:
 
 - Locate and load the Kernel
 - Enable A20
+- Detect Memory
 - Execute Kernel
