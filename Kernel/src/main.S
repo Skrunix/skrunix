@@ -1,12 +1,10 @@
-.code16
+.code32
 .section .text
 .org 0x0
 
 Start:
-	MOVW $0x1000, %AX
-	MOVW %AX, %DS
-	LEAW strKernel, %SI
-	CALL PrintString
+	LEAL strKernel, %ESI
+	CALL PrintString32
 
 Halt:
 	CLI
@@ -16,4 +14,4 @@ Halt:
 .section .data
 
 strKernel:
-	.asciz "\r\nStarting Kernel\r\n"
+	.asciz "In Kernel"

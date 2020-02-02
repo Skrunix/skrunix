@@ -40,8 +40,21 @@ Start:
 	# Get memory map
 	CALL DetectMemory
 
-	# Call kernel
-	JMP $LOAD_SEGMENT, $Start
+	LEAW strProtectedJump, %SI
+	CALL PrintString
+
+	# Load GDT and jump to Protected mode
+	CLI
+	XORL %EAX, %EAX
+	MOVW %DS, %AX
+	SHLL $4, %EAX
+	ADDL GDTDescriptorStart, %EAX
+	MOVL %EAX, GDTDescriptorStart
+	LGDT GDTDescriptor
+	MOVL %CR0, %EAX
+	ORB $0x1, %AL
+	MOVL %EAX, %CR0
+	LJMP $0x08, $Start32
 
 DiskReadError:
 	LEAW strDiskReadError, %SI
@@ -53,10 +66,45 @@ Halt:
 	HLT
 	JMP Halt
 
+
+.code32
+
+Start32:
+	MOVL $0x10, %EAX
+	MOVW %AX, %DS
+	MOVW %AX, %ES
+	MOVW %AX, %FS
+	MOVW %AX, %GS
+	MOVW %AX, %SS
+	
+	MOVL $0x400, %EAX
+	MOVL %EAX, %ESP
+	MOVL %EAX, %EBP
+
+	LEAL strProtectedMode, %ESI
+	CALL PrintString32
+
+	# Call kernel
+	MOVL $0x1000, %EAX
+	MOVL %EAX, %ESP
+	MOVL %EAX, %EBP
+	MOVL $0x20, %EAX
+	MOVW %AX, %DS
+	MOVW %AX, %ES
+	MOVW %AX, %FS
+	MOVW %AX, %GS
+	MOVW %AX, %SS
+	JMP $0x18, $Start
+
+
 .section .data
 
 strStage2:
 	.asciz "\r\nStarting Stage 2\r\n"
+strProtectedJump:
+	.asciz "\r\nSwitching to protected mode...\r\n"
+strProtectedMode:
+	.asciz "Protected mode enabled!"
 strDiskRead:
 	.asciz "Read kernel from disk\r\n"
 strDiskReadError:
