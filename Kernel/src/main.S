@@ -14,4 +14,4 @@ Halt:
 .section .data
 
 strKernel:
-	.asciz "In Kernel"
+	.asciz "In Kernel           "

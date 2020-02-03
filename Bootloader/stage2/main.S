@@ -85,6 +85,19 @@ Start32:
 	LEAL strProtectedMode, %ESI
 	CALL PrintString32
 
+	# Detect and use CPUID to detect long mode
+	CALL DetectCPUID
+	JC NoCPUID
+	MOVL $0, %EDX
+	LEAW strCPUID, %SI
+	CALL PrintString32
+
+	CALL DetectLongMode
+	JC NoLongMode
+	MOVL $80, %EDX
+	LEAW strLongMode, %SI
+	CALL PrintString32
+
 	# Call kernel
 	MOVL $0x1000, %EAX
 	MOVL %EAX, %ESP
@@ -96,6 +109,23 @@ Start32:
 	MOVW %AX, %GS
 	MOVW %AX, %SS
 	JMP $0x18, $Start
+
+NoCPUID:
+	MOVL $0, %EDX
+	LEAW strNoCPUID, %SI
+	CALL PrintString32
+	JMP Halt32
+
+NoLongMode:
+	MOVL $80, %EDX
+	LEAW strNoLongMode, %SI
+	CALL PrintString32
+	JMP Halt32
+
+Halt32:
+	CLI
+	HLT
+	JMP Halt32
 
 
 .section .data
@@ -110,3 +140,11 @@ strDiskRead:
 	.asciz "Read kernel from disk\r\n"
 strDiskReadError:
 	.asciz "Disk read failed.\r\n"
+strCPUID:
+	.asciz "CPUID supported"
+strNoCPUID:
+	.asciz "No CPUID support"
+strLongMode:
+	.asciz "Long mode supported"
+strNoLongMode:
+	.asciz "No long mode support"
