@@ -81,6 +81,7 @@ Start32:
 	MOVL %EAX, %ESP
 	MOVL %EAX, %EBP
 
+	MOVL $1920, %EDX
 	LEAL strProtectedMode, %ESI
 	CALL PrintString32
 

@@ -2,12 +2,13 @@
 .section .text
 .org 0x0
 
-.set VIDEO_MEMORY, 0xB8000 - 0x7C00 + (24 * 80 * 2)
+.set VIDEO_MEMORY, 0xB8000 - 0x7C00
 .set WHITE_ON_BLACK, 0x0F
 
 /// Print a null-terminated string
 ///
 /// Input:
+///  - `EDX`: Character offset to print at
 ///  - `DS:SI`: String start address
 ///  - `DF`: Specifies the direction to move the pointer (0 to increment)
 /// Output:
@@ -16,7 +17,8 @@
 PrintString32:
 	PUSHA
 
-	MOVL $VIDEO_MEMORY, %EDX
+	ADDL %EDX, %EDX
+	ADDL $VIDEO_MEMORY, %EDX
 .PrintStringStart32:
 	LODSB
 	TESTB %AL, %AL
