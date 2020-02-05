@@ -13,4 +13,8 @@ A larger block of code that:
 - Detect Memory
 - Load a GDT
 - Enter Protected mode
+- Detect CPUID
+- Load a GDT (64 bit)
+- Enable paging
+- Enter Long mode
 - Execute Kernel

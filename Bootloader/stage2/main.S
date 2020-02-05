@@ -36,21 +36,21 @@ Start:
 	CALL A20Status
 	CALL EnableA20
 	CALL A20Status
-	
+
 	# Get memory map
 	CALL DetectMemory
 
 	LEAW strProtectedJump, %SI
 	CALL PrintString
 
-	# Load GDT and jump to Protected mode
+	# Load GDT32 and jump to Protected mode
 	CLI
 	XORL %EAX, %EAX
 	MOVW %DS, %AX
 	SHLL $4, %EAX
-	ADDL GDTDescriptorStart, %EAX
-	MOVL %EAX, GDTDescriptorStart
-	LGDT GDTDescriptor
+	ADDL GDT32DescriptorStart, %EAX
+	MOVL %EAX, GDT32DescriptorStart
+	LGDT GDT32Descriptor
 	MOVL %CR0, %EAX
 	ORB $0x1, %AL
 	MOVL %EAX, %CR0
@@ -76,8 +76,8 @@ Start32:
 	MOVW %AX, %FS
 	MOVW %AX, %GS
 	MOVW %AX, %SS
-	
-	MOVL $0x400, %EAX
+
+	MOVL $0x2400, %EAX
 	MOVL %EAX, %ESP
 	MOVL %EAX, %EBP
 
@@ -98,17 +98,70 @@ Start32:
 	LEAW strLongMode, %SI
 	CALL PrintString32
 
-	# Call kernel
-	MOVL $0x1000, %EAX
+	# Setup Long mode paging
+	CALL Paging64
+	MOVL $160, %EDX
+	LEAW strPagingEnabled, %SI
+	CALL PrintString32
+
+	# Switch to (long) compatibility mode
+	MOVL $0xC0000080, %ECX
+	RDMSR
+	ORL $1<<8, %EAX
+	WRMSR
+	# Enable paging
+	MOVL %CR0, %EAX
+	ORL $1<<31, %EAX
+	MOVL %EAX, %CR0
+
+	# Load GDT64 and jump to Long mode
+	CLI
+	XORL %EAX, %EAX
+	# TODO: Get this value from DS somehow
+	MOVW $0x7C00, %AX
+	ADDL GDT64DescriptorStart, %EAX
+	MOVL %EAX, GDT64DescriptorStart
+	LGDT GDT64Descriptor
+	LJMP $0x08, $Start64+0x7c00
+
+
+.code64
+
+Start64:
+	CLI
+
+	# Stack no longer uses segments
+	MOVL $0xA000, %EAX
 	MOVL %EAX, %ESP
 	MOVL %EAX, %EBP
-	MOVL $0x20, %EAX
+
+	MOV $0x10, %RAX
 	MOVW %AX, %DS
 	MOVW %AX, %ES
 	MOVW %AX, %FS
 	MOVW %AX, %GS
 	MOVW %AX, %SS
-	JMP $0x18, $Start
+
+	MOVL $240, %EDX
+	MOVQ $strInLongMode, %RAX
+	ADDQ $0x7C00, %RAX # Data no longer uses segments
+	MOVQ %RAX, %RSI
+	MOVQ $PrintString64, %RAX
+	ADDQ $0x7C00, %RAX # Code no longer uses segments
+	CALL *%RAX
+
+	# Load kernel segments
+	MOVQ $0x20, %RAX
+	MOVW %AX, %DS
+	MOVW %AX, %ES
+	MOVW %AX, %FS
+	MOVW %AX, %GS
+	MOVW %AX, %SS
+
+	# Jump to kernel
+	PUSHQ $0x18
+	PUSHQ $0x10000
+	LRETQ
 
 NoCPUID:
 	MOVL $0, %EDX
@@ -148,3 +201,7 @@ strLongMode:
 	.asciz "Long mode supported"
 strNoLongMode:
 	.asciz "No long mode support"
+strPagingEnabled:
+	.asciz "Paging enabled           "
+strInLongMode:
+	.asciz "In long mode"
