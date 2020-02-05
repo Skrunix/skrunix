@@ -18,7 +18,7 @@ clean::
 
 $(1)/.build/%.o: $(1)/%.S
 	mkdir -p $(1)/.build
-	i386-elf-as --fatal-warnings -o $$@ $$<
+	x86_64-elf-as --fatal-warnings -o $$@ $$<
 endef
 
 
@@ -51,7 +51,7 @@ $(foreach _folder, $(SRC_FOLDERS), \
 
 bin/stage1.bin: $(stage1_OBJ) $(common16_OBJ)
 	mkdir -p bin/
-	i386-elf-ld --script link.ld -o $@ $^
+	x86_64-elf-ld --script link.ld -o $@ $^
 	@if [[ $$((`wc -c <"$@"` +0)) -gt 446 ]]; then \
 		echo "\033[0;31mERROR: stage1 too large: "$$((`wc -c <"$@"` +0))"/446 bytes\033[0m"; \
 		exit 1; \
@@ -61,5 +61,5 @@ bin/stage1.bin: $(stage1_OBJ) $(common16_OBJ)
 
 bin/stage2.bin: $(stage2_OBJ) $(common16_OBJ)
 	mkdir -p bin/
-	i386-elf-ld --script link.ld -o $@ $^
+	x86_64-elf-ld --script link.ld -o $@ $^
 	echo "\033[0;32mStage2 size: "$$((`wc -c <"$@"` +0))" bytes\033[0m"

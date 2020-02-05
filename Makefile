@@ -23,15 +23,15 @@ $(DISK): Bootloader/bin/stage1.bin Bootloader/bin/stage2.bin Kernel/bin/kernel.b
 
 
 ## Run
+# -S -s -D log -d int --no-reboot
 
 .PHONY: run-on
 run-on: $(DISK) qemu-bios/bin/a20on.bin
-#-S -gdb tcp::1234
-	qemu-system-i386  -bios qemu-bios/bin/a20on.bin -monitor stdio -drive format=raw,file=$(DISK)
+	qemu-system-x86_64  -bios qemu-bios/bin/a20on.bin -monitor stdio -drive format=raw,file=$(DISK)
 
 .PHONY: run-off
 run-off: $(DISK) qemu-bios/bin/a20off.bin
-	qemu-system-i386 -bios qemu-bios/bin/a20off.bin -monitor stdio -drive format=raw,file=$(DISK)
+	qemu-system-x86_64 -bios qemu-bios/bin/a20off.bin -monitor stdio -drive format=raw,file=$(DISK)
 
 
 ## Build Dependencies
