@@ -10,9 +10,10 @@ export PATH := $(TOOLCHAIN_BIN):$(PATH)
 
 # $(1) The source folder name
 define SrcTemplate =
-$(1)_SRC := $(shell find $(1) \( -name *.S -o -name *.c \))
+$(1)_SRC := $(shell find $(1) \( -name *.S -o -name *.c -o -name *.cpp \))
 $(1)_OBJ := $$($(1)_SRC:$(1)/%.S=$(1)/.build/%.o)
 $(1)_OBJ := $$($(1)_OBJ:$(1)/%.c=$(1)/.build/%.o)
+$(1)_OBJ := $$($(1)_OBJ:$(1)/%.cpp=$(1)/.build/%.o)
 
 clean::
 	rm -rf $(1)/.build
@@ -23,7 +24,11 @@ $(1)/.build/%.o: $(1)/%.S
 
 $(1)/.build/%.o: $(1)/%.c
 	mkdir -p $(1)/.build
-	x86_64-elf-gcc -o $$@ -c $$< -std=c11 -ffreestanding -O2 -Wall -Wextra -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2
+	x86_64-elf-gcc -o $$@ -c $$< -std=c11 -nostdinc -ffreestanding -O2 -Wall -Wextra -Werror -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2
+
+$(1)/.build/%.o: $(1)/%.cpp
+	mkdir -p $(1)/.build
+	x86_64-elf-g++ -o $$@ -c $$< -std=c++17 -nostdinc -Isrc -Wp,-v -ffreestanding -O2 -Wall -Wextra -Werror -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -fno-exceptions -fno-rtti
 endef
 
 
