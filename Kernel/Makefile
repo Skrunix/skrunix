@@ -10,8 +10,9 @@ export PATH := $(TOOLCHAIN_BIN):$(PATH)
 
 # $(1) The source folder name
 define SrcTemplate =
-$(1)_SRC = $(shell find $(1) -name *.S)
-$(1)_OBJ = $$($(1)_SRC:$(1)/%.S=$(1)/.build/%.o)
+$(1)_SRC := $(shell find $(1) \( -name *.S -o -name *.c \))
+$(1)_OBJ := $$($(1)_SRC:$(1)/%.S=$(1)/.build/%.o)
+$(1)_OBJ := $$($(1)_OBJ:$(1)/%.c=$(1)/.build/%.o)
 
 clean::
 	rm -rf $(1)/.build
@@ -19,6 +20,10 @@ clean::
 $(1)/.build/%.o: $(1)/%.S
 	mkdir -p $(1)/.build
 	x86_64-elf-as --fatal-warnings -o $$@ $$<
+
+$(1)/.build/%.o: $(1)/%.c
+	mkdir -p $(1)/.build
+	x86_64-elf-gcc -o $$@ -c $$< -std=c11 -ffreestanding -O2 -Wall -Wextra -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2
 endef
 
 
@@ -44,5 +49,5 @@ $(foreach _folder, $(SRC_FOLDERS), \
 
 bin/kernel.bin: $(src_OBJ)
 	mkdir -p bin/
-	x86_64-elf-ld --script link.ld -o $@ $^
+	x86_64-elf-gcc -T link.ld -o $@ $^ -ffreestanding -O2 -nostdlib -nostdlib -lgcc
 	echo "\033[0;32mKernel size: "$$((`wc -c <"$@"` +0))" bytes\033[0m"

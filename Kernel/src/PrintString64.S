@@ -8,8 +8,8 @@
 /// Print a null-terminated string
 ///
 /// Input:
-///  - `RDX`: Character offset to print at
-///  - `DS:SI`: String start address
+///  - `EDI`: Character offset to print at
+///  - `ESI`: String start address
 ///  - `DF`: Specifies the direction to move the pointer (0 to increment)
 /// Output:
 ///  NONE
@@ -17,8 +17,10 @@
 PrintString64:
 	PUSH %RAX
 	PUSH %RDX
+	PUSH %RSI
 
 	MOVL $0, %EAX
+	MOVL %EDI, %EDX
 	ADDQ %RDX, %RDX
 	ADDQ $VIDEO_MEMORY, %RDX
 .PrintStringStart64:
@@ -31,6 +33,7 @@ PrintString64:
 	JMP .PrintStringStart64
 .PrintStringEnd64:
 
+	POP %RSI
 	POP %RDX
 	POP %RAX
 	RET
