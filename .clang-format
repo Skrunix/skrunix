@@ -5,4 +5,6 @@ TabWidth: 4
 UseTab: ForIndentation
 DerivePointerAlignment: false
 PointerAlignment: Left
+AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: true
+BreakConstructorInitializers: BeforeComma
