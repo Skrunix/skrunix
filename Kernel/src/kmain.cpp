@@ -2,6 +2,7 @@
 
 void main() {
 	Screen screen;
+	screen.Clear();
 
 	screen.SetForeground(Screen::Color::Red);
 	screen.setBackground(Screen::Color::Black);

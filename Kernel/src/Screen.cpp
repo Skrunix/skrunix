@@ -6,9 +6,23 @@ Screen::Screen()
     : x(0)
     , y(0)
     , maxX(80)
+    , maxY(25)
     , foreground(Color::LightGray)
     , background(Color::Black) {}
 Screen::~Screen() {}
+
+void Screen::Clear() {
+	this->SetForeground(Color::LightGray);
+	this->setBackground(Color::Black);
+
+	auto memory = (uint16_t*)BasePointer;
+	auto offset = this->maxX * this->maxY;
+
+	uint16_t data = (this->background << 12) | (this->foreground << 8) | ' ';
+	for (uint16_t i = 0; i < offset; ++i) {
+		*(memory++) = data;
+	}
+}
 
 void Screen::Write(char character) {
 	if (character == '\r') {

@@ -7,6 +7,8 @@ class Screen {
 	Screen();
 	~Screen();
 
+	void Clear();
+
 	void Write(char);
 	void Write(const char*);
 
@@ -40,6 +42,7 @@ class Screen {
 	uint16_t y;
 
 	uint16_t maxX;
+	uint16_t maxY;
 
 	Color foreground;
 	Color background;
