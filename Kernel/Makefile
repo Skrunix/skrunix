@@ -8,27 +8,80 @@ TOOLCHAIN_BIN  := $(TOOLCHAIN_ROOT)/bin
 export PATH := $(TOOLCHAIN_BIN):$(PATH)
 
 
+AS := x86_64-elf-as
+CC := x86_64-elf-gcc
+CPP := x86_64-elf-g++
+LD := x86_64-elf-gcc
+
+ASFLAGS := \
+	--fatal-warnings
+CFLAGS := \
+	-std=c11 \
+	-nostdinc \
+	-ffreestanding \
+	-O2 \
+	-Wall \
+	-Wextra \
+	-Werror \
+	-mcmodel=large \
+	-mno-red-zone \
+	-mno-mmx \
+	-mno-sse \
+	-mno-sse2
+CPPFLAGS := \
+	-std=c++17 \
+	-nostdinc \
+	-Isrc \
+	-ffreestanding \
+	-O2 \
+	-Wall \
+	-Wextra \
+	-Werror \
+	-mcmodel=large \
+	-mno-red-zone \
+	-mno-mmx \
+	-mno-sse \
+	-mno-sse2 \
+	-fno-exceptions \
+	-fno-rtti
+LDFLAGS := \
+	-T link.ld \
+	-ffreestanding \
+	-O2 \
+	-nostdlib \
+	-lgcc
+
+
 # $(1) The source folder name
 define SrcTemplate =
 $(1)_SRC := $(shell find $(1) \( -name *.S -o -name *.c -o -name *.cpp \))
 $(1)_OBJ := $$($(1)_SRC:$(1)/%.S=$(1)/.build/%.o)
 $(1)_OBJ := $$($(1)_OBJ:$(1)/%.c=$(1)/.build/%.o)
 $(1)_OBJ := $$($(1)_OBJ:$(1)/%.cpp=$(1)/.build/%.o)
+$(1)_DEP := $$($(1)_SRC:$(1)/%.S=)
+$(1)_DEP := $$($(1)_DEP:$(1)/%.c=$(1)/.build/%.d)
+$(1)_DEP := $$($(1)_DEP:$(1)/%.cpp=$(1)/.build/%.d)
+
+$(1)_DEPFLAGS = -MT $$@ -MMD -MP -MF $(1)/.build/$$*.d
+
+include $$($(1)_DEP)
+$$($(1)_DEP):
+	@:
 
 clean::
 	rm -rf $(1)/.build
 
 $(1)/.build/%.o: $(1)/%.S
 	mkdir -p $(1)/.build
-	x86_64-elf-as --fatal-warnings -o $$@ $$<
+	$(AS) $(ASFLAGS) -o $$@ $$<
 
-$(1)/.build/%.o: $(1)/%.c
+$(1)/.build/%.o: $(1)/%.c $(1)/.build/%.d
 	mkdir -p $(1)/.build
-	x86_64-elf-gcc -o $$@ -c $$< -std=c11 -nostdinc -ffreestanding -O2 -Wall -Wextra -Werror -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2
+	$(CC) $$($(1)_DEPFLAGS) $(CFLAGS) -o $$@ -c $$<
 
-$(1)/.build/%.o: $(1)/%.cpp
+$(1)/.build/%.o: $(1)/%.cpp $(1)/.build/%.d
 	mkdir -p $(1)/.build
-	x86_64-elf-g++ -o $$@ -c $$< -std=c++17 -nostdinc -Isrc -Wp,-v -ffreestanding -O2 -Wall -Wextra -Werror -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -fno-exceptions -fno-rtti
+	$(CPP) $$($(1)_DEPFLAGS) $(CPPFLAGS) -o $$@ -c $$<
 endef
 
 
@@ -54,5 +107,5 @@ $(foreach _folder, $(SRC_FOLDERS), \
 
 bin/kernel.bin: $(src_OBJ)
 	mkdir -p bin/
-	x86_64-elf-gcc -T link.ld -o $@ $^ -ffreestanding -O2 -nostdlib -nostdlib -lgcc
-	echo "\033[0;32mKernel size: "$$((`wc -c <"$@"` +0))" bytes\033[0m"
+	$(LD) $(LDFLAGS) -o $@ $^
+	@echo "\033[0;32mKernel size: "$$((`wc -c <"$@"` +0))" bytes\033[0m"
