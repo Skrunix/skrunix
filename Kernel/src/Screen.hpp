@@ -8,6 +8,7 @@ class Screen {
 	~Screen();
 
 	void Clear();
+	void ScrollUp();
 
 	void Write(char);
 	void Write(const char*);
@@ -46,4 +47,6 @@ class Screen {
 
 	Color foreground;
 	Color background;
+
+	void IncrementY();
 };

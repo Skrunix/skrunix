@@ -24,13 +24,32 @@ void Screen::Clear() {
 	}
 }
 
+void Screen::ScrollUp() {
+	auto toMem   = (uint16_t*)BasePointer;
+	auto fromMem = (uint16_t*)BasePointer + this->maxX;
+	auto offset  = this->maxX * (this->maxY - 1);
+
+	for (uint16_t i = 0; i < offset; ++i) {
+		*(toMem++) = *(fromMem++);
+	}
+
+	uint16_t data = (this->background << 12) | (this->foreground << 8) | ' ';
+	for (uint16_t i = 0; i < this->maxX; ++i) {
+		*(toMem++) = data;
+	}
+
+	if (this->y > 0) {
+		--this->y;
+	}
+}
+
 void Screen::Write(char character) {
 	if (character == '\r') {
 		this->x = 0;
 		return;
 	}
 	if (character == '\n') {
-		++this->y;
+		this->IncrementY();
 		return;
 	}
 	this->WriteRaw(character);
@@ -46,7 +65,7 @@ void Screen::Write(const char* string) {
 void Screen::WriteRaw(char character) {
 	if (this->x >= this->maxX) {
 		this->x = 0;
-		++this->y;
+		this->IncrementY();
 	}
 
 	auto offset = this->y * this->maxX + this->x;
@@ -67,3 +86,11 @@ void Screen::WriteRaw(const char* string) {
 
 void Screen::SetForeground(Color color) { this->foreground = color; }
 void Screen::setBackground(Color color) { this->background = color; }
+
+void Screen::IncrementY() {
+	if (this->y >= this->maxY) {
+		this->ScrollUp();
+	} else {
+		++this->y;
+	}
+}

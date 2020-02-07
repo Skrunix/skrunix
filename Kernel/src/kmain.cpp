@@ -6,7 +6,8 @@ void main() {
 
 	screen.SetForeground(Screen::Color::Red);
 	screen.setBackground(Screen::Color::Black);
-	screen.Write("Skrunix\r\n\n");
+	screen.Write("\nSkrunix\r\n\n");
+	screen.ScrollUp();
 
 	screen.SetForeground(Screen::Color::Blue);
 	screen.setBackground(Screen::Color::Red);
