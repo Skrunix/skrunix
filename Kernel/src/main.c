@@ -1,5 +1,3 @@
 extern void kmainpp();
 
-void kmain() {
-	kmainpp();
-}
+void kmain() { kmainpp(); }

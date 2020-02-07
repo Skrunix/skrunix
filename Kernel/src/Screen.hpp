@@ -3,11 +3,13 @@
 #include "types.h"
 
 class Screen {
-public:
+  public:
 	Screen();
 	~Screen();
-	
+
 	void WriteRaw(char);
-private:
-	uint8_t x;
+	void WriteRaw(const char*);
+
+  private:
+	uint16_t x;
 };

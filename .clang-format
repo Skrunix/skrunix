@@ -1,0 +1,8 @@
+---
+Language: Cpp
+IndentWidth: 4
+TabWidth: 4
+UseTab: ForIndentation
+DerivePointerAlignment: false
+PointerAlignment: Left
+AlignConsecutiveDeclarations: true
