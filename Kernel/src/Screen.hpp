@@ -7,6 +7,9 @@ class Screen {
 	Screen();
 	~Screen();
 
+	void Write(char);
+	void Write(const char*);
+
 	void WriteRaw(char);
 	void WriteRaw(const char*);
 
@@ -34,6 +37,9 @@ class Screen {
 
   private:
 	uint16_t x;
+	uint16_t y;
+
+	uint16_t maxX;
 
 	Color foreground;
 	Color background;
