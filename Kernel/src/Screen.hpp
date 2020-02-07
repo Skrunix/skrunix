@@ -49,4 +49,7 @@ class Screen {
 	Color background;
 
 	void IncrementY();
+
+	void MoveCursor(uint16_t x, uint16_t y);
+	void UpdateCursor();
 };

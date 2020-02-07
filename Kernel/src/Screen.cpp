@@ -1,4 +1,5 @@
 #include "Screen.hpp"
+#include "IO.hpp"
 
 uint8_t* const BasePointer = (uint8_t*)0xB8000;
 
@@ -22,6 +23,8 @@ void Screen::Clear() {
 	for (uint16_t i = 0; i < offset; ++i) {
 		*(memory++) = data;
 	}
+
+	this->MoveCursor(0, 0);
 }
 
 void Screen::ScrollUp() {
@@ -39,13 +42,14 @@ void Screen::ScrollUp() {
 	}
 
 	if (this->y > 0) {
-		--this->y;
+		this->MoveCursor(this->x, this->y - 1);
 	}
 }
 
 void Screen::Write(char character) {
 	if (character == '\r') {
 		this->x = 0;
+		this->MoveCursor(0, this->y);
 		return;
 	}
 	if (character == '\n') {
@@ -74,7 +78,7 @@ void Screen::WriteRaw(char character) {
 	*(memory + 0) = character;
 	*(memory + 1) = (this->background << 4) | this->foreground;
 
-	++this->x;
+	this->MoveCursor(this->x + 1, this->y);
 }
 
 void Screen::WriteRaw(const char* string) {
@@ -88,9 +92,25 @@ void Screen::SetForeground(Color color) { this->foreground = color; }
 void Screen::setBackground(Color color) { this->background = color; }
 
 void Screen::IncrementY() {
+	++this->y;
 	if (this->y >= this->maxY) {
 		this->ScrollUp();
-	} else {
-		++this->y;
 	}
+	this->MoveCursor(this->x, this->y);
+}
+
+void Screen::MoveCursor(uint16_t x, uint16_t y) {
+	this->x = x;
+	this->y = y;
+	this->UpdateCursor();
+}
+
+void Screen::UpdateCursor() {
+	auto offset = this->y * this->maxX + this->x;
+
+	// Write cursor position
+	IO::out(0x3D4, 14);
+	IO::out(0x3D5, offset >> 8);
+	IO::out(0x3D4, 15);
+	IO::out(0x3D5, offset);
 }
