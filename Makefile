@@ -19,7 +19,7 @@ $(DISK): Bootloader/bin/stage1.bin Bootloader/bin/stage2.bin Kernel/bin/kernel.b
 	dd if=Bootloader/bin/stage1.bin of=$@ bs=1 count=510 conv=notrunc >& /dev/null
 	printf '\x55\xAA' | dd of=$@ bs=1 seek=510 count=2 conv=notrunc >& /dev/null
 	dd if=Bootloader/bin/stage2.bin of=$@ bs=512 seek=1 count=10 conv=notrunc >& /dev/null
-	dd if=Kernel/bin/kernel.bin of=$@ bs=512 seek=11 count=10 conv=notrunc >& /dev/null
+	dd if=Kernel/bin/kernel.bin of=$@ bs=512 seek=11 count=80 conv=notrunc >& /dev/null
 
 
 ## Run

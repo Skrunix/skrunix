@@ -5,7 +5,7 @@
 # TODO: Determine later
 .set LBA_TO_LOAD, 11
 # TODO: Determine later
-.set SECTORS_TO_LOAD, 10
+.set SECTORS_TO_LOAD, 80
 
 # Where the kernel should be loaded
 .set LOAD_SEGMENT, 0x1000

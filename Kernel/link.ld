@@ -6,7 +6,12 @@ SECTIONS {
 		*boot.o(.text)
 		*(.text)
 	}
+	.bss : {
+		*(.bss)
+	}
+	. = . + SIZEOF(.bss);
 	.data : {
 		*(.data)
+		*(.rodata)
 	}
 }
