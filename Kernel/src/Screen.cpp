@@ -66,6 +66,17 @@ void Screen::Write(const char* string) {
 	}
 }
 
+void Screen::WriteHex(uintptr_t value) {
+	static char lookup[] = {'0', '1', '2', '3', '4', '5', '6', '7',
+	                        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+	this->Write("0x");
+	for (uint8_t i = 60; i > 0; i -= 4) {
+		uint8_t halfByte = (value >> i) & 0xF;
+		this->Write(lookup[halfByte]);
+	}
+	this->Write(lookup[value & 0xF]);
+}
+
 void Screen::WriteRaw(char character) {
 	if (this->x >= this->maxX) {
 		this->x = 0;

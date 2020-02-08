@@ -31,6 +31,11 @@ void main() {
 			screen.WriteRaw('E');
 		}
 	}
+
+	screen.SetForeground(Screen::Color::LightGray);
+	screen.setBackground(Screen::Color::Black);
+	screen.Write("\r\n\n");
+	screen.WriteHex((uintptr_t)&screen);
 }
 
 extern "C" {
