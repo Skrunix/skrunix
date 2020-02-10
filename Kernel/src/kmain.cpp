@@ -1,3 +1,4 @@
+#include "IDT.hpp"
 #include "Screen.hpp"
 
 uint8_t screenData[sizeof(Screen)];
@@ -40,8 +41,28 @@ void main() {
 	screen->setBackground(Screen::Color::Black);
 	screen->Write("\r\n\n");
 	screen->WriteHex((uintptr_t)screen);
+
+	screen->Write("\r\n\n");
+
+	IDT idt;
+
+	asm volatile("int $0x3");
+	asm volatile("int $0x3");
+	asm volatile("int $0x4");
 }
 
 extern "C" {
 void kmainpp() { main(); }
+}
+
+extern "C" {
+typedef struct {
+	uint64_t interruptNumber;
+} IRQRegisters;
+
+void isrHandler(IRQRegisters registers) {
+	screen->Write("Got interrupt: ");
+	screen->WriteHex(registers.interruptNumber);
+	screen->Write("\r\n");
+}
 }
