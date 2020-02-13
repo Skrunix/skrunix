@@ -66,6 +66,14 @@ void Screen::Write(const char* string) {
 	}
 }
 
+void Screen::WriteHex(uint8_t value) {
+	static char lookup[] = {'0', '1', '2', '3', '4', '5', '6', '7',
+	                        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+	this->Write("0x");
+	this->Write(lookup[(value >> 4) & 0xF]);
+	this->Write(lookup[value & 0xF]);
+}
+
 void Screen::WriteHex(uintptr_t value) {
 	static char lookup[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 	                        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};

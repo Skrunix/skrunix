@@ -1,4 +1,6 @@
 #include "IDT.hpp"
+#include "IO.hpp"
+#include "PIC.hpp"
 #include "Screen.hpp"
 
 uint8_t screenData[sizeof(Screen)];
@@ -45,10 +47,14 @@ void main() {
 	screen->Write("\r\n\n");
 
 	IDT idt;
+	PIC pic;
 
 	asm volatile("int $0x3");
-	asm volatile("int $0x3");
 	asm volatile("int $0x4");
+	asm volatile("sti");
+
+	while (1)
+		;
 }
 
 extern "C" {
@@ -60,9 +66,29 @@ typedef struct {
 	uint64_t interruptNumber;
 } IRQRegisters;
 
+#define KB_DATA 0x60
+#define KB_STATUS 0x64
+
 void isrHandler(IRQRegisters registers) {
 	screen->Write("Got interrupt: ");
 	screen->WriteHex(registers.interruptNumber);
+
+	// PS2 Keyboard Interrupt
+	if (registers.interruptNumber == 0x21) {
+		screen->Write(" - ");
+		auto status = IO::in(KB_STATUS);
+		if (status & 0x01) {
+			uint8_t keycode = IO::in(KB_DATA);
+			if ((keycode & 0x80) == 0) {
+				screen->WriteHex(keycode);
+			} else {
+				screen->Write("-");
+				screen->WriteHex((uint8_t)(keycode & 0x7F));
+			}
+		}
+		PIC::EOI1();
+	}
+
 	screen->Write("\r\n");
 }
 }

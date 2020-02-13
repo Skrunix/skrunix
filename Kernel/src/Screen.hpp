@@ -13,6 +13,7 @@ class Screen {
 	void Write(char);
 	void Write(const char*);
 
+	void WriteHex(uint8_t);
 	void WriteHex(uintptr_t);
 
 	void WriteRaw(char);
