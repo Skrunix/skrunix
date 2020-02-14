@@ -69,26 +69,72 @@ typedef struct {
 #define KB_DATA 0x60
 #define KB_STATUS 0x64
 
-void isrHandler(IRQRegisters registers) {
-	screen->Write("Got interrupt: ");
-	screen->WriteHex(registers.interruptNumber);
+char qwerty[256] = {
+    '\0', '\0', '1',  '2',  '3',  '4',  '5',  '6',
+    '7',  '8',  '9',  '0',  '-',  '=',  '\0', '\0',
 
-	// PS2 Keyboard Interrupt
-	if (registers.interruptNumber == 0x21) {
-		screen->Write(" - ");
-		auto status = IO::in(KB_STATUS);
-		if (status & 0x01) {
-			uint8_t keycode = IO::in(KB_DATA);
-			if ((keycode & 0x80) == 0) {
-				screen->WriteHex(keycode);
+    'q',  'w',  'e',  'r',  't',  'y',  'u',  'i',
+    'o',  'p',  '[',  ']',  '\0', '\0', 'a',  's',
+
+    'd',  'f',  'g',  'h',  'j',  'k',  'l',  ';',
+    '\'', '`',  '\0', '\\', 'z',  'x',  'c',  'v',
+
+    'b',  'n',  'm',  ',',  '.',  '/',  '\0', '\0',
+    '\0', ' ',  '\0', '\0', '\0', '\0', '\0', '\0',
+};
+char QWERTY[256] = {
+    '\0', '\0', '!',  '@',  '#',  '$',  '%',  '^',
+    '&',  '*',  '(',  ')',  '_',  '+',  '\0', '\0',
+
+    'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',
+    'O',  'P',  '{',  '}',  '\0', '\0', 'A',  'S',
+
+    'D',  'F',  'G',  'H',  'J',  'K',  'L',  ':',
+    '"',  '~',  '\0', '|',  'Z',  'X',  'C',  'V',
+
+    'B',  'N',  'M',  '<',  '>',  '?',  '\0', '\0',
+    '\0', ' ',  '\0', '\0', '\0', '\0', '\0', '\0',
+};
+bool shift = false;
+
+void keyboardHandler(IRQRegisters) {
+	auto status = IO::in(KB_STATUS);
+	PIC::EOI1();
+	if (status & 0x01) {
+		uint8_t keycode = IO::in(KB_DATA);
+		if ((keycode & 0x80) == 0) {
+			char character = '\0';
+			if (shift) {
+				character = QWERTY[keycode];
 			} else {
-				screen->Write("-");
-				screen->WriteHex((uint8_t)(keycode & 0x7F));
+				character = qwerty[keycode];
+			}
+			if (character != '\0') {
+				screen->Write(character);
+			} else if (keycode == 0x2A) { // LShift
+				shift = true;
+			} else if (keycode == 0x1C) { // Enter
+				screen->Write("\r\n");
+			} else if (keycode == 0x0E) { // Backspace
+				screen->Write(8);
+			} else {
+				screen->WriteHex(keycode);
+			}
+		} else {
+			if (keycode == 0xAA) { // LShift
+				shift = false;
 			}
 		}
-		PIC::EOI1();
+	}
+}
+
+void isrHandler(IRQRegisters registers) {
+	if (registers.interruptNumber == 0x21) {
+		return keyboardHandler(registers);
 	}
 
+	screen->Write("Got interrupt: ");
+	screen->WriteHex(registers.interruptNumber);
 	screen->Write("\r\n");
 }
 }

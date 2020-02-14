@@ -48,12 +48,19 @@ void Screen::ScrollUp() {
 
 void Screen::Write(char character) {
 	if (character == '\r') {
-		this->x = 0;
 		this->MoveCursor(0, this->y);
 		return;
 	}
 	if (character == '\n') {
 		this->IncrementY();
+		return;
+	}
+	if (character == 8) { // Backspace
+		if (this->x > 0) {
+			--this->x;
+		}
+		this->WriteRaw(' ');
+		this->MoveCursor(this->x - 1, this->y);
 		return;
 	}
 	this->WriteRaw(character);
