@@ -25,7 +25,7 @@ static IDTDescriptor descriptors[256];
 
 IDT::IDT() {
 	idtr.limit  = sizeof(IDTDescriptor) * 256 - 1;
-	idtr.offset = (uintptr_t)&descriptors;
+	idtr.offset = reinterpret_cast<uintptr_t>(&descriptors);
 
 	this->SetGate(0, DefaultIntHandlers[0], 0x18, 0x8E);
 	for (uint8_t i = 1; i > 0; ++i) {
@@ -43,6 +43,7 @@ void IDT::SetGate(uint8_t number, uintptr_t offset, uint16_t selector,
 	descriptors[number].zero1      = 0;
 	descriptors[number].attributes = attributes;
 	descriptors[number].offsetMid  = (offset >> 16) & 0xFFFF;
-	descriptors[number].offsetHigh = (offset >> 32) & 0xFFFFFFFF;
-	descriptors[number].zero2      = 0;
+	descriptors[number].offsetHigh =
+	    static_cast<uint32_t>(offset >> 32) & 0xFFFFFFFF;
+	descriptors[number].zero2 = 0;
 }

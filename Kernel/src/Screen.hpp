@@ -53,6 +53,6 @@ class Screen {
 
 	void IncrementY();
 
-	void MoveCursor(uint16_t x, uint16_t y);
+	void MoveCursor(uint16_t newX, uint16_t newY);
 	void UpdateCursor();
 };

@@ -2,7 +2,7 @@
 #include "IO.hpp"
 #include <ValueOf.hpp>
 
-uint8_t* const BasePointer = (uint8_t*)0xB8000;
+uint8_t* const BasePointer = reinterpret_cast<uint8_t*>(0xB8000);
 
 Screen::Screen()
     : x(0)
@@ -17,7 +17,7 @@ void Screen::Clear() {
 	this->SetForeground(Color::LightGray);
 	this->setBackground(Color::Black);
 
-	auto memory = (uint16_t*)BasePointer;
+	auto memory = reinterpret_cast<uint16_t*>(BasePointer);
 	auto offset = this->maxX * this->maxY;
 
 	uint16_t data = (ValueOf(this->background) << 12) |
@@ -30,8 +30,8 @@ void Screen::Clear() {
 }
 
 void Screen::ScrollUp() {
-	auto toMem   = (uint16_t*)BasePointer;
-	auto fromMem = (uint16_t*)BasePointer + this->maxX;
+	auto toMem   = reinterpret_cast<uint16_t*>(BasePointer);
+	auto fromMem = reinterpret_cast<uint16_t*>(BasePointer) + this->maxX;
 	auto offset  = this->maxX * (this->maxY - 1);
 
 	for (uint16_t i = 0; i < offset; ++i) {
@@ -129,9 +129,9 @@ void Screen::IncrementY() {
 	this->MoveCursor(this->x, this->y);
 }
 
-void Screen::MoveCursor(uint16_t x, uint16_t y) {
-	this->x = x;
-	this->y = y;
+void Screen::MoveCursor(uint16_t newX, uint16_t newY) {
+	this->x = newX;
+	this->y = newY;
 	this->UpdateCursor();
 }
 

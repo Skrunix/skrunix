@@ -17,11 +17,12 @@ struct AddressRangeDescriptor {
 	uint32_t extended;
 };
 static_assert(sizeof(AddressRangeDescriptor) == 24);
-uint8_t*                rangesCount = (uint8_t*)0x9000;
-AddressRangeDescriptor* ranges      = (AddressRangeDescriptor*)0x9018;
+uint8_t*                rangesCount = reinterpret_cast<uint8_t*>(0x9000);
+AddressRangeDescriptor* ranges =
+    reinterpret_cast<AddressRangeDescriptor*>(0x9018);
 
 void main() {
-	screen  = (Screen*)&screenData;
+	screen  = reinterpret_cast<Screen*>(&screenData);
 	*screen = Screen();
 	screen->Clear();
 
@@ -47,8 +48,8 @@ void main() {
 	screen->WriteRaw("Color test:");
 	for (char fg = 0; fg < 0x10; ++fg) {
 		for (char bg = 0; bg < 0x10; ++bg) {
-			screen->SetForeground((Screen::Color)fg);
-			screen->setBackground((Screen::Color)bg);
+			screen->SetForeground(static_cast<Screen::Color>(fg));
+			screen->setBackground(static_cast<Screen::Color>(bg));
 			screen->WriteRaw('E');
 		}
 	}
@@ -56,7 +57,7 @@ void main() {
 	screen->SetForeground(Screen::Color::LightGray);
 	screen->setBackground(Screen::Color::Black);
 	screen->Write("\r\n\n");
-	screen->WriteHex((uintptr_t)screen);
+	screen->WriteHex(reinterpret_cast<uintptr_t>(screen));
 
 	screen->Write("\r\n\n");
 
@@ -76,7 +77,7 @@ void main() {
 			screen->Write("Reserved");
 		} else {
 			screen->Write("? ");
-			screen->WriteHex((uint8_t)range.type);
+			screen->WriteHex(static_cast<uint8_t>(range.type));
 		}
 		screen->Write("\r\n");
 	}
