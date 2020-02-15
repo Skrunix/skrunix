@@ -8,16 +8,7 @@ Start:
 	MOVL %EAX, %ESP
 	MOVL %EAX, %EBP
 
-	CALL kmain
-
-	MOVL $1920, %EDI
-	LEAL strKernel, %ESI
-	CALL PrintString64
-
-Halt:
-	CLI
-	HLT
-	JMP Halt
+	JMP main
 
 
 .section .data

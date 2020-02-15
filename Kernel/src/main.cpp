@@ -3,6 +3,10 @@
 #include "PIC.hpp"
 #include "Screen.hpp"
 
+extern "C" {
+[[noreturn]] void main();
+}
+
 uint8_t screenData[sizeof(Screen)];
 Screen* screen;
 
@@ -85,10 +89,6 @@ void main() {
 
 	while (1)
 		;
-}
-
-extern "C" {
-void kmainpp() { main(); }
 }
 
 extern "C" {
