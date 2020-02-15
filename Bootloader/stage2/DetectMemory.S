@@ -15,7 +15,7 @@ DetectMemory:
 	LEAW strDetectMemory, %SI
 	CALL PrintString
 
-	MOVL $0x8000, %EAX
+	MOVL $0x0900, %EAX
 	MOVW %AX, %ES
 	MOVW $24, %DI
 

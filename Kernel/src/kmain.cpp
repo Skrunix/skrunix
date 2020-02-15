@@ -6,6 +6,16 @@
 uint8_t screenData[sizeof(Screen)];
 Screen* screen;
 
+struct AddressRangeDescriptor {
+	uint64_t base;
+	uint64_t length;
+	uint32_t type;
+	uint32_t extended;
+};
+static_assert(sizeof(AddressRangeDescriptor) == 24);
+uint8_t*                rangesCount = (uint8_t*)0x9000;
+AddressRangeDescriptor* ranges      = (AddressRangeDescriptor*)0x9018;
+
 void main() {
 	screen  = (Screen*)&screenData;
 	*screen = Screen();
@@ -48,6 +58,26 @@ void main() {
 
 	IDT idt;
 	PIC pic;
+
+	uint8_t rangeCount = *rangesCount;
+	for (uint8_t i = 0; i < rangeCount; ++i) {
+		AddressRangeDescriptor range = ranges[i];
+		screen->WriteHex(range.base);
+		screen->Write(" ");
+		screen->WriteHex(range.length);
+		screen->Write(" ");
+		if (range.type == 1) {
+			screen->Write("Usable");
+		} else if (range.type == 2) {
+			screen->Write("Reserved");
+		} else {
+			screen->Write("? ");
+			screen->WriteHex((uint8_t)range.type);
+		}
+		screen->Write("\r\n");
+	}
+
+	screen->Write("\r\n");
 
 	asm volatile("int $0x3");
 	asm volatile("int $0x4");
