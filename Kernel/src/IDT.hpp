@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.h"
+#include <stdint.h>
 
 class IDT {
   public:

@@ -1,0 +1,41 @@
+# Freestanding LibCPP (C++20)
+
+## Requirements
+
+- Types
+  - \<cstddef>
+- Implementation properties
+  - \<limits>
+  - \<cfloat> \<climits> (since C++11)
+  - \<version> (since C++20)
+- Integer types
+  - \<cstdint> (since C++11)
+- Start and termination
+  - \<cstdlib> (partial)[1]
+- Dynamic memory management
+  - \<new>
+- Type identification
+  - \<typeinfo>
+- Source location
+  - \<source_location> (since C++20)
+- Exception handling
+  - \<exception>
+- Initializer lists
+  - \<initializer_list> (since C++11)
+- Comparisons
+  - \<compare> (since C++20)
+- Coroutines support
+  - \<coroutine> (since C++20)
+- Other runtime support
+  - \<cstdarg>
+- Fundamental library concepts
+  - \<concepts> (since C++20)
+- Type traits
+  - \<type_traits> (since C++11)
+- Bit manipulation
+  - \<bit> (since C++20)
+- Atomics
+  - \<atomic> (since C++11)[2]
+  - \<ciso646> (since C++11)(until C++20)
+- Deprecated headers
+  - \<cstdalign> \<cstdbool> (since C++11)(until C++20

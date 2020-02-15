@@ -1,5 +1,6 @@
 #include "Screen.hpp"
 #include "IO.hpp"
+#include <ValueOf.hpp>
 
 uint8_t* const BasePointer = (uint8_t*)0xB8000;
 
@@ -19,7 +20,8 @@ void Screen::Clear() {
 	auto memory = (uint16_t*)BasePointer;
 	auto offset = this->maxX * this->maxY;
 
-	uint16_t data = (this->background << 12) | (this->foreground << 8) | ' ';
+	uint16_t data = (ValueOf(this->background) << 12) |
+	                (ValueOf(this->foreground) << 8) | ' ';
 	for (uint16_t i = 0; i < offset; ++i) {
 		*(memory++) = data;
 	}
@@ -36,7 +38,8 @@ void Screen::ScrollUp() {
 		*(toMem++) = *(fromMem++);
 	}
 
-	uint16_t data = (this->background << 12) | (this->foreground << 8) | ' ';
+	uint16_t data = (ValueOf(this->background) << 12) |
+	                (ValueOf(this->foreground) << 8) | ' ';
 	for (uint16_t i = 0; i < this->maxX; ++i) {
 		*(toMem++) = data;
 	}
@@ -102,7 +105,8 @@ void Screen::WriteRaw(char character) {
 	auto memory = BasePointer + 2 * offset;
 
 	*(memory + 0) = character;
-	*(memory + 1) = (this->background << 4) | this->foreground;
+	*(memory + 1) =
+	    (ValueOf(this->background) << 4) | ValueOf(this->foreground);
 
 	this->MoveCursor(this->x + 1, this->y);
 }

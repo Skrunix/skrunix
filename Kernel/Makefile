@@ -31,7 +31,9 @@ CFLAGS := \
 CPPFLAGS := \
 	-std=c++17 \
 	-nostdinc \
-	-Isrc \
+	-iquote src \
+	-isystem src/LibC \
+	-isystem src/LibCPP \
 	-ffreestanding \
 	-O2 \
 	-Wall \

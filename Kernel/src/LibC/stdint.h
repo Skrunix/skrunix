@@ -21,8 +21,7 @@ typedef uint64_t uintptr_t;
 
 typedef uint64_t ptrdiff_t;
 
-#ifdef __cplusplus
-
+#if defined(__cplusplus)
 static_assert(sizeof(int8_t) == 1);
 static_assert(sizeof(int16_t) == 2);
 static_assert(sizeof(int32_t) == 4);
@@ -43,5 +42,4 @@ static_assert(sizeof(intptr_t) == 8);
 static_assert(sizeof(uintptr_t) == 8);
 
 static_assert(sizeof(ptrdiff_t) == 8);
-
 #endif

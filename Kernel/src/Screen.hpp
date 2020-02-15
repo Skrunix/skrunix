@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.h"
+#include <stdint.h>
 
 class Screen {
   public:
@@ -19,7 +19,7 @@ class Screen {
 	void WriteRaw(char);
 	void WriteRaw(const char*);
 
-	enum Color : uint8_t {
+	enum class Color : uint8_t {
 		Black        = 0x0,
 		Blue         = 0x1,
 		Green        = 0x2,
