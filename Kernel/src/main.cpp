@@ -1,3 +1,4 @@
+#include "GDT.hpp"
 #include "IDT.hpp"
 #include "IO.hpp"
 #include "PIC.hpp"
@@ -61,6 +62,7 @@ void main() {
 
 	screen->Write("\r\n\n");
 
+	GDT gdt;
 	IDT idt;
 	PIC pic;
 

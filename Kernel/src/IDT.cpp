@@ -29,7 +29,7 @@ IDT::IDT() {
 
 	this->SetGate(0, DefaultIntHandlers[0], 0x18, 0x8E);
 	for (uint8_t i = 1; i > 0; ++i) {
-		this->SetGate(i, DefaultIntHandlers[i], 0x18, 0x8E);
+		this->SetGate(i, DefaultIntHandlers[i], 0x08, 0x8E);
 	}
 	flushIDT(&idtr);
 }
