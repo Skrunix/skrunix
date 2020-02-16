@@ -2,6 +2,7 @@
 #include "IDT.hpp"
 #include "IO.hpp"
 #include "PIC.hpp"
+#include "PIT.hpp"
 #include "Screen.hpp"
 
 extern "C" {
@@ -65,6 +66,7 @@ void main() {
 	GDT gdt;
 	IDT idt;
 	PIC pic;
+	PIT pit(0x20);
 
 	uint8_t rangeCount = *rangesCount;
 	for (uint8_t i = 0; i < rangeCount; ++i) {
@@ -99,6 +101,14 @@ typedef struct {
 	uint64_t interruptNumber;
 } IRQRegisters;
 
+uint64_t timerCount;
+
+void timerHandler(IRQRegisters) {
+	screen->Write("\r");
+	screen->WriteHex(++timerCount);
+	PIC::EOI1();
+}
+
 #define KB_DATA 0x60
 #define KB_STATUS 0x64
 
@@ -132,7 +142,6 @@ bool shift = false;
 
 void keyboardHandler(IRQRegisters) {
 	auto status = IO::in(KB_STATUS);
-	PIC::EOI1();
 	if (status & 0x01) {
 		uint8_t keycode = IO::in(KB_DATA);
 		if ((keycode & 0x80) == 0) {
@@ -159,9 +168,13 @@ void keyboardHandler(IRQRegisters) {
 			}
 		}
 	}
+	PIC::EOI1();
 }
 
 void isrHandler(IRQRegisters registers) {
+	if (registers.interruptNumber == 0x20) {
+		return timerHandler(registers);
+	}
 	if (registers.interruptNumber == 0x21) {
 		return keyboardHandler(registers);
 	}

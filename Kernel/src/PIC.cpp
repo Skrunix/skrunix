@@ -36,8 +36,8 @@ PIC::PIC() {
 	IO::out(PIC1_DATA, 0xFF);
 	IO::out(PIC2_DATA, 0xFF);
 
-	// FIXME: Enable keyboard interrupt
-	IO::out(PIC1_DATA, ~0x02);
+	// FIXME: Enable timer/keyboard interrupt
+	IO::out(PIC1_DATA, ~0x03);
 }
 
 PIC::~PIC() {}
