@@ -46,6 +46,7 @@ CPPFLAGS := \
 	-Wchar-subscripts \
 	-Wcomment \
 	-Wdisabled-optimization \
+	-Wfloat-conversion \
 	-Wfloat-equal \
 	-Wformat \
 	-Wformat=2 \

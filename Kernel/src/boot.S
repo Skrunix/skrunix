@@ -9,9 +9,3 @@ Start:
 	MOVL %EAX, %EBP
 
 	JMP main
-
-
-.section .data
-
-strKernel:
-	.asciz "Kernel exit"

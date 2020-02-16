@@ -2,8 +2,8 @@
 
 extern "C" {
 typedef struct {
-	uint16_t limit;
-	uint64_t offset;
+	uint16_t  limit;
+	uintptr_t offset;
 } __attribute__((packed)) IDTR;
 
 typedef struct {
