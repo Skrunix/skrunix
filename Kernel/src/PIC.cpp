@@ -13,11 +13,6 @@
 
 #define PIC_EOI 0x20
 
-#define CMD_PORT 0x64
-#define STAT_PORT 0x64
-
-#define PS2_DATA_PORT 0x60
-
 PIC::PIC() {
 	// Program the PICs
 	IO::out(PIC1_COMMAND, PIC_INIT);
