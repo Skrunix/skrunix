@@ -88,8 +88,8 @@ void main() {
 
 	screen->Write("\r\n");
 
-	asm volatile("int $0x3");
-	asm volatile("int $0x4");
+	asm volatile("int $0x0");
+	asm volatile("int $0xff");
 	asm volatile("sti");
 
 	while (1)
@@ -180,7 +180,7 @@ void isrHandler(IRQRegisters registers) {
 	}
 
 	screen->Write("Got interrupt: ");
-	screen->WriteHex(registers.interruptNumber);
+	screen->WriteHex((uint8_t)registers.interruptNumber);
 	screen->Write("\r\n");
 }
 }

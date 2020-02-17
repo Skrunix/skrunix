@@ -1,12 +1,13 @@
 #include "IDT.hpp"
+#include "GDT.hpp"
 
-extern "C" {
-typedef struct {
-	uint16_t  limit;
-	uintptr_t offset;
-} __attribute__((packed)) IDTR;
+#define ATTR_PRESENT (0b1 << 7)
+#define ATTR_PRIV_ANY (0b00 << 5)
+#define ATTR_TYPE_TASK (0b10101 << 0)
+#define ATTR_TYPE_TRAP (0b01111 << 0)
+#define ATTR_TYPE_INTERRUPT (0b01110 << 0)
 
-typedef struct {
+struct __attribute__((packed)) IDTEntry {
 	uint16_t offsetLow;
 	uint16_t selector;
 	uint8_t  zero1;
@@ -14,36 +15,43 @@ typedef struct {
 	uint16_t offsetMid;
 	uint32_t offsetHigh;
 	uint32_t zero2;
-} __attribute__((packed)) IDTDescriptor;
+};
+static_assert(sizeof(IDTEntry) == 16);
 
+struct __attribute__((packed)) IDTPointer {
+	uint16_t  limit;
+	IDTEntry* offset;
+};
+static_assert(sizeof(IDTPointer) == 10);
+
+extern "C" {
 extern uintptr_t DefaultIntHandlers[];
-extern void      flushIDT(IDTR*);
+extern void      flushIDT(IDTPointer*);
 }
 
-static IDTR          idtr;
-static IDTDescriptor descriptors[256];
+static IDTPointer idt;
+static IDTEntry   idtEntries[256];
 
 IDT::IDT() {
-	idtr.limit  = sizeof(IDTDescriptor) * 256 - 1;
-	idtr.offset = reinterpret_cast<uintptr_t>(&descriptors);
+	idt.limit  = sizeof(idtEntries) - 1;
+	idt.offset = &idtEntries[0];
 
-	this->SetGate(0, DefaultIntHandlers[0], 0x18, 0x8E);
-	for (uint8_t i = 1; i > 0; ++i) {
-		this->SetGate(i, DefaultIntHandlers[i], 0x08, 0x8E);
+	uint8_t attributes = ATTR_PRESENT | ATTR_PRIV_ANY | ATTR_TYPE_INTERRUPT;
+	for (uint16_t i = 0; i <= UINT8_MAX; ++i) {
+		this->SetGate(i, DefaultIntHandlers[i], GDT_CODE_SELECTOR, attributes);
 	}
-	flushIDT(&idtr);
+	flushIDT(&idt);
 }
 
 IDT::~IDT() {}
 
 void IDT::SetGate(uint8_t number, uintptr_t offset, uint16_t selector,
                   uint8_t attributes) {
-	descriptors[number].offsetLow  = offset & 0xFFFF;
-	descriptors[number].selector   = selector;
-	descriptors[number].zero1      = 0;
-	descriptors[number].attributes = attributes;
-	descriptors[number].offsetMid  = (offset >> 16) & 0xFFFF;
-	descriptors[number].offsetHigh =
-	    static_cast<uint32_t>(offset >> 32) & 0xFFFFFFFF;
-	descriptors[number].zero2 = 0;
+	idtEntries[number].offsetLow  = offset & 0xFFFF;
+	idtEntries[number].selector   = selector;
+	idtEntries[number].zero1      = 0;
+	idtEntries[number].attributes = attributes;
+	idtEntries[number].offsetMid  = (offset >> 16) & 0xFFFF;
+	idtEntries[number].offsetHigh = (offset >> 32) & 0xFFFFFFFF;
+	idtEntries[number].zero2      = 0;
 }

@@ -2,6 +2,10 @@
 
 #include <stdint.h>
 
+#define GDT_NULL_SELECTOR 0x00
+#define GDT_CODE_SELECTOR 0x08
+#define GDT_DATA_SELECTOR 0x10
+
 class GDT {
   public:
 	GDT();
