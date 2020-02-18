@@ -5,6 +5,7 @@
 #define PIT_CH0_DATA 0x40
 #define PIT_CH1_DATA 0x41
 #define PIT_CH2_DATA 0x42
+#define BEEP_COMMAND 0x61
 
 #define CMD_CH0 (0b00 << 6)
 #define CMD_CH1 (0b01 << 6)
@@ -37,3 +38,20 @@ PIT::PIT(uint16_t frequency) {
 }
 
 PIT::~PIT() {}
+
+void PIT::Beep(uint16_t frequency) {
+	uint16_t divisor = 1193180 / frequency;
+
+	IO::out(PIT_COMMAND,
+	        CMD_CH2 | CMD_ACCESS_LOWHIGH | CMD_OP_SQUAREWAVE | CMD_16BIT);
+	IO::out(PIT_CH2_DATA, divisor & 0xFF);
+	IO::out(PIT_CH2_DATA, (divisor >> 8) & 0xFF);
+
+	uint8_t beepValue = IO::in(BEEP_COMMAND);
+	IO::out(BEEP_COMMAND, beepValue | 3);
+}
+
+void PIT::Stop() {
+	uint8_t beepValue = IO::in(BEEP_COMMAND);
+	IO::out(BEEP_COMMAND, beepValue & 0xFC);
+}

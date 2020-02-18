@@ -11,6 +11,7 @@ extern "C" {
 
 uint8_t screenData[sizeof(Screen)];
 Screen* screen;
+PIT*    globalPIT;
 
 struct AddressRangeDescriptor {
 	uint64_t base;
@@ -67,6 +68,8 @@ void main() {
 	IDT idt;
 	PIC pic;
 	PIT pit(0x20);
+
+	globalPIT = &pit;
 
 	uint8_t rangeCount = *rangesCount;
 	for (uint8_t i = 0; i < rangeCount; ++i) {
@@ -140,6 +143,8 @@ char QWERTY[256] = {
 };
 bool shift = false;
 
+uint16_t NOTES[10] = {261, 294, 330, 349, 392, 440, 493, 523, 587, 659};
+
 void keyboardHandler(IRQRegisters) {
 	auto status = IO::in(KB_STATUS);
 	if (status & 0x01) {
@@ -162,10 +167,15 @@ void keyboardHandler(IRQRegisters) {
 			} else {
 				screen->WriteHex(keycode);
 			}
+			if (character >= '0' && character <= '9') {
+				uint16_t frequency = NOTES[character - '0'];
+				globalPIT->Beep(frequency);
+			}
 		} else {
 			if (keycode == 0xAA) { // LShift
 				shift = false;
 			}
+			globalPIT->Stop();
 		}
 	}
 	PIC::EOI1();
