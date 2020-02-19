@@ -4,6 +4,7 @@
 #include "PIC.hpp"
 #include "PIT.hpp"
 #include "Screen.hpp"
+#include "Serial.hpp"
 
 extern "C" {
 [[noreturn]] void main();
@@ -70,6 +71,9 @@ void main() {
 	PIT pit(0x20);
 
 	globalPIT = &pit;
+
+	Serial serial;
+	serial.Write("HELLO\r\n");
 
 	uint8_t rangeCount = *rangesCount;
 	for (uint8_t i = 0; i < rangeCount; ++i) {
