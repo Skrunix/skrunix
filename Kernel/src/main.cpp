@@ -10,6 +10,9 @@ extern "C" {
 [[noreturn]] void main();
 }
 
+extern uint64_t KernelEnd; // Defined in linker script
+uint64_t        allocAddress = reinterpret_cast<uint64_t>(&KernelEnd);
+
 uint8_t screenData[sizeof(Screen)];
 Screen* screen;
 PIT*    globalPIT;
@@ -62,6 +65,8 @@ void main() {
 	screen->setBackground(Screen::Color::Black);
 	screen->Write("\r\n\n");
 	screen->WriteHex(reinterpret_cast<uintptr_t>(screen));
+	screen->Write("\r\n");
+	screen->WriteHex(allocAddress);
 
 	screen->Write("\r\n\n");
 

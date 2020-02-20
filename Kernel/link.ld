@@ -14,4 +14,5 @@ SECTIONS {
 		*(.data)
 		*(.rodata)
 	}
+	KernelEnd = .;
 }
