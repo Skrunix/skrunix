@@ -61,6 +61,7 @@ DiskReadError:
 	CALL PrintString
 	JMP Halt
 
+.global Halt
 Halt:
 	CLI
 	HLT

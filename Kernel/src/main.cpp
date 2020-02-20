@@ -86,6 +86,12 @@ void main() {
 			screen->Write("Usable");
 		} else if (range.type == 2) {
 			screen->Write("Reserved");
+		} else if (range.type == 3) {
+			screen->Write("ACPI reclaimable");
+		} else if (range.type == 4) {
+			screen->Write("ACPI NVS");
+		} else if (range.type == 4) {
+			screen->Write("Bad");
 		} else {
 			screen->Write("? ");
 			screen->WriteHex(static_cast<uint8_t>(range.type));
