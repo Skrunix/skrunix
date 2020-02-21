@@ -1,28 +1,13 @@
 #include "IDT.hpp"
 #include "GDT/GDT.hpp"
+#include "IDTEntry.hpp"
+#include "IDTPointer.hpp"
 
 #define ATTR_PRESENT (0b1 << 7)
 #define ATTR_PRIV_ANY (0b00 << 5)
 #define ATTR_TYPE_TASK (0b10101 << 0)
 #define ATTR_TYPE_TRAP (0b01111 << 0)
 #define ATTR_TYPE_INTERRUPT (0b01110 << 0)
-
-struct __attribute__((packed)) IDTEntry {
-	uint16_t offsetLow;
-	uint16_t selector;
-	uint8_t  zero1;
-	uint8_t  attributes;
-	uint16_t offsetMid;
-	uint32_t offsetHigh;
-	uint32_t zero2;
-};
-static_assert(sizeof(IDTEntry) == 16);
-
-struct __attribute__((packed)) IDTPointer {
-	uint16_t  limit;
-	IDTEntry* offset;
-};
-static_assert(sizeof(IDTPointer) == 10);
 
 extern "C" {
 extern uintptr_t DefaultIntHandlers[];
