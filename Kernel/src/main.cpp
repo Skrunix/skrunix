@@ -1,4 +1,4 @@
-#include "GDT.hpp"
+#include "GDT/GDT.hpp"
 #include "IDT.hpp"
 #include "IO.hpp"
 #include "PIC.hpp"

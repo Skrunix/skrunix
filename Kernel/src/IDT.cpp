@@ -1,5 +1,5 @@
 #include "IDT.hpp"
-#include "GDT.hpp"
+#include "GDT/GDT.hpp"
 
 #define ATTR_PRESENT (0b1 << 7)
 #define ATTR_PRIV_ANY (0b00 << 5)

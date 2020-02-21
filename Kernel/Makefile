@@ -128,15 +128,15 @@ clean::
 	rm -rf $(1)/.build
 
 $(1)/.build/%.o: $(1)/%.S
-	mkdir -p $(1)/.build
+	mkdir -p $(1)/.build/$$(patsubst $(1)/%,%,$$(shell dirname $$<))
 	$(AS) $(ASFLAGS) -o $$@ $$<
 
 $(1)/.build/%.o: $(1)/%.c $(1)/.build/%.d
-	mkdir -p $(1)/.build
+	mkdir -p $(1)/.build/$$(patsubst $(1)/%,%,$$(shell dirname $$<))
 	$(CC) $$($(1)_DEPFLAGS) $(CFLAGS) -o $$@ -c $$<
 
 $(1)/.build/%.o: $(1)/%.cpp $(1)/.build/%.d
-	mkdir -p $(1)/.build
+	mkdir -p $(1)/.build/$$(patsubst $(1)/%,%,$$(shell dirname $$<))
 	$(CPP) $$($(1)_DEPFLAGS) $(CPPFLAGS) -o $$@ -c $$<
 endef
 
