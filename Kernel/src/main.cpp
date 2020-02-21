@@ -1,5 +1,5 @@
 #include "GDT/GDT.hpp"
-#include "IDT.hpp"
+#include "IDT/IDT.hpp"
 #include "IO.hpp"
 #include "PIC.hpp"
 #include "PIT.hpp"
