@@ -158,18 +158,18 @@ char QWERTY[256] = {
 };
 bool shift = false;
 
-uint16_t NOTES[10] = {261, 294, 330, 349, 392, 440, 493, 523, 587, 659};
+UInt16 NOTES[10] = {261, 294, 330, 349, 392, 440, 493, 523, 587, 659};
 
 void keyboardHandler(IRQRegisters) {
 	auto status = IO::in(KB_STATUS);
-	if (status & 0x01) {
-		uint8_t keycode = IO::in(KB_DATA);
+	if ((status & 0x01) != 0) {
+		UInt8 keycode = IO::in(KB_DATA);
 		if ((keycode & 0x80) == 0) {
 			char character = '\0';
 			if (shift) {
-				character = QWERTY[keycode];
+				character = QWERTY[keycode.value];
 			} else {
-				character = qwerty[keycode];
+				character = qwerty[keycode.value];
 			}
 			if (character != '\0') {
 				screen->Write(character);
@@ -183,7 +183,7 @@ void keyboardHandler(IRQRegisters) {
 				screen->WriteHex(keycode);
 			}
 			if (character >= '0' && character <= '9') {
-				uint16_t frequency = NOTES[character - '0'];
+				UInt16 frequency = NOTES[character - '0'];
 				globalPIT->Beep(frequency);
 			}
 		} else {

@@ -1,12 +1,12 @@
 #pragma once
 
-#include <stdint.h>
+#include <integers>
 
 class PIT {
   public:
-	PIT(uint16_t frequency);
+	PIT(UInt16 frequency);
 	~PIT();
 
-	void Beep(uint16_t frequency);
+	void Beep(UInt16 frequency);
 	void Stop();
 };

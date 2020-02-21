@@ -1,16 +1,16 @@
 #pragma once
 
-#include <stdint.h>
+#include <integers>
 
 class IO {
   public:
-	static inline uint8_t in(uint16_t port) {
+	static inline UInt8 in(UInt16 port) {
 		uint8_t ret;
 		asm volatile("inb %1, %0" : "=a"(ret) : "Nd"(port));
 		return ret;
 	}
 
-	static inline void out(uint16_t port, uint8_t value) {
+	static inline void out(UInt16 port, UInt8 value) {
 		asm volatile("outb %0, %1" : : "a"(value), "Nd"(port));
 	}
 };

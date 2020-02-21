@@ -24,7 +24,7 @@ void Screen::Clear() {
 
 	uint16_t data = (ValueOf(this->background) << 12) |
 	                (ValueOf(this->foreground) << 8) | ' ';
-	for (uint16_t i = 0; i < offset; ++i) {
+	for (UInt16 i = 0; i < offset; ++i) {
 		*(memory++) = data;
 	}
 
@@ -33,16 +33,16 @@ void Screen::Clear() {
 
 void Screen::ScrollUp() {
 	auto toMem   = reinterpret_cast<uint16_t*>(BasePointer);
-	auto fromMem = reinterpret_cast<uint16_t*>(BasePointer) + this->maxX;
+	auto fromMem = reinterpret_cast<uint16_t*>(BasePointer) + this->maxX.value;
 	auto offset  = this->maxX * (this->maxY - 1);
 
-	for (uint16_t i = 0; i < offset; ++i) {
+	for (UInt16 i = 0; i < offset; ++i) {
 		*(toMem++) = *(fromMem++);
 	}
 
 	uint16_t data = (ValueOf(this->background) << 12) |
 	                (ValueOf(this->foreground) << 8) | ' ';
-	for (uint16_t i = 0; i < this->maxX; ++i) {
+	for (UInt16 i = 0; i < this->maxX; ++i) {
 		*(toMem++) = data;
 	}
 
@@ -78,12 +78,12 @@ void Screen::Write(const char* string) {
 	}
 }
 
-void Screen::WriteHex(uint8_t value) {
+void Screen::WriteHex(UInt8 value) {
 	static char lookup[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 	                        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	this->Write("0x");
-	this->Write(lookup[(value >> 4) & 0xF]);
-	this->Write(lookup[value & 0xF]);
+	this->Write(lookup[value.high().value]);
+	this->Write(lookup[value.low().value]);
 }
 
 void Screen::WriteHex(uintptr_t value) {
@@ -104,7 +104,7 @@ void Screen::WriteRaw(char character) {
 	}
 
 	auto offset = this->y * this->maxX + this->x;
-	auto memory = BasePointer + 2 * offset;
+	auto memory = BasePointer + 2 * offset.value;
 
 	*(memory + 0) = character;
 	*(memory + 1) =
@@ -131,7 +131,7 @@ void Screen::IncrementY() {
 	this->MoveCursor(this->x, this->y);
 }
 
-void Screen::MoveCursor(uint16_t newX, uint16_t newY) {
+void Screen::MoveCursor(UInt16 newX, UInt16 newY) {
 	this->x = newX;
 	this->y = newY;
 	this->UpdateCursor();
@@ -142,7 +142,7 @@ void Screen::UpdateCursor() {
 
 	// Write cursor position
 	IO::out(0x3D4, 14);
-	IO::out(0x3D5, offset >> 8);
+	IO::out(0x3D5, offset.high().value);
 	IO::out(0x3D4, 15);
-	IO::out(0x3D5, offset);
+	IO::out(0x3D5, offset.low().value);
 }

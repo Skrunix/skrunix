@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <integers>
 
 class Screen {
   public:
@@ -13,7 +13,7 @@ class Screen {
 	void Write(char);
 	void Write(const char*);
 
-	void WriteHex(uint8_t);
+	void WriteHex(UInt8);
 	void WriteHex(uintptr_t);
 
 	void WriteRaw(char);
@@ -42,17 +42,17 @@ class Screen {
 	void setBackground(Color);
 
   private:
-	uint16_t x;
-	uint16_t y;
+	UInt16 x;
+	UInt16 y;
 
-	uint16_t maxX;
-	uint16_t maxY;
+	UInt16 maxX;
+	UInt16 maxY;
 
 	Color foreground;
 	Color background;
 
 	void IncrementY();
 
-	void MoveCursor(uint16_t newX, uint16_t newY);
+	void MoveCursor(UInt16 newX, UInt16 newY);
 	void UpdateCursor();
 };

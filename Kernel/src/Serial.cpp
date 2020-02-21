@@ -32,4 +32,4 @@ void Serial::Write(const char* string) {
 	}
 }
 
-bool Serial::CanWrite() { return IO::in(COM1 + 5) & 0x20; }
+bool Serial::CanWrite() { return (IO::in(COM1 + 5) & 0x20) != 0; }
