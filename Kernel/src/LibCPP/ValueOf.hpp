@@ -3,6 +3,6 @@
 #include <type_traits.hpp>
 
 template <typename Enum>
-typename std::underlying_type<Enum>::type ValueOf(Enum const value) {
-	return static_cast<typename std::underlying_type<Enum>::type>(value);
+[[nodiscard]] auto ValueOf(const Enum value) {
+	return static_cast<std::underlying_type_t<Enum>>(value);
 }

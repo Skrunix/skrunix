@@ -1,10 +1,11 @@
 ---
 Language: Cpp
-IndentWidth: 4
-TabWidth: 4
-UseTab: ForIndentation
-DerivePointerAlignment: false
-PointerAlignment: Left
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: true
+AlwaysBreakTemplateDeclarations: Yes
 BreakConstructorInitializers: BeforeComma
+DerivePointerAlignment: false
+IndentWidth: 4
+PointerAlignment: Left
+TabWidth: 4
+UseTab: ForIndentation
