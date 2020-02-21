@@ -1,5 +1,7 @@
 #include "Screen.hpp"
+
 #include "IO.hpp"
+
 #include <ValueOf.hpp>
 
 uint8_t* const BasePointer = reinterpret_cast<uint8_t*>(0xB8000);

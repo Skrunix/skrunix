@@ -1,4 +1,5 @@
 #include "PIT.hpp"
+
 #include "IO.hpp"
 
 #define PIT_COMMAND 0x43

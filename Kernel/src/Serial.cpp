@@ -1,4 +1,5 @@
 #include "Serial.hpp"
+
 #include "IO.hpp"
 
 #define COM1 0x3F8

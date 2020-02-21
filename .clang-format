@@ -5,6 +5,7 @@ AlignConsecutiveDeclarations: true
 AlwaysBreakTemplateDeclarations: Yes
 BreakConstructorInitializers: BeforeComma
 DerivePointerAlignment: false
+IncludeBlocks: Regroup
 IndentWidth: 4
 PointerAlignment: Left
 TabWidth: 4
