@@ -1,4 +1,6 @@
 #include "GDT.hpp"
+#include "GDTEntry.hpp"
+#include "GDTPointer.hpp"
 
 #define ACCESS_PRESENT (0b1 << 7)
 #define ACCESS_PRIV_KERNEL (0b00 << 5)
@@ -10,23 +12,6 @@
 #define FLAGS_GRANULARITY_4K (0b1 << 3)
 #define FLAGS_SIZE_64_CODE (0b01 << 1)
 #define FLAGS_SIZE_64_DATA (0b00 << 1)
-
-struct __attribute__((packed)) GDTEntry {
-	uint16_t limitLow;      // Limit 0:15
-	uint16_t baseLow;       // Base 0:15
-	uint8_t  baseMid;       // Base 16:23
-	uint8_t  access;        // Access Byte
-	uint8_t  limitHigh : 4; // Limit 16:19
-	uint8_t  flags : 4;     // Flags
-	uint8_t  baseHigh;      // Base 24:31
-};
-static_assert(sizeof(GDTEntry) == 8);
-
-struct __attribute__((packed)) GDTPointer {
-	uint16_t  limit;
-	GDTEntry* base;
-};
-static_assert(sizeof(GDTPointer) == 10);
 
 extern "C" {
 extern void loadGDT(GDTPointer*);
