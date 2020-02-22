@@ -32,4 +32,15 @@ void Serial::Write(const char* string) {
 	}
 }
 
+void Serial::WriteHex(UInt64 value) {
+	static char lookup[] = {'0', '1', '2', '3', '4', '5', '6', '7',
+	                        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+	this->Write("0x");
+	for (UInt8 i = 60; i > 0; i -= 4) {
+		UInt8 halfByte = (value.value >> i.value) & 0xF;
+		this->Write(lookup[halfByte.value]);
+	}
+	this->Write(lookup[value.value & 0xF]);
+}
+
 bool Serial::CanWrite() { return (IO::in(COM1 + 5) & 0x20) != 0; }

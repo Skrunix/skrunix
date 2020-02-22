@@ -2,17 +2,25 @@ OUTPUT_FORMAT(binary)
 
 SECTIONS {
 	. = 0x10000;
+	_KernelTextSizeStart = .;
 	.text : {
 		*boot.o(.text)
-		*(.text)
+		*(.text*)
 	}
+	_KernelTextSizeEnd = .;
+	_KernelBSSSizeStart = .;
 	.bss : {
-		*(.bss)
+		*(.bss*)
 	}
-	. = . + SIZEOF(.bss);
+	_KernelBSSSizeEnd = .;
+	_KernelDataSizeStart = .;
 	.data : {
-		*(.data)
-		*(.rodata)
+		*(.data*)
+		*(.rodata*)
 	}
+	_KernelDataSizeEnd = .;
 	KernelEnd = .;
+	KernelTextSize = _KernelTextSizeEnd - _KernelTextSizeStart;
+	KernelDataSize = _KernelDataSizeEnd - _KernelDataSizeStart;
+	KernelBSSSize = _KernelBSSSizeEnd - _KernelBSSSizeStart;
 }

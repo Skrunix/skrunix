@@ -10,6 +10,13 @@ extern "C" {
 [[noreturn]] void main();
 }
 
+extern UInt64 KernelTextSize;
+extern UInt64 KernelDataSize;
+extern UInt64 KernelBSSSize;
+void*         KernelTextSize2 = &KernelTextSize;
+void*         KernelDataSize2 = &KernelDataSize;
+void*         KernelBSSSize2  = &KernelBSSSize;
+
 extern UInt64 KernelEnd; // Defined in linker script
 void*         allocAddress = &KernelEnd;
 
@@ -80,6 +87,15 @@ void main() {
 
 	Serial serial;
 	serial.Write("HELLO\r\n");
+	serial.Write("Text size: ");
+	serial.WriteHex(reinterpret_cast<uint64_t>(KernelTextSize2));
+	serial.Write("\r\n");
+	serial.Write("Data size: ");
+	serial.WriteHex(reinterpret_cast<uint64_t>(KernelDataSize2));
+	serial.Write("\r\n");
+	serial.Write("BSS  size: ");
+	serial.WriteHex(reinterpret_cast<uint64_t>(KernelBSSSize2));
+	serial.Write("\r\n");
 
 	UInt8 rangeCount = *rangesCount;
 	for (UInt8 i = 0; i < rangeCount; ++i) {
