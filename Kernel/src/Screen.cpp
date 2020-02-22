@@ -4,7 +4,7 @@
 
 #include <ValueOf.hpp>
 
-uint8_t* const BasePointer = reinterpret_cast<uint8_t*>(0xB8000);
+UInt8* const BasePointer = reinterpret_cast<UInt8*>(0xB8000);
 
 Screen::Screen()
     : x(0)
@@ -19,11 +19,11 @@ void Screen::Clear() {
 	this->SetForeground(Color::LightGray);
 	this->setBackground(Color::Black);
 
-	auto memory = reinterpret_cast<uint16_t*>(BasePointer);
+	auto memory = reinterpret_cast<UInt16*>(BasePointer);
 	auto offset = this->maxX * this->maxY;
 
-	uint16_t data = (ValueOf(this->background) << 12) |
-	                (ValueOf(this->foreground) << 8) | ' ';
+	UInt16 data = (ValueOf(this->background) << 12) |
+	              (ValueOf(this->foreground) << 8) | ' ';
 	for (UInt16 i = 0; i < offset; ++i) {
 		*(memory++) = data;
 	}
@@ -32,16 +32,16 @@ void Screen::Clear() {
 }
 
 void Screen::ScrollUp() {
-	auto toMem   = reinterpret_cast<uint16_t*>(BasePointer);
-	auto fromMem = reinterpret_cast<uint16_t*>(BasePointer) + this->maxX.value;
+	auto toMem   = reinterpret_cast<UInt16*>(BasePointer);
+	auto fromMem = reinterpret_cast<UInt16*>(BasePointer) + this->maxX.value;
 	auto offset  = this->maxX * (this->maxY - 1);
 
 	for (UInt16 i = 0; i < offset; ++i) {
 		*(toMem++) = *(fromMem++);
 	}
 
-	uint16_t data = (ValueOf(this->background) << 12) |
-	                (ValueOf(this->foreground) << 8) | ' ';
+	UInt16 data = (ValueOf(this->background) << 12) |
+	              (ValueOf(this->foreground) << 8) | ' ';
 	for (UInt16 i = 0; i < this->maxX; ++i) {
 		*(toMem++) = data;
 	}
@@ -86,15 +86,15 @@ void Screen::WriteHex(UInt8 value) {
 	this->Write(lookup[value.low().value]);
 }
 
-void Screen::WriteHex(uintptr_t value) {
+void Screen::WriteHex(UIntPtr value) {
 	static char lookup[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 	                        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	this->Write("0x");
-	for (uint8_t i = 60; i > 0; i -= 4) {
-		uint8_t halfByte = (value >> i) & 0xF;
-		this->Write(lookup[halfByte]);
+	for (UInt8 i = 60; i > 0; i -= 4) {
+		UInt8 halfByte = (value.value >> i.value) & 0xF;
+		this->Write(lookup[halfByte.value]);
 	}
-	this->Write(lookup[value & 0xF]);
+	this->Write(lookup[value.value & 0xF]);
 }
 
 void Screen::WriteRaw(char character) {

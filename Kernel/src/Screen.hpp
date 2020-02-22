@@ -14,12 +14,12 @@ class Screen {
 	void Write(const char*);
 
 	void WriteHex(UInt8);
-	void WriteHex(uintptr_t);
+	void WriteHex(UIntPtr);
 
 	void WriteRaw(char);
 	void WriteRaw(const char*);
 
-	enum class Color : uint8_t {
+	enum class Color : UInt8::BackingType {
 		Black        = 0x0,
 		Blue         = 0x1,
 		Green        = 0x2,

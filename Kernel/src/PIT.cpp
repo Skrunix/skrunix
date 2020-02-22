@@ -30,23 +30,23 @@
 #define CMD_4BCD (0b1)
 
 PIT::PIT(UInt16 frequency) {
-	uint16_t divisor = 1193180 / frequency.value;
+	UInt16 divisor = UInt16((UInt32(1193180) / UInt32(frequency)).value);
 
 	IO::out(PIT_COMMAND,
 	        CMD_CH0 | CMD_ACCESS_LOWHIGH | CMD_OP_SQUAREWAVE | CMD_16BIT);
-	IO::out(PIT_CH0_DATA, divisor & 0xFF);
-	IO::out(PIT_CH0_DATA, (divisor >> 8) & 0xFF);
+	IO::out(PIT_CH0_DATA, divisor.low());
+	IO::out(PIT_CH0_DATA, divisor.high());
 }
 
 PIT::~PIT() {}
 
 void PIT::Beep(UInt16 frequency) {
-	uint16_t divisor = 1193180 / frequency.value;
+	UInt16 divisor = 1193180 / frequency.value;
 
 	IO::out(PIT_COMMAND,
 	        CMD_CH2 | CMD_ACCESS_LOWHIGH | CMD_OP_SQUAREWAVE | CMD_16BIT);
-	IO::out(PIT_CH2_DATA, divisor & 0xFF);
-	IO::out(PIT_CH2_DATA, (divisor >> 8) & 0xFF);
+	IO::out(PIT_CH2_DATA, divisor.low());
+	IO::out(PIT_CH2_DATA, divisor.high());
 
 	UInt8 beepValue = IO::in(BEEP_COMMAND);
 	IO::out(BEEP_COMMAND, beepValue | 3);

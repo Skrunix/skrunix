@@ -10,26 +10,27 @@ extern "C" {
 [[noreturn]] void main();
 }
 
-extern uint64_t KernelEnd; // Defined in linker script
-uint64_t        allocAddress = reinterpret_cast<uint64_t>(&KernelEnd);
+extern UInt64 KernelEnd; // Defined in linker script
+void*         allocAddress = &KernelEnd;
 
-uint8_t screenData[sizeof(Screen)];
+UInt8   screenData[sizeof(Screen)];
 Screen* screen;
 PIT*    globalPIT;
 
 struct AddressRangeDescriptor {
-	uint64_t base;
-	uint64_t length;
-	uint32_t type;
-	uint32_t extended;
+	UInt64 base;
+	UInt64 length;
+	UInt32 type;
+	UInt32 extended;
 };
 static_assert(sizeof(AddressRangeDescriptor) == 24);
-uint8_t*                rangesCount = reinterpret_cast<uint8_t*>(0x9000);
+UInt8*                  rangesCount = reinterpret_cast<UInt8*>(0x9000);
 AddressRangeDescriptor* ranges =
     reinterpret_cast<AddressRangeDescriptor*>(0x9018);
 
 void main() {
-	screen  = reinterpret_cast<Screen*>(&screenData);
+	screen =
+	    reinterpret_cast<Screen*>(reinterpret_cast<uintptr_t>(&screenData));
 	*screen = Screen();
 	screen->Clear();
 
@@ -64,9 +65,9 @@ void main() {
 	screen->SetForeground(Screen::Color::LightGray);
 	screen->setBackground(Screen::Color::Black);
 	screen->Write("\r\n\n");
-	screen->WriteHex(reinterpret_cast<uintptr_t>(screen));
+	screen->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(screen)));
 	screen->Write("\r\n");
-	screen->WriteHex(allocAddress);
+	screen->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(allocAddress)));
 
 	screen->Write("\r\n\n");
 
@@ -80,12 +81,12 @@ void main() {
 	Serial serial;
 	serial.Write("HELLO\r\n");
 
-	uint8_t rangeCount = *rangesCount;
-	for (uint8_t i = 0; i < rangeCount; ++i) {
-		AddressRangeDescriptor range = ranges[i];
-		screen->WriteHex(range.base);
+	UInt8 rangeCount = *rangesCount;
+	for (UInt8 i = 0; i < rangeCount; ++i) {
+		AddressRangeDescriptor range = ranges[i.value];
+		screen->WriteHex(UIntPtr(range.base.value));
 		screen->Write(" ");
-		screen->WriteHex(range.length);
+		screen->WriteHex(UIntPtr(range.length.value));
 		screen->Write(" ");
 		if (range.type == 1) {
 			screen->Write("Usable");
@@ -99,7 +100,7 @@ void main() {
 			screen->Write("Bad");
 		} else {
 			screen->Write("? ");
-			screen->WriteHex(static_cast<uint8_t>(range.type));
+			screen->WriteHex(UIntPtr(range.type.value));
 		}
 		screen->Write("\r\n");
 	}
@@ -116,14 +117,14 @@ void main() {
 
 extern "C" {
 typedef struct {
-	uint64_t interruptNumber;
+	UInt64 interruptNumber;
 } IRQRegisters;
 
-uint64_t timerCount;
+UInt64 timerCount = 0;
 
 void timerHandler(IRQRegisters) {
 	screen->Write("\r");
-	screen->WriteHex(++timerCount);
+	screen->WriteHex(UIntPtr((++timerCount).value));
 	PIC::EOI1();
 }
 
@@ -205,7 +206,7 @@ void isrHandler(IRQRegisters registers) {
 	}
 
 	screen->Write("Got interrupt: ");
-	screen->WriteHex((uint8_t)registers.interruptNumber);
+	screen->WriteHex(UIntPtr(registers.interruptNumber.value));
 	screen->Write("\r\n");
 }
 }

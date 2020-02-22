@@ -5,7 +5,7 @@
 class IO {
   public:
 	static inline UInt8 in(UInt16 port) {
-		uint8_t ret;
+		UInt8 ret = 0;
 		asm volatile("inb %1, %0" : "=a"(ret) : "Nd"(port));
 		return ret;
 	}
