@@ -25,14 +25,14 @@ GDT::GDT() {
 	gdt.limit = sizeof(gdtEntries) - 1;
 	gdt.base  = &gdtEntries[0];
 
-	uint8_t access =
+	UInt8 access =
 	    ACCESS_PRESENT | ACCESS_PRIV_KERNEL | ACCESS_GROW_UP | ACCESS_RW;
-	uint8_t accessCode = access | ACCESS_TYPE_CODE;
-	uint8_t accessData = access | ACCESS_TYPE_DATA;
+	UInt8 accessCode = access | ACCESS_TYPE_CODE;
+	UInt8 accessData = access | ACCESS_TYPE_DATA;
 
-	uint8_t flags     = FLAGS_GRANULARITY_4K;
-	uint8_t flagsCode = flags | FLAGS_SIZE_64_CODE;
-	uint8_t flagsData = flags | FLAGS_SIZE_64_DATA;
+	UInt8 flags     = FLAGS_GRANULARITY_4K;
+	UInt8 flagsCode = flags | FLAGS_SIZE_64_CODE;
+	UInt8 flagsData = flags | FLAGS_SIZE_64_DATA;
 
 	this->SetEntry(0, UINT32_MAX, 0, 0, 0);                  // Null
 	this->SetEntry(1, UINT32_MAX, 0, accessCode, flagsCode); // Code
@@ -43,13 +43,13 @@ GDT::GDT() {
 
 GDT::~GDT() {}
 
-void GDT::SetEntry(uint8_t number, uint32_t limit, uintptr_t base,
-                   uint8_t access, uint8_t flags) {
-	gdtEntries[number].limitLow  = limit & 0xFFFF;
-	gdtEntries[number].baseLow   = base & 0xFFFF;
-	gdtEntries[number].baseMid   = (base >> 16) & 0xFF;
-	gdtEntries[number].access    = access;
-	gdtEntries[number].flags     = flags;
-	gdtEntries[number].limitHigh = (limit >> 16) & 0x0F;
-	gdtEntries[number].baseHigh  = (base >> 24) & 0xFF;
+void GDT::SetEntry(UInt8 number, UInt32 limit, UIntPtr base, UInt8 access,
+                   UInt8 flags) {
+	gdtEntries[number.value].limitLow = limit.low();
+	gdtEntries[number.value].baseLow  = base.value & 0xFFFF;
+	gdtEntries[number.value].baseMid  = (base.value >> 16) & 0xFF;
+	gdtEntries[number.value].access   = access;
+	gdtEntries[number.value].flags =
+	    (flags.value << 4) | ((limit.value >> 16) & 0x0F);
+	gdtEntries[number.value].baseHigh = (base.value >> 24) & 0xFF;
 }

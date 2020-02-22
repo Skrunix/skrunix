@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <integers>
 
 #define GDT_NULL_SELECTOR 0x00
 #define GDT_CODE_SELECTOR 0x08
@@ -12,6 +12,6 @@ class GDT {
 	~GDT();
 
   private:
-	void SetEntry(uint8_t number, uint32_t limit, uintptr_t base,
-	              uint8_t access, uint8_t flags);
+	void SetEntry(UInt8 number, UInt32 limit, UIntPtr base, UInt8 access,
+	              UInt8 flags);
 };

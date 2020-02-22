@@ -1,14 +1,21 @@
 #pragma once
 
-#include <stdint.h>
+#include <integers>
 
 struct __attribute__((packed)) GDTEntry {
-	uint16_t limitLow;      // Limit 0:15
-	uint16_t baseLow;       // Base 0:15
-	uint8_t  baseMid;       // Base 16:23
-	uint8_t  access;        // Access Byte
-	uint8_t  limitHigh : 4; // Limit 16:19
-	uint8_t  flags : 4;     // Flags
-	uint8_t  baseHigh;      // Base 24:31
+	UInt16 limitLow; // Limit 0:15
+	UInt16 baseLow;  // Base 0:15
+	UInt8  baseMid;  // Base 16:23
+	UInt8  access;   // Access Byte
+	UInt8  flags;    // Flags (<<4) | Limit 16:19 (>>4)
+	UInt8  baseHigh; // Base 24:31
+
+	constexpr GDTEntry()
+	    : limitLow()
+	    , baseLow()
+	    , baseMid()
+	    , access()
+	    , flags()
+	    , baseHigh() {}
 };
 static_assert(sizeof(GDTEntry) == 8);

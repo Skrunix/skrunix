@@ -2,10 +2,14 @@
 
 #include "GDTEntry.hpp"
 
-#include <stdint.h>
+#include <integers>
 
 struct __attribute__((packed)) GDTPointer {
-	uint16_t  limit;
+	UInt16    limit;
 	GDTEntry* base;
+
+	constexpr GDTPointer()
+	    : limit()
+	    , base(0) {}
 };
 static_assert(sizeof(GDTPointer) == 10);
