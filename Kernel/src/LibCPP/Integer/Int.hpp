@@ -2,13 +2,17 @@
 
 #include <stdint.h>
 
-struct Int {
-	intmax_t value;
+struct __attribute__((packed)) Int {
+	using BackingType = intmax_t;
 
-	constexpr static const intmax_t min = INTMAX_MIN;
-	constexpr static const intmax_t max = INTMAX_MAX;
+	BackingType value;
 
-	constexpr Int(intmax_t value)
+	constexpr static const BackingType min = INTMAX_MIN;
+	constexpr static const BackingType max = INTMAX_MAX;
+
+	constexpr Int()
+	    : value(0) {}
+	constexpr Int(BackingType value)
 	    : value(value) {}
 };
 static_assert(sizeof(Int) == 8);

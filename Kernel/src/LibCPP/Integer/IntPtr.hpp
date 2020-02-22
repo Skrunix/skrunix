@@ -2,17 +2,17 @@
 
 #include <stdint.h>
 
-struct __attribute__((packed))Int64 {
-	using BackingType = int64_t;
+struct __attribute__((packed))IntPtr {
+	using BackingType = intptr_t;
 
 	BackingType value;
 
 	constexpr static const BackingType min = INT64_MIN;
 	constexpr static const BackingType max = INT64_MAX;
 
-	constexpr Int64()
+	constexpr IntPtr()
 	    : value(0) {}
-	constexpr Int64(BackingType value)
+	constexpr IntPtr(BackingType value)
 	    : value(value) {}
 };
-static_assert(sizeof(Int64) == 8);
+static_assert(sizeof(IntPtr) == 8);

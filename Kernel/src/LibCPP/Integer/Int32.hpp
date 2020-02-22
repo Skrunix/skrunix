@@ -2,13 +2,17 @@
 
 #include <stdint.h>
 
-struct Int32 {
-	int32_t value;
+struct __attribute__((packed)) Int32 {
+	using BackingType = int32_t;
 
-	constexpr static const int32_t min = INT32_MIN;
-	constexpr static const int32_t max = INT32_MAX;
+	BackingType value;
 
-	constexpr Int32(int32_t value)
+	constexpr static const BackingType min = INT32_MIN;
+	constexpr static const BackingType max = INT32_MAX;
+
+	constexpr Int32()
+	    : value(0) {}
+	constexpr Int32(BackingType value)
 	    : value(value) {}
 };
 static_assert(sizeof(Int32) == 4);

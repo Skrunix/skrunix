@@ -2,13 +2,19 @@
 
 #include <stdint.h>
 
-struct UInt {
-	uintmax_t value;
+struct __attribute__((packed))UInt {
+	using BackingType = uintmax_t;
 
-	constexpr static const uintmax_t min = UINTMAX_MIN;
-	constexpr static const uintmax_t max = UINTMAX_MAX;
+	BackingType value;
 
-	constexpr UInt(uintmax_t value)
+	constexpr static const BackingType min = UINTMAX_MIN;
+	constexpr static const BackingType max = UINTMAX_MAX;
+	
+	constexpr UInt()
+	    : value(0) {}
+	constexpr UInt(BackingType value)
 	    : value(value) {}
+
+	inline UInt operator&(UInt rhs) { return value & rhs.value; };
 };
 static_assert(sizeof(UInt) == 8);

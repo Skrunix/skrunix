@@ -2,13 +2,17 @@
 
 #include <Integer/UInt8.hpp>
 
-struct UInt16 {
-	uint16_t value;
+struct __attribute__((packed)) UInt16 {
+	using BackingType = uint16_t;
 
-	constexpr static const uint16_t min = UINT16_MIN;
-	constexpr static const uint16_t max = UINT16_MAX;
+	BackingType value;
 
-	constexpr UInt16(uint16_t value)
+	constexpr static const BackingType min = UINT16_MIN;
+	constexpr static const BackingType max = UINT16_MAX;
+
+	constexpr UInt16()
+	    : value(0) {}
+	constexpr UInt16(BackingType value)
 	    : value(value) {}
 
 	inline UInt8 low() { return value & 0xFF; }
@@ -17,6 +21,9 @@ struct UInt16 {
 	inline UInt16 operator+(UInt16 rhs) { return value + rhs.value; };
 	inline UInt16 operator-(UInt16 rhs) { return value - rhs.value; };
 	inline UInt16 operator*(UInt16 rhs) { return value * rhs.value; };
+	inline UInt16 operator/(UInt16 rhs) { return value / rhs.value; };
+
+	inline UInt16 operator&(UInt16 rhs) { return value & rhs.value; };
 
 	inline UInt16 operator>>(UInt16 rhs) { return value >> rhs.value; };
 

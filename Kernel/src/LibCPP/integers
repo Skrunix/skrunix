@@ -5,8 +5,10 @@
 #include <Integer/Int32.hpp>
 #include <Integer/Int64.hpp>
 #include <Integer/Int8.hpp>
+#include <Integer/IntPtr.hpp>
 #include <Integer/UInt.hpp>
 #include <Integer/UInt16.hpp>
 #include <Integer/UInt32.hpp>
 #include <Integer/UInt64.hpp>
 #include <Integer/UInt8.hpp>
+#include <Integer/UIntPtr.hpp>

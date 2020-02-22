@@ -2,13 +2,17 @@
 
 #include <stdint.h>
 
-struct Int16 {
-	int16_t value;
+struct __attribute__((packed))Int16 {
+	using BackingType = int16_t;
 
-	constexpr static const int16_t min = INT16_MIN;
-	constexpr static const int16_t max = INT16_MAX;
+	BackingType value;
 
-	constexpr Int16(int16_t value)
+	constexpr static const BackingType min = INT16_MIN;
+	constexpr static const BackingType max = INT16_MAX;
+
+	constexpr Int16()
+	    : value(0) {}
+	constexpr Int16(BackingType value)
 	    : value(value) {}
 };
 static_assert(sizeof(Int16) == 2);
