@@ -2,10 +2,14 @@
 
 #include "IDTEntry.hpp"
 
-#include <stdint.h>
+#include <integers>
 
 struct __attribute__((packed)) IDTPointer {
-	uint16_t  limit;
+	UInt16    limit;
 	IDTEntry* offset;
+
+	constexpr IDTPointer()
+	    : limit()
+	    , offset(0) {}
 };
 static_assert(sizeof(IDTPointer) == 10);

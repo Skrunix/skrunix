@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <integers>
 
 class IDT {
   public:
@@ -8,6 +8,6 @@ class IDT {
 	~IDT();
 
   private:
-	void SetGate(uint8_t number, uintptr_t offset, uint16_t selector,
-	             uint8_t attributes);
+	void SetGate(UInt8 number, UIntPtr offset, UInt16 selector,
+	             UInt8 attributes);
 };

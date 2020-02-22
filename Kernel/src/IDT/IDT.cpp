@@ -11,8 +11,8 @@
 #define ATTR_TYPE_INTERRUPT (0b01110 << 0)
 
 extern "C" {
-extern uintptr_t DefaultIntHandlers[];
-extern void      flushIDT(IDTPointer*);
+extern UIntPtr DefaultIntHandlers[];
+extern void    flushIDT(IDTPointer*);
 }
 
 static IDTPointer idt;
@@ -22,22 +22,23 @@ IDT::IDT() {
 	idt.limit  = sizeof(idtEntries) - 1;
 	idt.offset = &idtEntries[0];
 
-	uint8_t attributes = ATTR_PRESENT | ATTR_PRIV_ANY | ATTR_TYPE_INTERRUPT;
-	for (uint16_t i = 0; i <= UINT8_MAX; ++i) {
-		this->SetGate(i, DefaultIntHandlers[i], GDT_CODE_SELECTOR, attributes);
+	UInt8 attributes = ATTR_PRESENT | ATTR_PRIV_ANY | ATTR_TYPE_INTERRUPT;
+	for (UInt16 i = 0; i <= UINT8_MAX; ++i) {
+		this->SetGate(i.low(), DefaultIntHandlers[i.value], GDT_CODE_SELECTOR,
+		              attributes);
 	}
 	flushIDT(&idt);
 }
 
 IDT::~IDT() {}
 
-void IDT::SetGate(uint8_t number, uintptr_t offset, uint16_t selector,
-                  uint8_t attributes) {
-	idtEntries[number].offsetLow  = offset & 0xFFFF;
-	idtEntries[number].selector   = selector;
-	idtEntries[number].zero1      = 0;
-	idtEntries[number].attributes = attributes;
-	idtEntries[number].offsetMid  = (offset >> 16) & 0xFFFF;
-	idtEntries[number].offsetHigh = (offset >> 32) & 0xFFFFFFFF;
-	idtEntries[number].zero2      = 0;
+void IDT::SetGate(UInt8 number, UIntPtr offset, UInt16 selector,
+                  UInt8 attributes) {
+	idtEntries[number.value].offsetLow  = offset.value & 0xFFFF;
+	idtEntries[number.value].selector   = selector;
+	idtEntries[number.value].zero1      = 0;
+	idtEntries[number.value].attributes = attributes;
+	idtEntries[number.value].offsetMid  = (offset.value >> 16) & 0xFFFF;
+	idtEntries[number.value].offsetHigh = (offset.value >> 32) & 0xFFFFFFFF;
+	idtEntries[number.value].zero2      = 0;
 }

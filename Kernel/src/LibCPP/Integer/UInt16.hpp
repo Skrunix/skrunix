@@ -29,6 +29,7 @@ struct __attribute__((packed)) UInt16 {
 
 	inline bool operator<(UInt16 rhs) { return value < rhs.value; };
 	inline bool operator>(UInt16 rhs) { return value > rhs.value; };
+	inline bool operator<=(UInt16 rhs) { return value <= rhs.value; };
 	inline bool operator>=(UInt16 rhs) { return value >= rhs.value; };
 
 	// Prefix
