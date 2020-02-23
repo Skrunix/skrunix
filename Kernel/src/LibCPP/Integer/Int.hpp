@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-struct __attribute__((packed)) Int {
+struct [[gnu::packed]] Int {
 	using BackingType = intmax_t;
 
 	BackingType value;

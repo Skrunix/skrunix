@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-struct __attribute__((packed)) UInt8 {
+struct [[gnu::packed]] UInt8 {
 	using BackingType = uint8_t;
 
 	BackingType value;

@@ -2,7 +2,7 @@
 
 #include <integers>
 
-struct __attribute__((packed)) IDTEntry {
+struct [[gnu::packed]] IDTEntry {
 	UInt16 offsetLow;
 	UInt16 selector;
 	UInt8  zero1;

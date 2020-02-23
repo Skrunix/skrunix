@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-struct __attribute__((packed)) UInt64 {
+struct [[gnu::packed]] UInt64 {
 	using BackingType = uint64_t;
 
 	BackingType value;

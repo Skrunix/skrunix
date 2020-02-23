@@ -4,7 +4,7 @@
 
 #include <integers>
 
-struct __attribute__((packed)) GDTPointer {
+struct [[gnu::packed]] GDTPointer {
 	UInt16    limit;
 	GDTEntry* base;
 

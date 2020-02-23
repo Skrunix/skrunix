@@ -2,9 +2,9 @@
 
 #include <stdint.h>
 
-struct __attribute__((packed)) Int8 {
+struct [[gnu::packed]] Int8 {
 	using BackingType = int8_t;
-	
+
 	BackingType value;
 
 	constexpr static const BackingType min = INT8_MIN;

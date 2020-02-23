@@ -2,7 +2,7 @@
 
 #include <Integer/UInt8.hpp>
 
-struct __attribute__((packed)) UInt16 {
+struct [[gnu::packed]] UInt16 {
 	using BackingType = uint16_t;
 
 	BackingType value;

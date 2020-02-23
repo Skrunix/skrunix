@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-struct __attribute__((packed)) UIntPtr {
+struct [[gnu::packed]] UIntPtr {
 	using BackingType = uintptr_t;
 
 	BackingType value;

@@ -4,7 +4,7 @@
 
 #include <integers>
 
-struct __attribute__((packed)) IDTPointer {
+struct [[gnu::packed]] IDTPointer {
 	UInt16    limit;
 	IDTEntry* offset;
 

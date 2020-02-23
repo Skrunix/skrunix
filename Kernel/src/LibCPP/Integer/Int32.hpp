@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-struct __attribute__((packed)) Int32 {
+struct [[gnu::packed]] Int32 {
 	using BackingType = int32_t;
 
 	BackingType value;

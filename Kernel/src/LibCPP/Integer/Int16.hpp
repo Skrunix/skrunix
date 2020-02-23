@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-struct __attribute__((packed))Int16 {
+struct [[gnu::packed]] Int16 {
 	using BackingType = int16_t;
 
 	BackingType value;
