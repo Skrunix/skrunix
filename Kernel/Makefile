@@ -59,6 +59,7 @@ CPPFLAGS := \
 	-Winvalid-pch \
 	-Wunsafe-loop-optimizations \
 	-Wlong-long \
+	-Wmaybe-uninitialized \
 	-Wmissing-braces \
 	-Wmissing-field-initializers \
 	-Wmissing-format-attribute \
@@ -75,6 +76,7 @@ CPPFLAGS := \
 	-Wstack-protector \
 	-Wstrict-aliasing \
 	-Wstrict-aliasing=2 \
+	-Wsuggest-override \
 	-Wswitch \
 	-Wswitch-default \
 	-Wswitch-enum \

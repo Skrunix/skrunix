@@ -82,8 +82,8 @@ void Screen::WriteHex(UInt8 value) {
 	static char lookup[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 	                        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	this->Write("0x");
-	this->Write(lookup[value.high().value]);
-	this->Write(lookup[value.low().value]);
+	this->Write(lookup[value.high()]);
+	this->Write(lookup[value.low()]);
 }
 
 void Screen::WriteHex(UIntPtr value) {
@@ -142,7 +142,7 @@ void Screen::UpdateCursor() {
 
 	// Write cursor position
 	IO::out(0x3D4, 14);
-	IO::out(0x3D5, offset.high().value);
+	IO::out(0x3D5, offset.high());
 	IO::out(0x3D4, 15);
-	IO::out(0x3D5, offset.low().value);
+	IO::out(0x3D5, offset.low());
 }

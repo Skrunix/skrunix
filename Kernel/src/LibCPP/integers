@@ -1,14 +1,139 @@
 #pragma once
 
-#include <Integer/Int.hpp>
-#include <Integer/Int16.hpp>
-#include <Integer/Int32.hpp>
-#include <Integer/Int64.hpp>
-#include <Integer/Int8.hpp>
-#include <Integer/IntPtr.hpp>
-#include <Integer/UInt.hpp>
-#include <Integer/UInt16.hpp>
-#include <Integer/UInt32.hpp>
-#include <Integer/UInt64.hpp>
-#include <Integer/UInt8.hpp>
-#include <Integer/UIntPtr.hpp>
+#include <stdint.h>
+
+template <typename BackingTypeName, int BitWidth, BackingTypeName minValue,
+          BackingTypeName maxValue>
+struct [[gnu::packed]] Integer {
+	using BackingType = BackingTypeName;
+
+	constexpr static const int HalfBitWidth = BitWidth / 2;
+
+	constexpr static const BackingType Mask     = (1 << BitWidth) - 1;
+	constexpr static const BackingType HalfMask = (1 << HalfBitWidth) - 1;
+
+	constexpr static const Integer Min = minValue;
+	constexpr static const Integer Max = maxValue;
+
+	BackingType value;
+
+	constexpr Integer()
+	    : value(0) {}
+	constexpr Integer(BackingType value)
+	    : value(value) {}
+
+	inline BackingType low() { return value & HalfMask; }
+	inline BackingType high() { return (value >> HalfBitWidth) & HalfMask; }
+
+	inline Integer operator+(Integer rhs) { return value + rhs.value; };
+	inline Integer operator-(Integer rhs) { return value - rhs.value; };
+	inline Integer operator*(Integer rhs) { return value * rhs.value; };
+	inline Integer operator/(Integer rhs) { return value / rhs.value; };
+
+	inline Integer operator&(Integer rhs) { return value & rhs.value; };
+	inline Integer operator|(Integer rhs) { return value | rhs.value; };
+	inline Integer operator^(Integer rhs) { return value ^ rhs.value; };
+
+	inline Integer operator<<(Integer rhs) { return value << rhs.value; };
+	inline Integer operator>>(Integer rhs) { return value >> rhs.value; };
+
+	inline bool operator<(Integer rhs) { return value < rhs.value; };
+	inline bool operator>(Integer rhs) { return value > rhs.value; };
+	inline bool operator<=(Integer rhs) { return value <= rhs.value; };
+	inline bool operator>=(Integer rhs) { return value >= rhs.value; };
+	inline bool operator==(Integer rhs) { return value == rhs.value; };
+	inline bool operator!=(Integer rhs) { return value != rhs.value; };
+
+	inline Integer& operator+=(const Integer& rhs) {
+		value += rhs.value;
+		return *this;
+	};
+	inline Integer& operator-=(const Integer& rhs) {
+		value -= rhs.value;
+		return *this;
+	};
+	inline Integer& operator*=(const Integer& rhs) {
+		value *= rhs.value;
+		return *this;
+	};
+	inline Integer& operator/=(const Integer& rhs) {
+		value /= rhs.value;
+		return *this;
+	};
+
+	inline Integer& operator&=(const Integer& rhs) {
+		value &= rhs.value;
+		return *this;
+	};
+	inline Integer& operator|=(const Integer& rhs) {
+		value |= rhs.value;
+		return *this;
+	};
+	inline Integer& operator^=(const Integer& rhs) {
+		value ^= rhs.value;
+		return *this;
+	};
+
+	inline Integer& operator<<=(const Integer& rhs) {
+		value <<= rhs.value;
+		return *this;
+	};
+	inline Integer& operator>>=(const Integer& rhs) {
+		value >>= rhs.value;
+		return *this;
+	};
+
+	// Prefix
+	inline Integer& operator++() {
+		++value;
+		return *this;
+	}
+	inline Integer& operator--() {
+		--value;
+		return *this;
+	}
+
+	// Postfix
+	inline Integer operator++(int) { return value++; }
+	inline Integer operator--(int) { return value--; }
+};
+
+// Signed
+
+using Int8 = Integer<int8_t, 8, INT8_MIN, INT8_MAX>;
+static_assert(sizeof(Int8) == 1);
+
+using Int16 = Integer<int16_t, 16, INT16_MIN, INT16_MAX>;
+static_assert(sizeof(Int16) == 2);
+
+using Int32 = Integer<int32_t, 32, INT32_MIN, INT32_MAX>;
+static_assert(sizeof(Int32) == 4);
+
+using Int64 = Integer<int64_t, 64, INT64_MIN, INT64_MAX>;
+static_assert(sizeof(Int64) == 8);
+
+using Int = Integer<intmax_t, 64, INTMAX_MIN, INTMAX_MAX>;
+static_assert(sizeof(Int) == 8);
+
+using IntPtr = Integer<intptr_t, 64, INTPTR_MIN, INTPTR_MAX>;
+static_assert(sizeof(IntPtr) == 8);
+
+// Unsigned
+
+using UInt8 = Integer<uint8_t, 8, UINT8_MIN, UINT8_MAX>;
+static_assert(sizeof(UInt8) == 1);
+
+using UInt16 = Integer<uint16_t, 16, UINT16_MIN, UINT16_MAX>;
+static_assert(sizeof(UInt16) == 2);
+
+using UInt32 = Integer<uint32_t, 32, UINT32_MIN, UINT32_MAX>;
+static_assert(sizeof(UInt32) == 4);
+
+using UInt64 = Integer<uint64_t, 64, UINT64_MIN, UINT64_MAX>;
+static_assert(sizeof(UInt64) == 8);
+
+using UInt = Integer<uintmax_t, 64, UINTMAX_MIN, UINTMAX_MAX>;
+static_assert(sizeof(UInt) == 8);
+
+using UIntPtr = Integer<uintptr_t, 64, UINTPTR_MIN, UINTPTR_MAX>;
+static_assert(sizeof(UIntPtr) == 8);
