@@ -1,10 +1,13 @@
 #include "GDT/GDT.hpp"
 #include "IDT/IDT.hpp"
 #include "IO.hpp"
+#include "Memory/BuddyAlloc.hpp"
 #include "PIC.hpp"
 #include "PIT.hpp"
 #include "Screen.hpp"
 #include "Serial.hpp"
+
+#include <ValueOf.hpp>
 
 extern "C" {
 [[noreturn]] void main();
@@ -23,17 +26,6 @@ void*         allocAddress = &KernelEnd;
 UInt8   screenData[sizeof(Screen)];
 Screen* screen;
 PIT*    globalPIT;
-
-struct AddressRangeDescriptor {
-	UInt64 base;
-	UInt64 length;
-	UInt32 type;
-	UInt32 extended;
-};
-static_assert(sizeof(AddressRangeDescriptor) == 24);
-UInt8*                  rangesCount = reinterpret_cast<UInt8*>(0x9000);
-AddressRangeDescriptor* ranges =
-    reinterpret_cast<AddressRangeDescriptor*>(0x9018);
 
 void main() {
 	screen =
@@ -97,30 +89,40 @@ void main() {
 	serial.WriteHex(reinterpret_cast<uint64_t>(KernelBSSSize2));
 	serial.Write("\r\n");
 
-	UInt8 rangeCount = *rangesCount;
-	for (UInt8 i = 0; i < rangeCount; ++i) {
-		AddressRangeDescriptor range = ranges[i.value];
+	UInt*         rangesCount = reinterpret_cast<UInt*>(0x9000);
+	AddressRange* ranges      = reinterpret_cast<AddressRange*>(0x9018);
+	BuddyAlloc    pageAllocator(ranges, *rangesCount);
+
+	serial.Write("RAM Pages: ");
+	serial.WriteHex(pageAllocator.pageCount);
+	serial.Write("\r\n");
+
+	UInt rangeCount = *rangesCount;
+	for (UInt i = 0; i < rangeCount; ++i) {
+		AddressRange range = ranges[i.value];
 		screen->WriteHex(UIntPtr(range.base.value));
 		screen->Write(" ");
 		screen->WriteHex(UIntPtr(range.length.value));
 		screen->Write(" ");
-		if (range.type == 1) {
+		if (range.type == AddressRange::Type::Usable) {
 			screen->Write("Usable");
-		} else if (range.type == 2) {
+		} else if (range.type == AddressRange::Type::Reserved) {
 			screen->Write("Reserved");
-		} else if (range.type == 3) {
+		} else if (range.type == AddressRange::Type::ACPI_Reclaimable) {
 			screen->Write("ACPI reclaimable");
-		} else if (range.type == 4) {
+		} else if (range.type == AddressRange::Type::ACPI_NVS) {
 			screen->Write("ACPI NVS");
-		} else if (range.type == 4) {
+		} else if (range.type == AddressRange::Type::Bad) {
 			screen->Write("Bad");
 		} else {
 			screen->Write("? ");
-			screen->WriteHex(UIntPtr(range.type.value));
+			screen->WriteHex(UIntPtr(ValueOf(range.type)));
 		}
 		screen->Write("\r\n");
 	}
-
+	screen->Write("RAM Pages: ");
+	screen->WriteHex(UIntPtr(pageAllocator.pageCount.value));
+	screen->Write("\r\n");
 	screen->Write("\r\n");
 
 	asm volatile("int $0x0");

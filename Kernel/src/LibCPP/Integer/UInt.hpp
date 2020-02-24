@@ -16,5 +16,21 @@ struct [[gnu::packed]] UInt {
 	    : value(value) {}
 
 	inline UInt operator&(UInt rhs) { return value & rhs.value; };
+
+	inline bool operator<(UInt rhs) { return value < rhs.value; };
+
+	// Prefix
+	inline UInt& operator++() {
+		++value;
+		return *this;
+	}
+	inline UInt& operator--() {
+		--value;
+		return *this;
+	}
+
+	// Postfix
+	inline UInt operator++(int) { return value++; }
+	inline UInt operator--(int) { return value--; }
 };
 static_assert(sizeof(UInt) == 8);

@@ -15,7 +15,18 @@ struct [[gnu::packed]] UInt64 {
 	constexpr UInt64(BackingType value)
 	    : value(value) {}
 
+	inline UInt64 operator+(UInt64 rhs) { return value + rhs.value; };
+	inline UInt64 operator-(UInt64 rhs) { return value - rhs.value; };
+
+	inline UInt64 operator<<(UInt64 rhs) { return value << rhs.value; };
+	inline UInt64 operator>>(UInt64 rhs) { return value >> rhs.value; };
+
 	inline bool operator==(UInt64 rhs) { return value == rhs.value; };
+
+	inline UInt64& operator+=(const UInt64& rhs) {
+		value += rhs.value;
+		return *this;
+	};
 
 	// Prefix
 	inline UInt64& operator++() {
