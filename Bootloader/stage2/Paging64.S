@@ -22,20 +22,20 @@ Paging64:
 	# PML4T - 0x2400 (0xA000 real)
 	# PDPT  - 0x3400 (0xB000 real)
 	# PDT   - 0x4400 (0xC000 real)
-	# PT    - 0x5400 (0xD000 real)
+	# PT    - 0x5400 (0xD000 real) - Does not exist
 	MOVL $0xB003, (%EDI)
 	ADDL $0x1000, %EDI
 	MOVL $0xC003, (%EDI)
 	ADDL $0x1000, %EDI
-	MOVL $0xD003, (%EDI)
-	ADDL $0x1000, %EDI
+	#MOVL $0xD003, (%EDI)
+	#ADDL $0x1000, %EDI
 
-	# Identity map the first two megabytes
-	MOVL $0x3, %EBX
+	# Identity map the first gigabyte
+	MOVL $0b10000011, %EBX // present + writable + huge
 	MOVL $512, %ECX
 .SetEntry:
 	MOVL %EBX, (%EDI)
-	ADDL $0x1000, %EBX
+	ADDL $0x200000, %EBX // 2MiB
 	ADDL $8, %EDI
 	LOOP .SetEntry
 

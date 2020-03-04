@@ -4,7 +4,7 @@
 
 Start:
 	# Setup stack
-	MOVL $0x200000, %EAX
+	MOVL $0x10000, %EAX
 	MOVL %EAX, %ESP
 	MOVL %EAX, %EBP
 
