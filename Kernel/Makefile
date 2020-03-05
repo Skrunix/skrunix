@@ -32,7 +32,7 @@ CPPFLAGS := \
 	-std=c++17 \
 	-nostdinc \
 	-iquote src \
-	-isystem src/LibC \
+	-isystem ../Libraries/KLibC \
 	-isystem src/LibCPP \
 	-ffreestanding \
 	-O2 \

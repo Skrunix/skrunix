@@ -1,5 +1,7 @@
 {
 	"files.associations": {
 		"**/src/LibCPP/integers": "cpp"
-	}
+	},
+	"C_Cpp.clang_format_style": "file",
+	"C_Cpp.clang_format_sortIncludes": true
 }

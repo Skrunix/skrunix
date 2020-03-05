@@ -8,5 +8,6 @@ DerivePointerAlignment: false
 IncludeBlocks: Regroup
 IndentWidth: 4
 PointerAlignment: Left
+SortIncludes: true
 TabWidth: 4
 UseTab: ForIndentation

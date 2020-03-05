@@ -15,7 +15,7 @@
                 "-iquote",
                 "${workspaceFolder}/src",
                 "-isystem",
-                "${workspaceFolder}/src/LibC",
+                "${workspaceFolder}/../Libraries/KLibC",
                 "-isystem",
                 "${workspaceFolder}/src/LibCPP",
                 "-ffreestanding",
