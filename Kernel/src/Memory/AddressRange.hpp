@@ -12,9 +12,9 @@ struct AddressRange {
 		Bad              = 5,
 	};
 
-	UInt64 base;
-	UInt64 length;
-	Type   type;
-	UInt32 extended;
+	UIntPtr base;
+	UInt64  length;
+	Type    type;
+	UInt32  extended;
 };
 static_assert(sizeof(AddressRange) == 24);

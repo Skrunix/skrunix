@@ -30,9 +30,13 @@ PIT*    globalPIT;
 Serial* globalSerial;
 
 void main() {
-	screen =
-	    reinterpret_cast<Screen*>(reinterpret_cast<uintptr_t>(&screenData));
-	*screen = Screen();
+	UInt*         rangesCount = reinterpret_cast<UInt*>(0x9000);
+	AddressRange* ranges      = reinterpret_cast<AddressRange*>(0x9018);
+	BuddyAlloc    pageAllocator(ranges, *rangesCount);
+
+	uintptr_t screenByteAddress = reinterpret_cast<uintptr_t>(&screenData);
+	screen                      = reinterpret_cast<Screen*>(screenByteAddress);
+	*screen                     = Screen();
 	screen->Clear();
 
 	screen->SetForeground(Screen::Color::Red);
@@ -93,10 +97,6 @@ void main() {
 	serial.Write("BSS  size: ");
 	serial.WriteHex(reinterpret_cast<uint64_t>(KernelBSSSize2));
 	serial.Write("\r\n");
-
-	UInt*         rangesCount = reinterpret_cast<UInt*>(0x9000);
-	AddressRange* ranges      = reinterpret_cast<AddressRange*>(0x9018);
-	BuddyAlloc    pageAllocator(ranges, *rangesCount);
 
 	serial.Write("RAM Pages: ");
 	serial.WriteHex(pageAllocator.pageCount);

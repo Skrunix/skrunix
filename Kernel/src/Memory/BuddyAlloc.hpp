@@ -11,11 +11,16 @@ class BuddyAlloc {
 	BuddyAlloc(AddressRange* rangeList, UInt count);
 	~BuddyAlloc();
 
+	void* allocRegion(UIntPtr address, UInt64 count);
+	void* allocPages(BlockOrder);
+	void  freePages(void*);
+
 	UInt64 pageCount;
 
   private:
-	void initPages(UInt64 address, UInt64 count);
+	void initPageRegion(UIntPtr address, UInt64 count);
 
 	PageBlock* getUnusedBlock();
 	void       setUnusedBlock(PageBlock*);
+	void       freeBlock(PageBlock*, BlockOrder);
 };

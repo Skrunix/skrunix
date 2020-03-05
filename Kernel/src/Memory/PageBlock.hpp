@@ -4,5 +4,5 @@
 
 struct PageBlock {
 	PageBlock* next;
-	UInt64     address;
+	UIntPtr    address;
 };
