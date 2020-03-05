@@ -1,9 +1,11 @@
 #pragma once
 
+#include <integers>
+
 #define BlockOrderCount 12
 
-enum class BlockOrder {
-	_4k,
+enum class BlockOrder : UInt8::BackingType {
+	_4k = 0,
 	_8k,
 	_16k,
 	_32k,

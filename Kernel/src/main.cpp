@@ -7,6 +7,7 @@
 #include "Screen.hpp"
 #include "Serial.hpp"
 
+#include <Align.hpp>
 #include <ValueOf.hpp>
 
 extern "C" {
@@ -21,11 +22,12 @@ void*         KernelDataSize2 = &KernelDataSize;
 void*         KernelBSSSize2  = &KernelBSSSize;
 
 extern UInt64 KernelEnd; // Defined in linker script
-void*         allocAddress = &KernelEnd;
+void*         kernelEndAddress = &KernelEnd;
 
 UInt8   screenData[sizeof(Screen)];
 Screen* screen;
 PIT*    globalPIT;
+Serial* globalSerial;
 
 void main() {
 	screen =
@@ -66,7 +68,9 @@ void main() {
 	screen->Write("\r\n\n");
 	screen->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(screen)));
 	screen->Write("\r\n");
-	screen->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(allocAddress)));
+	screen->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(kernelEndAddress)));
+	screen->WriteHex(UIntPtr(
+	    reinterpret_cast<uintptr_t>(Align<void>(kernelEndAddress, 4096))));
 
 	screen->Write("\r\n\n");
 
@@ -78,7 +82,8 @@ void main() {
 	globalPIT = &pit;
 
 	Serial serial;
-	serial.Write("HELLO\r\n");
+	globalSerial = &serial;
+	serial.Write("Skrunix\r\n");
 	serial.Write("Text size: ");
 	serial.WriteHex(reinterpret_cast<uint64_t>(KernelTextSize2));
 	serial.Write("\r\n");
@@ -119,6 +124,26 @@ void main() {
 			screen->WriteHex(UIntPtr(ValueOf(range.type)));
 		}
 		screen->Write("\r\n");
+
+		globalSerial->WriteHex(UIntPtr(range.base.value));
+		globalSerial->Write(" ");
+		globalSerial->WriteHex(UIntPtr(range.length.value));
+		globalSerial->Write(" ");
+		if (range.type == AddressRange::Type::Usable) {
+			globalSerial->Write("Usable");
+		} else if (range.type == AddressRange::Type::Reserved) {
+			globalSerial->Write("Reserved");
+		} else if (range.type == AddressRange::Type::ACPI_Reclaimable) {
+			globalSerial->Write("ACPI reclaimable");
+		} else if (range.type == AddressRange::Type::ACPI_NVS) {
+			globalSerial->Write("ACPI NVS");
+		} else if (range.type == AddressRange::Type::Bad) {
+			globalSerial->Write("Bad");
+		} else {
+			globalSerial->Write("? ");
+			globalSerial->WriteHex(UIntPtr(ValueOf(range.type)));
+		}
+		globalSerial->Write("\r\n");
 	}
 	screen->Write("RAM Pages: ");
 	screen->WriteHex(UIntPtr(pageAllocator.pageCount.value));

@@ -84,6 +84,8 @@ struct [[gnu::packed]] Integer {
 	};
 
 	// Prefix
+	inline Integer  operator-() { return -value; }
+	inline Integer  operator~() { return ~value; }
 	inline Integer& operator++() {
 		++value;
 		return *this;
@@ -118,6 +120,9 @@ static_assert(sizeof(Int) == 8);
 using IntPtr = Integer<intptr_t, 64, INTPTR_MIN, INTPTR_MAX>;
 static_assert(sizeof(IntPtr) == 8);
 
+using Size = Integer<ssize_t, 64, SSIZE_MIN, SSIZE_MAX>;
+static_assert(sizeof(Size) == 8);
+
 // Unsigned
 
 using UInt8 = Integer<uint8_t, 8, UINT8_MIN, UINT8_MAX>;
@@ -137,3 +142,6 @@ static_assert(sizeof(UInt) == 8);
 
 using UIntPtr = Integer<uintptr_t, 64, UINTPTR_MIN, UINTPTR_MAX>;
 static_assert(sizeof(UIntPtr) == 8);
+
+using USize = Integer<size_t, 64, SIZE_MIN, SIZE_MAX>;
+static_assert(sizeof(USize) == 8);

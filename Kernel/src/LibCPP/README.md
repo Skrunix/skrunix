@@ -11,7 +11,7 @@
 - Integer types
   - \<cstdint> (since C++11)
 - Start and termination
-  - \<cstdlib> (partial)[1]
+  - \<cstdlib> (partial)
 - Dynamic memory management
   - \<new>
 - Type identification
@@ -35,7 +35,7 @@
 - Bit manipulation
   - \<bit> (since C++20)
 - Atomics
-  - \<atomic> (since C++11)[2]
+  - \<atomic> (since C++11)
   - \<ciso646> (since C++11)(until C++20)
 - Deprecated headers
-  - \<cstdalign> \<cstdbool> (since C++11)(until C++20
+  - \<cstdalign> \<cstdbool> (since C++11)(until C++20)
