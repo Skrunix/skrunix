@@ -1,9 +1,10 @@
 #pragma once
 
 #include <integers>
+#include <Inline.hpp>
 
 template <typename Type>
-inline Type* Align(void* pointer, USize alignment) {
+FORCE_INLINE Type* Align(void* pointer, USize alignment) {
 	UIntPtr value = reinterpret_cast<uintptr_t>(pointer);
 	--alignment;
 	value = (value + alignment) & (~alignment);

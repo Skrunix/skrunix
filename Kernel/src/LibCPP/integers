@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Inline.hpp>
 #include <stdint.h>
 
 template <typename BackingTypeName, int BitWidth, BackingTypeName minValue,
@@ -22,82 +23,84 @@ struct [[gnu::packed]] Integer {
 	constexpr Integer(BackingType value)
 	    : value(value) {}
 
-	inline BackingType low() { return value & HalfMask; }
-	inline BackingType high() { return (value >> HalfBitWidth) & HalfMask; }
+	FORCE_INLINE BackingType low() { return value & HalfMask; }
+	FORCE_INLINE BackingType high() {
+		return (value >> HalfBitWidth) & HalfMask;
+	}
 
-	inline Integer operator+(Integer rhs) { return value + rhs.value; };
-	inline Integer operator-(Integer rhs) { return value - rhs.value; };
-	inline Integer operator*(Integer rhs) { return value * rhs.value; };
-	inline Integer operator/(Integer rhs) { return value / rhs.value; };
+	FORCE_INLINE Integer operator+(Integer rhs) { return value + rhs.value; };
+	FORCE_INLINE Integer operator-(Integer rhs) { return value - rhs.value; };
+	FORCE_INLINE Integer operator*(Integer rhs) { return value * rhs.value; };
+	FORCE_INLINE Integer operator/(Integer rhs) { return value / rhs.value; };
 
-	inline Integer operator&(Integer rhs) { return value & rhs.value; };
-	inline Integer operator|(Integer rhs) { return value | rhs.value; };
-	inline Integer operator^(Integer rhs) { return value ^ rhs.value; };
+	FORCE_INLINE Integer operator&(Integer rhs) { return value & rhs.value; };
+	FORCE_INLINE Integer operator|(Integer rhs) { return value | rhs.value; };
+	FORCE_INLINE Integer operator^(Integer rhs) { return value ^ rhs.value; };
 
-	inline Integer operator<<(Integer rhs) { return value << rhs.value; };
-	inline Integer operator>>(Integer rhs) { return value >> rhs.value; };
+	FORCE_INLINE Integer operator<<(Integer rhs) { return value << rhs.value; };
+	FORCE_INLINE Integer operator>>(Integer rhs) { return value >> rhs.value; };
 
-	inline bool operator<(Integer rhs) { return value < rhs.value; };
-	inline bool operator>(Integer rhs) { return value > rhs.value; };
-	inline bool operator<=(Integer rhs) { return value <= rhs.value; };
-	inline bool operator>=(Integer rhs) { return value >= rhs.value; };
-	inline bool operator==(Integer rhs) { return value == rhs.value; };
-	inline bool operator!=(Integer rhs) { return value != rhs.value; };
+	FORCE_INLINE bool operator<(Integer rhs) { return value < rhs.value; };
+	FORCE_INLINE bool operator>(Integer rhs) { return value > rhs.value; };
+	FORCE_INLINE bool operator<=(Integer rhs) { return value <= rhs.value; };
+	FORCE_INLINE bool operator>=(Integer rhs) { return value >= rhs.value; };
+	FORCE_INLINE bool operator==(Integer rhs) { return value == rhs.value; };
+	FORCE_INLINE bool operator!=(Integer rhs) { return value != rhs.value; };
 
-	inline Integer& operator+=(const Integer& rhs) {
+	FORCE_INLINE Integer& operator+=(const Integer& rhs) {
 		value += rhs.value;
 		return *this;
 	};
-	inline Integer& operator-=(const Integer& rhs) {
+	FORCE_INLINE Integer& operator-=(const Integer& rhs) {
 		value -= rhs.value;
 		return *this;
 	};
-	inline Integer& operator*=(const Integer& rhs) {
+	FORCE_INLINE Integer& operator*=(const Integer& rhs) {
 		value *= rhs.value;
 		return *this;
 	};
-	inline Integer& operator/=(const Integer& rhs) {
+	FORCE_INLINE Integer& operator/=(const Integer& rhs) {
 		value /= rhs.value;
 		return *this;
 	};
 
-	inline Integer& operator&=(const Integer& rhs) {
+	FORCE_INLINE Integer& operator&=(const Integer& rhs) {
 		value &= rhs.value;
 		return *this;
 	};
-	inline Integer& operator|=(const Integer& rhs) {
+	FORCE_INLINE Integer& operator|=(const Integer& rhs) {
 		value |= rhs.value;
 		return *this;
 	};
-	inline Integer& operator^=(const Integer& rhs) {
+	FORCE_INLINE Integer& operator^=(const Integer& rhs) {
 		value ^= rhs.value;
 		return *this;
 	};
 
-	inline Integer& operator<<=(const Integer& rhs) {
+	FORCE_INLINE Integer& operator<<=(const Integer& rhs) {
 		value <<= rhs.value;
 		return *this;
 	};
-	inline Integer& operator>>=(const Integer& rhs) {
+	FORCE_INLINE Integer& operator>>=(const Integer& rhs) {
 		value >>= rhs.value;
 		return *this;
 	};
 
 	// Prefix
-	inline Integer  operator-() { return -value; }
-	inline Integer  operator~() { return ~value; }
-	inline Integer& operator++() {
+	FORCE_INLINE Integer operator-() { return -value; }
+	FORCE_INLINE Integer operator~() { return ~value; }
+	FORCE_INLINE Integer& operator++() {
 		++value;
 		return *this;
 	}
-	inline Integer& operator--() {
+	FORCE_INLINE Integer& operator--() {
 		--value;
 		return *this;
 	}
 
 	// Postfix
-	inline Integer operator++(int) { return value++; }
-	inline Integer operator--(int) { return value--; }
+	FORCE_INLINE Integer operator++(int) { return value++; }
+	FORCE_INLINE Integer operator--(int) { return value--; }
 };
 
 // Signed
