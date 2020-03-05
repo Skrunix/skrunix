@@ -30,6 +30,19 @@ PIT*    globalPIT;
 Serial* globalSerial;
 
 void main() {
+	Serial serial;
+	globalSerial = &serial;
+	serial.Write("Skrunix\r\n");
+	serial.Write("Text size: ");
+	serial.WriteHex(reinterpret_cast<uint64_t>(KernelTextSize2));
+	serial.Write("\r\n");
+	serial.Write("Data size: ");
+	serial.WriteHex(reinterpret_cast<uint64_t>(KernelDataSize2));
+	serial.Write("\r\n");
+	serial.Write("BSS  size: ");
+	serial.WriteHex(reinterpret_cast<uint64_t>(KernelBSSSize2));
+	serial.Write("\r\n");
+
 	UInt*         rangesCount = reinterpret_cast<UInt*>(0x9000);
 	AddressRange* ranges      = reinterpret_cast<AddressRange*>(0x9018);
 	BuddyAlloc    pageAllocator(ranges, *rangesCount);
@@ -84,19 +97,6 @@ void main() {
 	PIT pit(0x20);
 
 	globalPIT = &pit;
-
-	Serial serial;
-	globalSerial = &serial;
-	serial.Write("Skrunix\r\n");
-	serial.Write("Text size: ");
-	serial.WriteHex(reinterpret_cast<uint64_t>(KernelTextSize2));
-	serial.Write("\r\n");
-	serial.Write("Data size: ");
-	serial.WriteHex(reinterpret_cast<uint64_t>(KernelDataSize2));
-	serial.Write("\r\n");
-	serial.Write("BSS  size: ");
-	serial.WriteHex(reinterpret_cast<uint64_t>(KernelBSSSize2));
-	serial.Write("\r\n");
 
 	serial.Write("RAM Pages: ");
 	serial.WriteHex(pageAllocator.pageCount);

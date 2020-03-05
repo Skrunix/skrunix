@@ -8,9 +8,6 @@
 #include "Serial.hpp"
 extern Serial* globalSerial;
 
-#include "Screen.hpp"
-extern Screen* screen;
-
 extern UInt64 KernelEnd; // Defined in linker script
 void*         allocAddress = &KernelEnd;
 
@@ -39,9 +36,9 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, UInt count)
 		this->pageCount += (endPage - startPage);
 	}
 
-	screen->Write("Tentative allocAddress: ");
-	screen->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(allocAddress)));
-	screen->Write("\r\n");
+	globalSerial->Write("Tentative allocAddress: ");
+	globalSerial->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(allocAddress)));
+	globalSerial->Write("\r\n");
 
 	// Find a segment of RAM large enough to store all PageBlocks
 	bool   foundBufferLocation = false;
@@ -76,14 +73,14 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, UInt count)
 	}
 
 	if (foundBufferLocation == false) {
-		screen->Write("Could not find space for allocAddress\r\n");
+		globalSerial->Write("Could not find space for allocAddress\r\n");
 		while (true)
 			;
 	}
 
-	screen->Write("Real allocAddress:      ");
-	screen->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(allocAddress)));
-	screen->Write("\r\n");
+	globalSerial->Write("Real allocAddress:      ");
+	globalSerial->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(allocAddress)));
+	globalSerial->Write("\r\n");
 
 	// Create required unusedBlocks for all of RAM
 	PageBlock* blockBuffer = Align<PageBlock>(allocAddress, 4096);
