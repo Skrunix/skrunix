@@ -9,7 +9,7 @@ struct [[gnu::packed]] IDTPointer {
 	IDTEntry* offset;
 
 	constexpr IDTPointer()
-	    : limit()
+	    : limit(256 * sizeof(IDTEntry))
 	    , offset(0) {}
 };
 static_assert(sizeof(IDTPointer) == 10);

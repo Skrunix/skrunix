@@ -79,7 +79,7 @@ void main() {
 	screen->Write("\r\n\n");
 
 	GDT gdt;
-	IDT idt;
+	IDT idt(pageAllocator.allocRegion(0, 1));
 	PIC pic;
 	PIT pit(0x20);
 

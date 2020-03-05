@@ -1,13 +1,22 @@
 #pragma once
 
+#include "IDTEntry.hpp"
+#include "IDTPointer.hpp"
+
 #include <integers>
 
 class IDT {
   public:
-	IDT();
+	IDT(void* buffer);
+	IDT(const IDT&) = delete;
 	~IDT();
+
+	IDT& operator=(const IDT&) = delete;
 
   private:
 	void SetGate(UInt8 number, UIntPtr offset, UInt16 selector,
 	             UInt8 attributes);
+
+	IDTPointer idt;
+	IDTEntry*  entries;
 };
