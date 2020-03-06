@@ -14,12 +14,12 @@ extern "C" {
 [[noreturn]] void main();
 }
 
-extern UInt64 KernelTextSize;
-extern UInt64 KernelDataSize;
-extern UInt64 KernelBSSSize;
-void*         KernelTextSize2 = &KernelTextSize;
-void*         KernelDataSize2 = &KernelDataSize;
-void*         KernelBSSSize2  = &KernelBSSSize;
+extern USize KernelTextSize;
+extern USize KernelDataSize;
+extern USize KernelBSSSize;
+void*        KernelTextSize2 = &KernelTextSize;
+void*        KernelDataSize2 = &KernelDataSize;
+void*        KernelBSSSize2  = &KernelBSSSize;
 
 extern UInt64 KernelEnd; // Defined in linker script
 void*         kernelEndAddress = &KernelEnd;
@@ -43,7 +43,7 @@ void main() {
 	serial.WriteHex(reinterpret_cast<uint64_t>(KernelBSSSize2));
 	serial.Write("\r\n");
 
-	UInt*         rangesCount = reinterpret_cast<UInt*>(0x9000);
+	USize*        rangesCount = reinterpret_cast<USize*>(0x9000);
 	AddressRange* ranges      = reinterpret_cast<AddressRange*>(0x9018);
 	BuddyAlloc    pageAllocator(ranges, *rangesCount);
 
@@ -102,12 +102,12 @@ void main() {
 	serial.WriteHex(pageAllocator.pageCount);
 	serial.Write("\r\n");
 
-	UInt rangeCount = *rangesCount;
-	for (UInt i = 0; i < rangeCount; ++i) {
+	USize rangeCount = *rangesCount;
+	for (USize i = 0; i < rangeCount; ++i) {
 		AddressRange range = ranges[i.value];
-		screen->WriteHex(UIntPtr(range.base.value));
+		screen->WriteHex(range.base);
 		screen->Write(" ");
-		screen->WriteHex(UIntPtr(range.length.value));
+		screen->WriteHex(range.length);
 		screen->Write(" ");
 		if (range.type == AddressRange::Type::Usable) {
 			screen->Write("Usable");

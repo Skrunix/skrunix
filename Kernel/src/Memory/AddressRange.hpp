@@ -13,7 +13,7 @@ struct AddressRange {
 	};
 
 	UIntPtr base;
-	UInt64  length;
+	USize   length;
 	Type    type;
 	UInt32  extended;
 };

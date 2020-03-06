@@ -3,7 +3,8 @@
         {
             "name": "Libraries",
             "includePath": [
-                "${workspaceFolder}/KLibC"
+                "${workspaceFolder}/KLibC",
+                "${workspaceFolder}/KLibCPP"
             ],
             "defines": [],
             "macFrameworkPath": [],

@@ -12,129 +12,125 @@ struct [[gnu::packed]] USize {
 
 	BackingType value;
 
-	constexpr USize()
+	const_inline USize()
 	    : value(0) {}
-	constexpr USize(BackingType value)
+	const_inline USize(const BackingType& value)
 	    : value(value) {}
 
 	// Int conversion
-	[[gnu::always_inline]] inline explicit operator BackingType() const {
+	const_inline explicit operator BackingType() const noexcept {
 		return this->value;
 	}
 
 	// Arithmetic
-	[[gnu::always_inline]] inline USize operator+(USize rhs) {
+	const_inline USize operator+(const USize& rhs) const noexcept {
 		return this->value + rhs.value;
 	};
-	[[gnu::always_inline]] inline USize operator-(USize rhs) {
+	const_inline USize operator-(const USize& rhs) const noexcept {
 		return this->value - rhs.value;
 	};
-	[[gnu::always_inline]] inline USize operator*(USize rhs) {
+	const_inline USize operator*(const USize& rhs) const noexcept {
 		return this->value * rhs.value;
 	};
-	[[gnu::always_inline]] inline USize operator/(USize rhs) {
+	const_inline USize operator/(const USize& rhs) const noexcept {
 		return this->value / rhs.value;
 	};
 
 	// Logical
-	[[gnu::always_inline]] inline USize operator&(USize rhs) {
+	const_inline USize operator&(const USize& rhs) const noexcept {
 		return this->value & rhs.value;
 	};
-	[[gnu::always_inline]] inline USize operator|(USize rhs) {
+	const_inline USize operator|(const USize& rhs) const noexcept {
 		return this->value | rhs.value;
 	};
-	[[gnu::always_inline]] inline USize operator^(USize rhs) {
+	const_inline USize operator^(const USize& rhs) const noexcept {
 		return this->value ^ rhs.value;
 	};
 
 	// Shift
-	[[gnu::always_inline]] inline USize operator<<(USize rhs) {
+	const_inline USize operator<<(const USize& rhs) const noexcept {
 		return this->value << rhs.value;
 	};
-	[[gnu::always_inline]] inline USize operator>>(USize rhs) {
+	const_inline USize operator>>(const USize& rhs) const noexcept {
 		return this->value >> rhs.value;
 	};
 
 	// Comparison
-	[[gnu::always_inline]] inline bool operator<(USize rhs) {
+	const_inline bool operator<(const USize& rhs) const noexcept {
 		return this->value < rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator>(USize rhs) {
+	const_inline bool operator>(const USize& rhs) const noexcept {
 		return this->value > rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator<=(USize rhs) {
+	const_inline bool operator<=(const USize& rhs) const noexcept {
 		return this->value <= rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator>=(USize rhs) {
+	const_inline bool operator>=(const USize& rhs) const noexcept {
 		return this->value >= rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator==(USize rhs) {
+	const_inline bool operator==(const USize& rhs) const noexcept {
 		return this->value == rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator!=(USize rhs) {
+	const_inline bool operator!=(const USize& rhs) const noexcept {
 		return this->value != rhs.value;
 	};
 
 	// Arithmetic Assignment
-	[[gnu::always_inline]] inline USize& operator+=(const USize& rhs) {
+	const_inline USize& operator+=(const USize& rhs) noexcept {
 		this->value += rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline USize& operator-=(const USize& rhs) {
+	const_inline USize& operator-=(const USize& rhs) noexcept {
 		this->value -= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline USize& operator*=(const USize& rhs) {
+	const_inline USize& operator*=(const USize& rhs) noexcept {
 		this->value *= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline USize& operator/=(const USize& rhs) {
+	const_inline USize& operator/=(const USize& rhs) noexcept {
 		this->value /= rhs.value;
 		return *this;
 	};
 
 	// Logical Assignment
-	[[gnu::always_inline]] inline USize& operator&=(const USize& rhs) {
+	const_inline USize& operator&=(const USize& rhs) noexcept {
 		this->value &= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline USize& operator|=(const USize& rhs) {
+	const_inline USize& operator|=(const USize& rhs) noexcept {
 		this->value |= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline USize& operator^=(const USize& rhs) {
+	const_inline USize& operator^=(const USize& rhs) noexcept {
 		this->value ^= rhs.value;
 		return *this;
 	};
 
 	// Shift Assignment
-	[[gnu::always_inline]] inline USize& operator<<=(const USize& rhs) {
+	const_inline USize& operator<<=(const USize& rhs) noexcept {
 		this->value <<= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline USize& operator>>=(const USize& rhs) {
+	const_inline USize& operator>>=(const USize& rhs) noexcept {
 		this->value >>= rhs.value;
 		return *this;
 	};
 
 	// Prefix
-	[[gnu::always_inline]] inline USize  operator-() { return -this->value; }
-	[[gnu::always_inline]] inline USize  operator~() { return ~this->value; }
-	[[gnu::always_inline]] inline USize& operator++() {
+	const_inline USize operator-() const noexcept { return -this->value; }
+	const_inline USize operator~() const noexcept { return ~this->value; }
+	const_inline USize& operator++() noexcept {
 		++this->value;
 		return *this;
 	}
-	[[gnu::always_inline]] inline USize& operator--() {
+	const_inline USize& operator--() noexcept {
 		--this->value;
 		return *this;
 	}
 
 	// Postfix
-	[[gnu::always_inline]] inline USize operator++(int) {
-		return this->value++;
-	}
-	[[gnu::always_inline]] inline USize operator--(int) {
-		return this->value--;
-	}
+	const_inline USize operator++(int) noexcept { return this->value++; }
+	const_inline USize operator--(int) noexcept { return this->value--; }
 };
 static_assert(sizeof(USize) == 8);

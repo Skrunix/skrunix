@@ -8,17 +8,17 @@
 
 class BuddyAlloc {
   public:
-	BuddyAlloc(AddressRange* rangeList, UInt count);
+	BuddyAlloc(AddressRange* rangeList, USize count);
 	~BuddyAlloc();
 
-	void* allocRegion(UIntPtr address, UInt64 count);
+	void* allocRegion(UIntPtr address, USize count);
 	void* allocPages(BlockOrder);
 	void  freePages(void*);
 
-	UInt64 pageCount;
+	USize pageCount;
 
   private:
-	void initPageRegion(UIntPtr address, UInt64 count);
+	void initPageRegion(UIntPtr address, USize count);
 
 	PageBlock* getUnusedBlock();
 	void       setUnusedBlock(PageBlock*);

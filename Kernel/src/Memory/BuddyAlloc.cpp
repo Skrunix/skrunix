@@ -15,7 +15,7 @@ PageBlock* freeBlocks[BlockOrderCount] = {0};
 PageBlock* usedBlocks[BlockOrderCount] = {0};
 PageBlock* unusedBlocks                = nullptr;
 
-BuddyAlloc::BuddyAlloc(AddressRange* rangeList, UInt count)
+BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count)
     : pageCount(0) {
 	for (UInt8 order = 0; order < BlockOrderCount; ++order) {
 		freeBlocks[order.value] = nullptr;
@@ -24,7 +24,7 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, UInt count)
 	unusedBlocks = nullptr;
 
 	// Count number of possible pages
-	for (UInt i = 0; i < count; ++i) {
+	for (USize i = 0; i < count; ++i) {
 		AddressRange range = rangeList[i.value];
 
 		if (range.type != AddressRange::Type::Usable) {
@@ -42,9 +42,9 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, UInt count)
 
 	// Find a segment of RAM large enough to store all PageBlocks
 	bool   foundBufferLocation = false;
-	UInt64 requiredBufferSize  = this->pageCount * sizeof(PageBlock);
+	USize  requiredBufferSize  = this->pageCount * sizeof(PageBlock);
 	UInt64 allocPage = reinterpret_cast<uintptr_t>(allocAddress) >> PageShift;
-	for (UInt i = 0; i < count; ++i) {
+	for (USize i = 0; i < count; ++i) {
 		AddressRange range = rangeList[i.value];
 
 		if (range.type != AddressRange::Type::Usable) {
@@ -91,7 +91,7 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, UInt count)
 	}
 
 	// Populate freeBlocks
-	for (UInt i = 0; i < count; ++i) {
+	for (USize i = 0; i < count; ++i) {
 		AddressRange range = rangeList[i.value];
 
 		if (range.type != AddressRange::Type::Usable) {
@@ -107,13 +107,13 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, UInt count)
 
 BuddyAlloc::~BuddyAlloc() {}
 
-void* BuddyAlloc::allocRegion(UIntPtr address, UInt64 count) {
+void* BuddyAlloc::allocRegion(UIntPtr address, USize count) {
 	UInt64 previousCount;
 	while (count > 0) {
 		previousCount = count;
 		for (UInt8 order = BlockOrderCount - 1; order != UInt8::Max; --order) {
-			UInt64 orderPageCount = 1 << order.value;
-			UInt64 byteCount      = orderPageCount << PageShift;
+			USize  orderPageCount = 1 << order.value;
+			USize  byteCount      = orderPageCount << PageShift;
 
 			// Find the free block that contains the pages
 			PageBlock* current  = nullptr;
@@ -146,7 +146,7 @@ void* BuddyAlloc::allocRegion(UIntPtr address, UInt64 count) {
 
 			// If the Block only contains the address, free the memory before
 			if (address != current->address) {
-				UInt64 freeCount =
+				USize freeCount =
 				    (address - current->address).value >> PageShift;
 				this->initPageRegion(current->address, freeCount);
 
@@ -243,9 +243,9 @@ void BuddyAlloc::freePages(void* pointer) {
 	// FIXME: Fail here
 }
 
-void BuddyAlloc::initPageRegion(UIntPtr address, UInt64 count) {
+void BuddyAlloc::initPageRegion(UIntPtr address, USize count) {
 	for (UInt8 order = BlockOrderCount - 1; order != UInt8::Max; --order) {
-		UInt64 size = 1 << order.value;
+		USize size = 1 << order.value;
 		while (count >= size) {
 			PageBlock* newBlock = this->getUnusedBlock();
 

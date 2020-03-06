@@ -2,6 +2,8 @@
 
 #include "UInt64.hpp"
 
+#include <type_traits>
+
 struct [[gnu::packed]] UIntPtr {
 	using BackingType = uintptr_t;
 
@@ -12,135 +14,144 @@ struct [[gnu::packed]] UIntPtr {
 
 	BackingType value;
 
-	constexpr UIntPtr()
+	const_inline UIntPtr()
 	    : value(0) {}
-	constexpr UIntPtr(BackingType value)
+	const_inline UIntPtr(const BackingType& value)
 	    : value(value) {}
-	constexpr UIntPtr(UInt64 value)
+	const_inline UIntPtr(const UInt64& value)
+	    : value(value.value) {}
+	const_inline UIntPtr(const USize& value)
 	    : value(value.value) {}
 
+	// Pointer conversion
+	template <typename T, typename = std::enable_if_t<std::is_pointer_v<T>>>
+	const_inline static UIntPtr From(const T pointer) noexcept {
+		return UIntPtr(reinterpret_cast<uintptr_t>(pointer));
+	}
+
+	template <typename T, typename = std::enable_if_t<std::is_pointer_v<T>>>
+	const_inline T To() const noexcept {
+		return reinterpret_cast<T>(this->value);
+	}
+
 	// Int conversion
-	[[gnu::always_inline]] inline explicit operator BackingType() const {
+	const_inline explicit operator BackingType() const noexcept {
 		return this->value;
 	}
 	template <typename T>
-	[[gnu::always_inline]] inline explicit operator T*() const {
+	const_inline explicit operator T*() const noexcept {
 		return reinterpret_cast<T*>(this->value);
 	}
 
 	// Arithmetic
-	[[gnu::always_inline]] inline UIntPtr operator+(UIntPtr rhs) {
+	const_inline UIntPtr operator+(const UIntPtr& rhs) const noexcept {
 		return this->value + rhs.value;
 	};
-	[[gnu::always_inline]] inline UIntPtr operator-(UIntPtr rhs) {
+	const_inline UIntPtr operator-(const UIntPtr& rhs) const noexcept {
 		return this->value - rhs.value;
 	};
-	[[gnu::always_inline]] inline UIntPtr operator*(UIntPtr rhs) {
+	const_inline UIntPtr operator*(const UIntPtr& rhs) const noexcept {
 		return this->value * rhs.value;
 	};
-	[[gnu::always_inline]] inline UIntPtr operator/(UIntPtr rhs) {
+	const_inline UIntPtr operator/(const UIntPtr& rhs) const noexcept {
 		return this->value / rhs.value;
 	};
 
 	// Logical
-	[[gnu::always_inline]] inline UIntPtr operator&(UIntPtr rhs) {
+	const_inline UIntPtr operator&(const UIntPtr& rhs) const noexcept {
 		return this->value & rhs.value;
 	};
-	[[gnu::always_inline]] inline UIntPtr operator|(UIntPtr rhs) {
+	const_inline UIntPtr operator|(const UIntPtr& rhs) const noexcept {
 		return this->value | rhs.value;
 	};
-	[[gnu::always_inline]] inline UIntPtr operator^(UIntPtr rhs) {
+	const_inline UIntPtr operator^(const UIntPtr& rhs) const noexcept {
 		return this->value ^ rhs.value;
 	};
 
 	// Shift
-	[[gnu::always_inline]] inline UIntPtr operator<<(UIntPtr rhs) {
+	const_inline UIntPtr operator<<(const UIntPtr& rhs) const noexcept {
 		return this->value << rhs.value;
 	};
-	[[gnu::always_inline]] inline UIntPtr operator>>(UIntPtr rhs) {
+	const_inline UIntPtr operator>>(const UIntPtr& rhs) const noexcept {
 		return this->value >> rhs.value;
 	};
 
 	// Comparison
-	[[gnu::always_inline]] inline bool operator<(UIntPtr rhs) {
+	const_inline bool operator<(const UIntPtr& rhs) const noexcept {
 		return this->value < rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator>(UIntPtr rhs) {
+	const_inline bool operator>(const UIntPtr& rhs) const noexcept {
 		return this->value > rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator<=(UIntPtr rhs) {
+	const_inline bool operator<=(const UIntPtr& rhs) const noexcept {
 		return this->value <= rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator>=(UIntPtr rhs) {
+	const_inline bool operator>=(const UIntPtr& rhs) const noexcept {
 		return this->value >= rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator==(UIntPtr rhs) {
+	const_inline bool operator==(const UIntPtr& rhs) const noexcept {
 		return this->value == rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator!=(UIntPtr rhs) {
+	const_inline bool operator!=(const UIntPtr& rhs) const noexcept {
 		return this->value != rhs.value;
 	};
 
 	// Arithmetic Assignment
-	[[gnu::always_inline]] inline UIntPtr& operator+=(const UIntPtr& rhs) {
+	const_inline UIntPtr& operator+=(const UIntPtr& rhs) noexcept {
 		this->value += rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline UIntPtr& operator-=(const UIntPtr& rhs) {
+	const_inline UIntPtr& operator-=(const UIntPtr& rhs) noexcept {
 		this->value -= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline UIntPtr& operator*=(const UIntPtr& rhs) {
+	const_inline UIntPtr& operator*=(const UIntPtr& rhs) noexcept {
 		this->value *= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline UIntPtr& operator/=(const UIntPtr& rhs) {
+	const_inline UIntPtr& operator/=(const UIntPtr& rhs) noexcept {
 		this->value /= rhs.value;
 		return *this;
 	};
 
 	// Logical Assignment
-	[[gnu::always_inline]] inline UIntPtr& operator&=(const UIntPtr& rhs) {
+	const_inline UIntPtr& operator&=(const UIntPtr& rhs) noexcept {
 		this->value &= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline UIntPtr& operator|=(const UIntPtr& rhs) {
+	const_inline UIntPtr& operator|=(const UIntPtr& rhs) noexcept {
 		this->value |= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline UIntPtr& operator^=(const UIntPtr& rhs) {
+	const_inline UIntPtr& operator^=(const UIntPtr& rhs) noexcept {
 		this->value ^= rhs.value;
 		return *this;
 	};
 
 	// Shift Assignment
-	[[gnu::always_inline]] inline UIntPtr& operator<<=(const UIntPtr& rhs) {
+	const_inline UIntPtr& operator<<=(const UIntPtr& rhs) noexcept {
 		this->value <<= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline UIntPtr& operator>>=(const UIntPtr& rhs) {
+	const_inline UIntPtr& operator>>=(const UIntPtr& rhs) noexcept {
 		this->value >>= rhs.value;
 		return *this;
 	};
 
 	// Prefix
-	[[gnu::always_inline]] inline UIntPtr  operator-() { return -this->value; }
-	[[gnu::always_inline]] inline UIntPtr  operator~() { return ~this->value; }
-	[[gnu::always_inline]] inline UIntPtr& operator++() {
+	const_inline UIntPtr operator-() const noexcept { return -this->value; }
+	const_inline UIntPtr operator~() const noexcept { return ~this->value; }
+	const_inline UIntPtr& operator++() noexcept {
 		++this->value;
 		return *this;
 	}
-	[[gnu::always_inline]] inline UIntPtr& operator--() {
+	const_inline UIntPtr& operator--() noexcept {
 		--this->value;
 		return *this;
 	}
 
 	// Postfix
-	[[gnu::always_inline]] inline UIntPtr operator++(int) {
-		return this->value++;
-	}
-	[[gnu::always_inline]] inline UIntPtr operator--(int) {
-		return this->value--;
-	}
+	const_inline UIntPtr operator++(int) noexcept { return this->value++; }
+	const_inline UIntPtr operator--(int) noexcept { return this->value--; }
 };
 static_assert(sizeof(UIntPtr) == 8);

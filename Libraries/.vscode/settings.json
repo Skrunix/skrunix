@@ -1,4 +1,8 @@
 {
+	"files.associations": {
+		"**/KLibCPP/cstdint": "cpp",
+		"**/KLibCPP/type_traits": "cpp"
+	},
 	"C_Cpp.clang_format_style": "file",
 	"C_Cpp.clang_format_sortIncludes": true
 }

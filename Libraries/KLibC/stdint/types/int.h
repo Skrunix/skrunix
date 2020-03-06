@@ -2,10 +2,10 @@
 
 #include <assert.h>
 
-typedef signed char      int8_t;
-typedef signed short     int16_t;
-typedef signed int       int32_t;
-typedef signed long long int64_t;
+typedef signed char  int8_t;
+typedef signed short int16_t;
+typedef signed int   int32_t;
+typedef signed long  int64_t;
 
 typedef int64_t intmax_t;
 typedef int64_t intptr_t;

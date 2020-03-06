@@ -14,138 +14,132 @@ struct [[gnu::packed]] UInt64 {
 
 	BackingType value;
 
-	constexpr UInt64()
+	const_inline UInt64()
 	    : value(0) {}
-	constexpr UInt64(BackingType value)
+	const_inline UInt64(const BackingType& value)
 	    : value(value) {}
-	constexpr UInt64(USize value)
+	const_inline UInt64(const USize& value)
 	    : value(value.value) {}
 
-	[[gnu::always_inline]] inline UInt32 low() {
-		return this->value & HalfMask;
-	}
-	[[gnu::always_inline]] inline UInt32 high() {
+	const_inline UInt32 low() const noexcept { return this->value & HalfMask; }
+	const_inline UInt32 high() const noexcept {
 		return (this->value >> (BitWidth / 2)) & HalfMask;
 	}
 
 	// Int conversion
-	[[gnu::always_inline]] inline explicit operator BackingType() const {
+	const_inline explicit operator BackingType() const noexcept {
 		return this->value;
 	}
 
 	// Arithmetic
-	[[gnu::always_inline]] inline UInt64 operator+(UInt64 rhs) {
+	const_inline UInt64 operator+(const UInt64& rhs) const noexcept {
 		return this->value + rhs.value;
 	};
-	[[gnu::always_inline]] inline UInt64 operator-(UInt64 rhs) {
+	const_inline UInt64 operator-(const UInt64& rhs) const noexcept {
 		return this->value - rhs.value;
 	};
-	[[gnu::always_inline]] inline UInt64 operator*(UInt64 rhs) {
+	const_inline UInt64 operator*(const UInt64& rhs) const noexcept {
 		return this->value * rhs.value;
 	};
-	[[gnu::always_inline]] inline UInt64 operator/(UInt64 rhs) {
+	const_inline UInt64 operator/(const UInt64& rhs) const noexcept {
 		return this->value / rhs.value;
 	};
 
 	// Logical
-	[[gnu::always_inline]] inline UInt64 operator&(UInt64 rhs) {
+	const_inline UInt64 operator&(const UInt64& rhs) const noexcept {
 		return this->value & rhs.value;
 	};
-	[[gnu::always_inline]] inline UInt64 operator|(UInt64 rhs) {
+	const_inline UInt64 operator|(const UInt64& rhs) const noexcept {
 		return this->value | rhs.value;
 	};
-	[[gnu::always_inline]] inline UInt64 operator^(UInt64 rhs) {
+	const_inline UInt64 operator^(const UInt64& rhs) const noexcept {
 		return this->value ^ rhs.value;
 	};
 
 	// Shift
-	[[gnu::always_inline]] inline UInt64 operator<<(UInt64 rhs) {
+	const_inline UInt64 operator<<(const UInt64& rhs) const noexcept {
 		return this->value << rhs.value;
 	};
-	[[gnu::always_inline]] inline UInt64 operator>>(UInt64 rhs) {
+	const_inline UInt64 operator>>(const UInt64& rhs) const noexcept {
 		return this->value >> rhs.value;
 	};
 
 	// Comparison
-	[[gnu::always_inline]] inline bool operator<(UInt64 rhs) {
+	const_inline bool operator<(const UInt64& rhs) const noexcept {
 		return this->value < rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator>(UInt64 rhs) {
+	const_inline bool operator>(const UInt64& rhs) const noexcept {
 		return this->value > rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator<=(UInt64 rhs) {
+	const_inline bool operator<=(const UInt64& rhs) const noexcept {
 		return this->value <= rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator>=(UInt64 rhs) {
+	const_inline bool operator>=(const UInt64& rhs) const noexcept {
 		return this->value >= rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator==(UInt64 rhs) {
+	const_inline bool operator==(const UInt64& rhs) const noexcept {
 		return this->value == rhs.value;
 	};
-	[[gnu::always_inline]] inline bool operator!=(UInt64 rhs) {
+	const_inline bool operator!=(const UInt64& rhs) const noexcept {
 		return this->value != rhs.value;
 	};
 
 	// Arithmetic Assignment
-	[[gnu::always_inline]] inline UInt64& operator+=(const UInt64& rhs) {
+	const_inline UInt64& operator+=(const UInt64& rhs) noexcept {
 		this->value += rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline UInt64& operator-=(const UInt64& rhs) {
+	const_inline UInt64& operator-=(const UInt64& rhs) noexcept {
 		this->value -= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline UInt64& operator*=(const UInt64& rhs) {
+	const_inline UInt64& operator*=(const UInt64& rhs) noexcept {
 		this->value *= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline UInt64& operator/=(const UInt64& rhs) {
+	const_inline UInt64& operator/=(const UInt64& rhs) noexcept {
 		this->value /= rhs.value;
 		return *this;
 	};
 
 	// Logical Assignment
-	[[gnu::always_inline]] inline UInt64& operator&=(const UInt64& rhs) {
+	const_inline UInt64& operator&=(const UInt64& rhs) noexcept {
 		this->value &= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline UInt64& operator|=(const UInt64& rhs) {
+	const_inline UInt64& operator|=(const UInt64& rhs) noexcept {
 		this->value |= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline UInt64& operator^=(const UInt64& rhs) {
+	const_inline UInt64& operator^=(const UInt64& rhs) noexcept {
 		this->value ^= rhs.value;
 		return *this;
 	};
 
 	// Shift Assignment
-	[[gnu::always_inline]] inline UInt64& operator<<=(const UInt64& rhs) {
+	const_inline UInt64& operator<<=(const UInt64& rhs) noexcept {
 		this->value <<= rhs.value;
 		return *this;
 	};
-	[[gnu::always_inline]] inline UInt64& operator>>=(const UInt64& rhs) {
+	const_inline UInt64& operator>>=(const UInt64& rhs) noexcept {
 		this->value >>= rhs.value;
 		return *this;
 	};
 
 	// Prefix
-	[[gnu::always_inline]] inline UInt64  operator-() { return -this->value; }
-	[[gnu::always_inline]] inline UInt64  operator~() { return ~this->value; }
-	[[gnu::always_inline]] inline UInt64& operator++() {
+	const_inline UInt64 operator-() const noexcept { return -this->value; }
+	const_inline UInt64 operator~() const noexcept { return ~this->value; }
+	const_inline UInt64& operator++() noexcept {
 		++this->value;
 		return *this;
 	}
-	[[gnu::always_inline]] inline UInt64& operator--() {
+	const_inline UInt64& operator--() noexcept {
 		--this->value;
 		return *this;
 	}
 
 	// Postfix
-	[[gnu::always_inline]] inline UInt64 operator++(int) {
-		return this->value++;
-	}
-	[[gnu::always_inline]] inline UInt64 operator--(int) {
-		return this->value--;
-	}
+	const_inline UInt64 operator++(int) noexcept { return this->value++; }
+	const_inline UInt64 operator--(int) noexcept { return this->value--; }
 };
 static_assert(sizeof(UInt64) == 8);
