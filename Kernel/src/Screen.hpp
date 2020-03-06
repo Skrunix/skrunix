@@ -1,6 +1,6 @@
 #pragma once
 
-#include <integers>
+#include <Integers.hpp>
 
 class Screen {
   public:

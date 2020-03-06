@@ -1,6 +1,6 @@
 #pragma once
 
-#include <integers>
+#include <Integers.hpp>
 
 struct [[gnu::packed]] IDTEntry {
 	UInt16 offsetLow;

@@ -1,0 +1,16 @@
+#pragma once
+
+#include "types/signed/Int.hpp"
+#include "types/signed/Int16.hpp"
+#include "types/signed/Int32.hpp"
+#include "types/signed/Int64.hpp"
+#include "types/signed/Int8.hpp"
+#include "types/signed/IntPtr.hpp"
+#include "types/signed/Size.hpp"
+#include "types/unsigned/UInt.hpp"
+#include "types/unsigned/UInt16.hpp"
+#include "types/unsigned/UInt32.hpp"
+#include "types/unsigned/UInt64.hpp"
+#include "types/unsigned/UInt8.hpp"
+#include "types/unsigned/UIntPtr.hpp"
+#include "types/unsigned/USize.hpp"

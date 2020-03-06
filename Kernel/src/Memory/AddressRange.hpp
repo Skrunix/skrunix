@@ -1,6 +1,6 @@
 #pragma once
 
-#include <integers>
+#include <Integers.hpp>
 
 struct AddressRange {
 	enum class Type : UInt32::BackingType {

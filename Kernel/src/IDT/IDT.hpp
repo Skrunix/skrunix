@@ -3,7 +3,7 @@
 #include "IDTEntry.hpp"
 #include "IDTPointer.hpp"
 
-#include <integers>
+#include <Integers.hpp>
 
 class IDT {
   public:

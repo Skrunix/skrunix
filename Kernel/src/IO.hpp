@@ -1,17 +1,16 @@
 #pragma once
 
-#include <Inline.hpp>
-#include <integers>
+#include <Integers.hpp>
 
 class IO {
   public:
-	static FORCE_INLINE UInt8 in(UInt16 port) {
+	[[gnu::always_inline]] inline static UInt8 in(UInt16 port) {
 		UInt8 ret = 0;
-		asm volatile("inb %1, %0" : "=a"(ret) : "Nd"(port));
+		asm volatile("inb %1, %0" : "=a"(ret.value) : "Nd"(port));
 		return ret;
 	}
 
-	static FORCE_INLINE void out(UInt16 port, UInt8 value) {
+	[[gnu::always_inline]] inline static void out(UInt16 port, UInt8 value) {
 		asm volatile("outb %0, %1" : : "a"(value), "Nd"(port));
 	}
 };

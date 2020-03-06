@@ -34,6 +34,7 @@ CPPFLAGS := \
 	-iquote src \
 	-isystem ../Libraries/KLibC \
 	-isystem src/LibCPP \
+	-isystem ../Libraries/Integers \
 	-ffreestanding \
 	-O2 \
 	-Wall \

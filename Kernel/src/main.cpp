@@ -125,9 +125,9 @@ void main() {
 		}
 		screen->Write("\r\n");
 
-		globalSerial->WriteHex(UIntPtr(range.base.value));
+		globalSerial->WriteHex(range.base.value);
 		globalSerial->Write(" ");
-		globalSerial->WriteHex(UIntPtr(range.length.value));
+		globalSerial->WriteHex(range.length.value);
 		globalSerial->Write(" ");
 		if (range.type == AddressRange::Type::Usable) {
 			globalSerial->Write("Usable");
@@ -141,7 +141,7 @@ void main() {
 			globalSerial->Write("Bad");
 		} else {
 			globalSerial->Write("? ");
-			globalSerial->WriteHex(UIntPtr(ValueOf(range.type)));
+			globalSerial->WriteHex(ValueOf(range.type));
 		}
 		globalSerial->Write("\r\n");
 	}

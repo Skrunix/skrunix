@@ -33,11 +33,11 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, UInt count)
 
 		UIntPtr startPage = (range.base + (1 << PageShift) - 1) >> PageShift;
 		UIntPtr endPage   = (range.base + range.length) >> PageShift;
-		this->pageCount += (endPage - startPage);
+		this->pageCount += (endPage - startPage).value;
 	}
 
 	globalSerial->Write("Tentative allocAddress: ");
-	globalSerial->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(allocAddress)));
+	globalSerial->WriteHex(reinterpret_cast<uintptr_t>(allocAddress));
 	globalSerial->Write("\r\n");
 
 	// Find a segment of RAM large enough to store all PageBlocks
@@ -51,8 +51,8 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, UInt count)
 			continue;
 		}
 
-		UInt64 startPage = range.base >> PageShift;
-		UInt64 endPage   = (range.base + range.length) >> PageShift;
+		UInt64 startPage = range.base.value >> PageShift;
+		UInt64 endPage   = (range.base + range.length).value >> PageShift;
 
 		// Check if the range contains allocAddress
 		if (startPage <= allocPage && endPage > allocPage) {
@@ -79,7 +79,7 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, UInt count)
 	}
 
 	globalSerial->Write("Real allocAddress:      ");
-	globalSerial->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(allocAddress)));
+	globalSerial->WriteHex(reinterpret_cast<uintptr_t>(allocAddress));
 	globalSerial->Write("\r\n");
 
 	// Create required unusedBlocks for all of RAM
@@ -100,7 +100,8 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, UInt count)
 
 		UIntPtr startPage = (range.base + (1 << PageShift) - 1) >> PageShift;
 		UIntPtr endPage   = (range.base + range.length) >> PageShift;
-		this->initPageRegion(startPage << PageShift, endPage - startPage);
+		this->initPageRegion(startPage << PageShift,
+		                     (endPage - startPage).value);
 	}
 }
 
@@ -145,7 +146,8 @@ void* BuddyAlloc::allocRegion(UIntPtr address, UInt64 count) {
 
 			// If the Block only contains the address, free the memory before
 			if (address != current->address) {
-				UInt64 freeCount = (address - current->address) >> PageShift;
+				UInt64 freeCount =
+				    (address - current->address).value >> PageShift;
 				this->initPageRegion(current->address, freeCount);
 
 				orderPageCount -= freeCount;

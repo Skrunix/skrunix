@@ -1,8 +1,10 @@
 {
     "configurations": [
         {
-            "name": "Kernel",
-            "includePath": [],
+            "name": "Libraries",
+            "includePath": [
+                "${workspaceFolder}/KLibC"
+            ],
             "defines": [],
             "macFrameworkPath": [],
             "compilerPath": "${workspaceFolder}/../toolchain/root/bin/x86_64-elf-gcc",
@@ -12,14 +14,10 @@
             "compilerArgs": [
                 "-std=c++17",
                 "-nostdinc",
-                "-iquote",
-                "${workspaceFolder}/src",
                 "-isystem",
-                "${workspaceFolder}/../Libraries/KLibC",
+                "${workspaceFolder}/KLibC",
                 "-isystem",
-                "${workspaceFolder}/src/LibCPP",
-                "-isystem",
-                "${workspaceFolder}/../Libraries/Integers",
+                "${workspaceFolder}/KLibCPP",
                 "-ffreestanding",
                 "-O2",
                 "-Wall",

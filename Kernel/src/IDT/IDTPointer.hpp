@@ -2,7 +2,7 @@
 
 #include "IDTEntry.hpp"
 
-#include <integers>
+#include <Integers.hpp>
 
 struct [[gnu::packed]] IDTPointer {
 	UInt16    limit;

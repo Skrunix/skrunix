@@ -1,6 +1,6 @@
 #pragma once
 
-#include <integers>
+#include <Integers.hpp>
 
 struct [[gnu::packed]] GDTEntry {
 	UInt16 limitLow; // Limit 0:15

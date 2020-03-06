@@ -4,7 +4,7 @@
 #include "BlockOrder.hpp"
 #include "PageBlock.hpp"
 
-#include <integers>
+#include <Integers.hpp>
 
 class BuddyAlloc {
   public:
