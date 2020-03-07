@@ -1,3 +1,4 @@
+#include "Align.hpp"
 #include "GDT/GDT.hpp"
 #include "IDT/IDT.hpp"
 #include "IO.hpp"
@@ -7,7 +8,6 @@
 #include "Screen.hpp"
 #include "Serial.hpp"
 
-#include <Align.hpp>
 #include <ValueOf.hpp>
 
 extern "C" {
@@ -86,8 +86,8 @@ void main() {
 	screen->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(screen)));
 	screen->Write("\r\n");
 	screen->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(kernelEndAddress)));
-	screen->WriteHex(UIntPtr(
-	    reinterpret_cast<uintptr_t>(Align<void>(kernelEndAddress, 4096))));
+	screen->WriteHex(
+	    UIntPtr(reinterpret_cast<uintptr_t>(Align<void>(kernelEndAddress))));
 
 	screen->Write("\r\n\n");
 

@@ -1,6 +1,7 @@
 #include "BuddyAlloc.hpp"
 
-#include <Align.hpp>
+#include "Align.hpp"
+
 #include <ValueOf.hpp>
 
 #define PageShift 12
@@ -79,7 +80,7 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count)
 	globalSerial->Write("\r\n");
 
 	// Create required this->unusedBlocks for all of RAM
-	PageBlock* blockBuffer = Align<PageBlock>(allocAddress, 4096);
+	PageBlock* blockBuffer = Align<PageBlock>(allocAddress);
 	this->unusedBlocks     = &blockBuffer[0];
 
 	for (UInt64 i = 0; i < (this->pageCount - 1); ++i) {
