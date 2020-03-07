@@ -1,6 +1,7 @@
 #pragma once
 
-#include "UInt32.hpp"
+#include <Integers/types/unsigned/UInt32.hpp>
+#include <stdint.h>
 
 struct [[gnu::packed]] UInt {
 	using BackingType = uintmax_t;

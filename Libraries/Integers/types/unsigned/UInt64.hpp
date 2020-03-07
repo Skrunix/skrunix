@@ -1,7 +1,8 @@
 #pragma once
 
-#include "UInt32.hpp"
-#include "USize.hpp"
+#include <Integers/types/unsigned/UInt32.hpp>
+#include <Integers/types/unsigned/USize.hpp>
+#include <stdint.h>
 
 struct [[gnu::packed]] UInt64 {
 	using BackingType = uint64_t;

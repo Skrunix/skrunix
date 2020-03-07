@@ -1,7 +1,8 @@
 #pragma once
 
-#include "UInt64.hpp"
-
+#include <Integers/types/unsigned/UInt64.hpp>
+#include <Integers/types/unsigned/USize.hpp>
+#include <stdint.h>
 #include <type_traits>
 
 struct [[gnu::packed]] UIntPtr {

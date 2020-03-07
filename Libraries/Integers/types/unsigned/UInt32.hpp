@@ -1,6 +1,7 @@
 #pragma once
 
-#include "UInt16.hpp"
+#include <Integers/types/unsigned/UInt16.hpp>
+#include <stdint.h>
 
 struct [[gnu::packed]] UInt32 {
 	using BackingType = uint32_t;
