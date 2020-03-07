@@ -25,13 +25,14 @@ struct [[gnu::packed]] UIntPtr {
 	    : value(value.value) {}
 
 	// Pointer conversion
-	template <typename T, typename = std::enable_if_t<std::is_pointer_v<T>>>
-	const_inline static UIntPtr From(const T pointer) noexcept {
+	template <typename T>
+	const_inline static std::enable_if_t<std::is_pointer_v<T>, UIntPtr> From(
+	    const T pointer) noexcept {
 		return UIntPtr(reinterpret_cast<uintptr_t>(pointer));
 	}
 
-	template <typename T, typename = std::enable_if_t<std::is_pointer_v<T>>>
-	const_inline T To() const noexcept {
+	template <typename T>
+	const_inline std::enable_if_t<std::is_pointer_v<T>, T> To() const noexcept {
 		return reinterpret_cast<T>(this->value);
 	}
 
