@@ -2,7 +2,7 @@
 
 #include "GDTEntry.hpp"
 
-#include <Integers.hpp>
+#include <Integers/Integers.hpp>
 
 struct [[gnu::packed]] GDTPointer {
 	const UInt16    limit;

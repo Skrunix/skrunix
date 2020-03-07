@@ -33,9 +33,9 @@ CPPFLAGS := \
 	-nostdinc \
 	-iquote src \
 	-isystem src/LibCPP \
+	-isystem ../Libraries/ \
 	-isystem ../Libraries/KLibC \
 	-isystem ../Libraries/KLibCPP \
-	-isystem ../Libraries/Integers \
 	-ffreestanding \
 	-O2 \
 	-Wall \

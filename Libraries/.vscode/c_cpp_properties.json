@@ -3,6 +3,7 @@
         {
             "name": "Libraries",
             "includePath": [
+                "${workspaceFolder}/",
                 "${workspaceFolder}/KLibC",
                 "${workspaceFolder}/KLibCPP"
             ],
@@ -15,6 +16,8 @@
             "compilerArgs": [
                 "-std=c++17",
                 "-nostdinc",
+                "-isystem",
+                "${workspaceFolder}/",
                 "-isystem",
                 "${workspaceFolder}/KLibC",
                 "-isystem",

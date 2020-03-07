@@ -2,7 +2,7 @@
 
 #include "GDTEntry.hpp"
 
-#include <Integers.hpp>
+#include <Integers/Integers.hpp>
 
 #define GDT_NULL_SELECTOR 0x00
 #define GDT_CODE_SELECTOR 0x08
