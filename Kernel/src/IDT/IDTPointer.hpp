@@ -5,11 +5,11 @@
 #include <Integers.hpp>
 
 struct [[gnu::packed]] IDTPointer {
-	UInt16    limit;
-	IDTEntry* offset;
+	const UInt16    limit;
+	const IDTEntry* offset;
 
-	constexpr IDTPointer()
-	    : limit(256 * sizeof(IDTEntry))
-	    , offset(0) {}
+	constexpr IDTPointer(const IDTEntry* start, const UInt16& count)
+	    : limit(count * sizeof(IDTEntry))
+	    , offset(start) {}
 };
 static_assert(sizeof(IDTPointer) == 10);

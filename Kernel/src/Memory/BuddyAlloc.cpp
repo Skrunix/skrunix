@@ -11,17 +11,13 @@ extern Serial* globalSerial;
 extern UInt64 KernelEnd; // Defined in linker script
 void*         allocAddress = &KernelEnd;
 
-PageBlock* freeBlocks[BlockOrderCount] = {0};
-PageBlock* usedBlocks[BlockOrderCount] = {0};
-PageBlock* unusedBlocks                = nullptr;
-
 BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count)
-    : pageCount(0) {
+    : pageCount(0)
+    , unusedBlocks(nullptr) {
 	for (UInt8 order = 0; order < BlockOrderCount; ++order) {
-		freeBlocks[order.value] = nullptr;
-		usedBlocks[order.value] = nullptr;
+		this->freeBlocks[order.value] = nullptr;
+		this->usedBlocks[order.value] = nullptr;
 	}
-	unusedBlocks = nullptr;
 
 	// Count number of possible pages
 	for (USize i = 0; i < count; ++i) {
@@ -82,15 +78,15 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count)
 	globalSerial->WriteHex(reinterpret_cast<uintptr_t>(allocAddress));
 	globalSerial->Write("\r\n");
 
-	// Create required unusedBlocks for all of RAM
+	// Create required this->unusedBlocks for all of RAM
 	PageBlock* blockBuffer = Align<PageBlock>(allocAddress, 4096);
-	unusedBlocks           = &blockBuffer[0];
+	this->unusedBlocks     = &blockBuffer[0];
 
 	for (UInt64 i = 0; i < (this->pageCount - 1); ++i) {
 		blockBuffer[i.value].next = &blockBuffer[i.value + 1];
 	}
 
-	// Populate freeBlocks
+	// Populate this->freeBlocks
 	for (USize i = 0; i < count; ++i) {
 		AddressRange range = rangeList[i.value];
 
@@ -112,13 +108,13 @@ void* BuddyAlloc::allocRegion(UIntPtr address, USize count) {
 	while (count > 0) {
 		previousCount = count;
 		for (UInt8 order = BlockOrderCount - 1; order != UInt8::Max; --order) {
-			USize  orderPageCount = 1 << order.value;
-			USize  byteCount      = orderPageCount << PageShift;
+			USize orderPageCount = 1 << order.value;
+			USize byteCount      = orderPageCount << PageShift;
 
 			// Find the free block that contains the pages
 			PageBlock* current  = nullptr;
 			PageBlock* previous = nullptr;
-			for (current  = freeBlocks[order.value]; current != nullptr;
+			for (current  = this->freeBlocks[order.value]; current != nullptr;
 			     previous = current, current = current->next) {
 
 				if (current->address <= address &&
@@ -138,7 +134,7 @@ void* BuddyAlloc::allocRegion(UIntPtr address, USize count) {
 
 			// Remove the Block from the list
 			if (previous == nullptr) {
-				freeBlocks[order.value] = current->next;
+				this->freeBlocks[order.value] = current->next;
 			} else {
 				previous->next = current->next;
 			}
@@ -182,18 +178,18 @@ void* BuddyAlloc::allocRegion(UIntPtr address, USize count) {
 
 void* BuddyAlloc::allocPages(BlockOrder order) {
 	for (UInt8 i = ValueOf(order); i < BlockOrderCount; ++i) {
-		if (freeBlocks[i.value] == nullptr) {
+		if (this->freeBlocks[i.value] == nullptr) {
 			continue;
 		}
 
-		// Pop block form freeBlocks
-		PageBlock* newBlock = freeBlocks[i.value];
+		// Pop block form this->freeBlocks
+		PageBlock* newBlock = this->freeBlocks[i.value];
 		void* returnValue   = reinterpret_cast<void*>(newBlock->address.value);
-		freeBlocks[i.value] = newBlock->next;
+		this->freeBlocks[i.value] = newBlock->next;
 
-		// Push block on usedBlocks
-		newBlock->next      = usedBlocks[i.value];
-		usedBlocks[i.value] = newBlock;
+		// Push block on this->usedBlocks
+		newBlock->next            = this->usedBlocks[i.value];
+		this->usedBlocks[i.value] = newBlock;
 
 		if (i == ValueOf(order)) {
 			return returnValue;
@@ -227,11 +223,11 @@ void BuddyAlloc::freePages(void* pointer) {
 	UInt64     address  = reinterpret_cast<uintptr_t>(pointer);
 
 	for (UInt8 i = 0; i < BlockOrderCount; ++i) {
-		for (current  = usedBlocks[i.value]; current != nullptr;
+		for (current  = this->usedBlocks[i.value]; current != nullptr;
 		     previous = current, current = current->next) {
 			if (current->address == address) {
 				if (previous == nullptr) {
-					usedBlocks[i.value] = current->next;
+					this->usedBlocks[i.value] = current->next;
 				} else {
 					previous->next = current->next;
 				}
@@ -251,7 +247,7 @@ void BuddyAlloc::initPageRegion(UIntPtr address, USize count) {
 
 			PageBlock* current  = nullptr;
 			PageBlock* previous = nullptr;
-			for (current  = freeBlocks[order.value]; current != nullptr;
+			for (current  = this->freeBlocks[order.value]; current != nullptr;
 			     previous = current, current = current->next) {
 				if (current->address > address) {
 					break;
@@ -261,7 +257,7 @@ void BuddyAlloc::initPageRegion(UIntPtr address, USize count) {
 			newBlock->next    = current;
 			newBlock->address = address;
 			if (previous == nullptr) {
-				freeBlocks[order.value] = newBlock;
+				this->freeBlocks[order.value] = newBlock;
 			} else {
 				previous->next = newBlock;
 			}
@@ -276,14 +272,14 @@ void BuddyAlloc::initPageRegion(UIntPtr address, USize count) {
 }
 
 PageBlock* BuddyAlloc::getUnusedBlock() {
-	auto newBlock = unusedBlocks;
-	unusedBlocks  = newBlock->next;
+	auto newBlock      = this->unusedBlocks;
+	this->unusedBlocks = newBlock->next;
 	return newBlock;
 }
 
 void BuddyAlloc::setUnusedBlock(PageBlock* block) {
-	block->next  = unusedBlocks;
-	unusedBlocks = block;
+	block->next        = this->unusedBlocks;
+	this->unusedBlocks = block;
 }
 
 void BuddyAlloc::freeBlock(PageBlock* block, BlockOrder order) {
@@ -292,8 +288,8 @@ void BuddyAlloc::freeBlock(PageBlock* block, BlockOrder order) {
 
 	block->next = nullptr;
 
-	if (freeBlocks[ValueOf(order)] == nullptr) {
-		freeBlocks[ValueOf(order)] = block;
+	if (this->freeBlocks[ValueOf(order)] == nullptr) {
+		this->freeBlocks[ValueOf(order)] = block;
 		return;
 	}
 
@@ -304,14 +300,14 @@ void BuddyAlloc::freeBlock(PageBlock* block, BlockOrder order) {
 	for (UInt8 i = ValueOf(order); i < (BlockOrderCount - 1); ++i) {
 		UIntPtr buddyAddress = (block->address ^ (1 << (i.value + PageShift)));
 		shouldMerge          = false;
-		for (current  = freeBlocks[i.value]; current != nullptr;
+		for (current  = this->freeBlocks[i.value]; current != nullptr;
 		     previous = current, current = current->next) {
 
 			if (current->address > block->address) {
 				// Found buddy that has a larger address
 				if (current->address == buddyAddress) {
 					if (previous == nullptr) {
-						freeBlocks[i.value] = current->next;
+						this->freeBlocks[i.value] = current->next;
 					} else {
 						previous->next = current->next;
 					}
@@ -322,7 +318,7 @@ void BuddyAlloc::freeBlock(PageBlock* block, BlockOrder order) {
 					break;
 				} else { // Not a buddy
 					if (previous == nullptr) {
-						freeBlocks[i.value] = block->next;
+						this->freeBlocks[i.value] = block->next;
 					} else {
 						previous->next = block->next;
 					}
@@ -331,7 +327,7 @@ void BuddyAlloc::freeBlock(PageBlock* block, BlockOrder order) {
 				}
 			} else if (current->address == buddyAddress) { // Buddy
 				if (previous == nullptr) {
-					freeBlocks[i.value] = current->next;
+					this->freeBlocks[i.value] = current->next;
 				} else {
 					previous->next = current->next;
 				}
@@ -351,12 +347,12 @@ void BuddyAlloc::freeBlock(PageBlock* block, BlockOrder order) {
 		if (current != nullptr) {
 			current->next = block;
 		} else {
-			freeBlocks[ValueOf(order)] = block;
+			this->freeBlocks[ValueOf(order)] = block;
 		}
 		return;
 	}
 
 	// We got to the highest order and cannot merge anymore
-	block->next                = freeBlocks[ValueOf(order)];
-	freeBlocks[ValueOf(order)] = block;
+	block->next                      = this->freeBlocks[ValueOf(order)];
+	this->freeBlocks[ValueOf(order)] = block;
 }

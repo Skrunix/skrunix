@@ -5,11 +5,11 @@
 #include <Integers.hpp>
 
 struct [[gnu::packed]] GDTPointer {
-	UInt16    limit;
-	GDTEntry* base;
+	const UInt16    limit;
+	const GDTEntry* base;
 
-	constexpr GDTPointer()
-	    : limit()
-	    , base(0) {}
+	constexpr GDTPointer(const GDTEntry* start, const UInt16& count)
+	    : limit(count)
+	    , base(start) {}
 };
 static_assert(sizeof(GDTPointer) == 10);

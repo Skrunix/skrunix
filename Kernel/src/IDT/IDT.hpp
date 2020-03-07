@@ -17,6 +17,5 @@ class IDT {
 	void SetGate(UInt8 number, UIntPtr offset, UInt16 selector,
 	             UInt8 attributes);
 
-	IDTPointer idt;
-	IDTEntry*  entries;
+	IDTEntry* entries;
 };

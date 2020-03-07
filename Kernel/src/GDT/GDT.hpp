@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GDTEntry.hpp"
+
 #include <Integers.hpp>
 
 #define GDT_NULL_SELECTOR 0x00
@@ -14,4 +16,6 @@ class GDT {
   private:
 	void SetEntry(UInt8 number, UInt32 limit, UIntPtr base, UInt8 access,
 	              UInt8 flags);
+
+	GDTEntry gdtEntries[3];
 };

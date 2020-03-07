@@ -1,6 +1,5 @@
 #include "GDT.hpp"
 
-#include "GDTEntry.hpp"
 #include "GDTPointer.hpp"
 
 #define ACCESS_PRESENT (0b1 << 7)
@@ -18,12 +17,8 @@ extern "C" {
 extern void loadGDT(GDTPointer*);
 }
 
-GDTPointer gdt;
-GDTEntry   gdtEntries[3];
-
 GDT::GDT() {
-	gdt.limit = sizeof(gdtEntries) - 1;
-	gdt.base  = &gdtEntries[0];
+	GDTPointer gdt(&this->gdtEntries[0], sizeof(this->gdtEntries) - 1);
 
 	UInt8 access =
 	    ACCESS_PRESENT | ACCESS_PRIV_KERNEL | ACCESS_GROW_UP | ACCESS_RW;
@@ -45,11 +40,11 @@ GDT::~GDT() {}
 
 void GDT::SetEntry(UInt8 number, UInt32 limit, UIntPtr base, UInt8 access,
                    UInt8 flags) {
-	gdtEntries[number.value].limitLow = limit.low();
-	gdtEntries[number.value].baseLow  = base.value & 0xFFFF;
-	gdtEntries[number.value].baseMid  = (base.value >> 16) & 0xFF;
-	gdtEntries[number.value].access   = access;
-	gdtEntries[number.value].flags =
+	this->gdtEntries[number.value].limitLow = limit.low();
+	this->gdtEntries[number.value].baseLow  = base.value & 0xFFFF;
+	this->gdtEntries[number.value].baseMid  = (base.value >> 16) & 0xFF;
+	this->gdtEntries[number.value].access   = access;
+	this->gdtEntries[number.value].flags =
 	    (flags.value << 4) | ((limit.value >> 16) & 0x0F);
-	gdtEntries[number.value].baseHigh = (base.value >> 24) & 0xFF;
+	this->gdtEntries[number.value].baseHigh = (base.value >> 24) & 0xFF;
 }

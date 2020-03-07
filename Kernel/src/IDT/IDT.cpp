@@ -14,16 +14,15 @@ extern void    flushIDT(IDTPointer*);
 }
 
 IDT::IDT(void* buffer)
-    : idt()
-    , entries(reinterpret_cast<IDTEntry*>(buffer)) {
-	this->idt.offset = &this->entries[0];
+    : entries(reinterpret_cast<IDTEntry*>(buffer)) {
+	IDTPointer idt(&this->entries[0], 256);
 
 	UInt8 attributes = ATTR_PRESENT | ATTR_PRIV_ANY | ATTR_TYPE_INTERRUPT;
 	for (UInt16 i = 0; i <= UINT8_MAX; ++i) {
 		this->SetGate(i.low(), DefaultIntHandlers[i.value], GDT_CODE_SELECTOR,
 		              attributes);
 	}
-	flushIDT(&this->idt);
+	flushIDT(&idt);
 }
 
 IDT::~IDT() {}
