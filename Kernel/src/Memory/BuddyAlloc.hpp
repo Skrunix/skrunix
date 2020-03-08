@@ -8,7 +8,7 @@
 
 class BuddyAlloc {
   public:
-	BuddyAlloc(AddressRange* rangeList, USize count);
+	BuddyAlloc(AddressRange* rangeList, USize count, UIntPtr freePage);
 	BuddyAlloc(const BuddyAlloc&) = delete;
 	~BuddyAlloc();
 

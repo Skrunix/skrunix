@@ -19,6 +19,7 @@ SECTIONS {
 		*(.rodata*)
 	}
 	_KernelDataSizeEnd = .;
+	. = ALIGN(4096);
 	KernelEnd = .;
 	KernelTextSize = _KernelTextSizeEnd - _KernelTextSizeStart;
 	KernelDataSize = _KernelDataSizeEnd - _KernelDataSizeStart;

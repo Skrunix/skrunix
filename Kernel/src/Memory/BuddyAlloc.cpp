@@ -9,12 +9,10 @@
 #include "Serial.hpp"
 extern Serial* globalSerial;
 
-extern UInt64 KernelEnd; // Defined in linker script
-void*         allocAddress = &KernelEnd;
-
-BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count)
+BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count, UIntPtr freePage)
     : pageCount(0)
     , unusedBlocks(nullptr) {
+	freePage = Align(freePage);
 	for (UInt8 order = 0; order < BlockOrderCount; ++order) {
 		this->freeBlocks[order.value] = nullptr;
 		this->usedBlocks[order.value] = nullptr;
@@ -28,19 +26,19 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count)
 			continue;
 		}
 
-		UIntPtr startPage = (range.base + (1 << PageShift) - 1) >> PageShift;
-		UIntPtr endPage   = (range.base + range.length) >> PageShift;
+		UIntPtr startPage = Align(range.base) >> PageShift;
+		UIntPtr endPage   = AlignDown(range.base + range.length) >> PageShift;
 		this->pageCount += (endPage - startPage).value;
 	}
 
 	globalSerial->Write("Tentative allocAddress: ");
-	globalSerial->WriteHex(reinterpret_cast<uintptr_t>(allocAddress));
+	globalSerial->WriteHex(freePage);
 	globalSerial->Write("\r\n");
 
 	// Find a segment of RAM large enough to store all PageBlocks
 	bool   foundBufferLocation = false;
 	USize  requiredBufferSize  = this->pageCount * sizeof(PageBlock);
-	UInt64 allocPage = reinterpret_cast<uintptr_t>(allocAddress) >> PageShift;
+	UInt64 allocPage           = freePage.value >> PageShift;
 	for (USize i = 0; i < count; ++i) {
 		AddressRange range = rangeList[i.value];
 
@@ -48,8 +46,8 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count)
 			continue;
 		}
 
-		UInt64 startPage = range.base.value >> PageShift;
-		UInt64 endPage   = (range.base + range.length).value >> PageShift;
+		UIntPtr startPage = Align(range.base) >> PageShift;
+		UIntPtr endPage   = AlignDown(range.base + range.length) >> PageShift;
 
 		// Check if the range contains allocAddress
 		if (startPage <= allocPage && endPage > allocPage) {
@@ -63,7 +61,7 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count)
 
 		// We are checking some other range than where the kernel is loaded
 		if (range.length >= requiredBufferSize) {
-			allocAddress        = reinterpret_cast<void*>(range.base.value);
+			freePage            = startPage << PageShift;
 			foundBufferLocation = true;
 			break;
 		}
@@ -76,11 +74,11 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count)
 	}
 
 	globalSerial->Write("Real allocAddress:      ");
-	globalSerial->WriteHex(reinterpret_cast<uintptr_t>(allocAddress));
+	globalSerial->WriteHex(freePage);
 	globalSerial->Write("\r\n");
 
 	// Create required this->unusedBlocks for all of RAM
-	PageBlock* blockBuffer = Align<PageBlock>(allocAddress);
+	PageBlock* blockBuffer = freePage.To<PageBlock*>();
 	this->unusedBlocks     = &blockBuffer[0];
 
 	for (UInt64 i = 0; i < (this->pageCount - 1); ++i) {
@@ -197,7 +195,7 @@ void* BuddyAlloc::allocPages(BlockOrder order) {
 		}
 
 		// Split the block
-		UInt64  pagesLeft = (1 << i.value) - (1 << ValueOf(order));
+		UInt64  pagesLeft = (1 << i.value) - (1 << ValueOf(order).value);
 		UIntPtr endAddress =
 		    newBlock->address.value + (1 << (i.value + PageShift));
 		for (UInt8 j = i - 1; j != UInt8::Max; --j) {
@@ -289,8 +287,8 @@ void BuddyAlloc::freeBlock(PageBlock* block, BlockOrder order) {
 
 	block->next = nullptr;
 
-	if (this->freeBlocks[ValueOf(order)] == nullptr) {
-		this->freeBlocks[ValueOf(order)] = block;
+	if (this->freeBlocks[ValueOf(order).value] == nullptr) {
+		this->freeBlocks[ValueOf(order).value] = block;
 		return;
 	}
 
@@ -348,12 +346,12 @@ void BuddyAlloc::freeBlock(PageBlock* block, BlockOrder order) {
 		if (current != nullptr) {
 			current->next = block;
 		} else {
-			this->freeBlocks[ValueOf(order)] = block;
+			this->freeBlocks[ValueOf(order).value] = block;
 		}
 		return;
 	}
 
 	// We got to the highest order and cannot merge anymore
-	block->next                      = this->freeBlocks[ValueOf(order)];
-	this->freeBlocks[ValueOf(order)] = block;
+	block->next = this->freeBlocks[ValueOf(order).value];
+	this->freeBlocks[ValueOf(order).value] = block;
 }

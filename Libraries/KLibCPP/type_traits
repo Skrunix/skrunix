@@ -5,6 +5,7 @@
 #include <type_trait/integral_constant.hpp>
 #include <type_trait/is_enum.hpp>
 #include <type_trait/is_pointer.hpp>
+#include <type_trait/is_same.hpp>
 #include <type_trait/remove_const.hpp>
 #include <type_trait/remove_cv.hpp>
 #include <type_trait/remove_reference.hpp>

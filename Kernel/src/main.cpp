@@ -34,18 +34,19 @@ void main() {
 	globalSerial = &serial;
 	serial.Write("Skrunix\r\n");
 	serial.Write("Text size: ");
-	serial.WriteHex(reinterpret_cast<uint64_t>(KernelTextSize2));
+	serial.WriteHex(UIntPtr::From(KernelTextSize2));
 	serial.Write("\r\n");
 	serial.Write("Data size: ");
-	serial.WriteHex(reinterpret_cast<uint64_t>(KernelDataSize2));
+	serial.WriteHex(UIntPtr::From(KernelDataSize2));
 	serial.Write("\r\n");
 	serial.Write("BSS  size: ");
-	serial.WriteHex(reinterpret_cast<uint64_t>(KernelBSSSize2));
+	serial.WriteHex(UIntPtr::From(KernelBSSSize2));
 	serial.Write("\r\n");
 
 	USize*        rangesCount = reinterpret_cast<USize*>(0x9000);
 	AddressRange* ranges      = reinterpret_cast<AddressRange*>(0x9018);
-	BuddyAlloc    pageAllocator(ranges, *rangesCount);
+	BuddyAlloc    pageAllocator(ranges, *rangesCount,
+                             UIntPtr::From(kernelEndAddress));
 
 	uintptr_t screenByteAddress = reinterpret_cast<uintptr_t>(&screenData);
 	screen                      = reinterpret_cast<Screen*>(screenByteAddress);
@@ -99,7 +100,7 @@ void main() {
 	globalPIT = &pit;
 
 	serial.Write("RAM Pages: ");
-	serial.WriteHex(pageAllocator.pageCount);
+	serial.WriteHex(UInt64(pageAllocator.pageCount));
 	serial.Write("\r\n");
 
 	USize rangeCount = *rangesCount;
@@ -121,13 +122,13 @@ void main() {
 			screen->Write("Bad");
 		} else {
 			screen->Write("? ");
-			screen->WriteHex(UIntPtr(ValueOf(range.type)));
+			screen->WriteHex(UIntPtr(ValueOf(range.type).value));
 		}
 		screen->Write("\r\n");
 
-		globalSerial->WriteHex(range.base.value);
+		globalSerial->WriteHex(range.base);
 		globalSerial->Write(" ");
-		globalSerial->WriteHex(range.length.value);
+		globalSerial->WriteHex(UInt64(range.length));
 		globalSerial->Write(" ");
 		if (range.type == AddressRange::Type::Usable) {
 			globalSerial->Write("Usable");
@@ -146,7 +147,7 @@ void main() {
 		globalSerial->Write("\r\n");
 	}
 	screen->Write("RAM Pages: ");
-	screen->WriteHex(UIntPtr(pageAllocator.pageCount.value));
+	screen->WriteHex(UIntPtr(pageAllocator.pageCount));
 	screen->Write("\r\n");
 	screen->Write("\r\n");
 

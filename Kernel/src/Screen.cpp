@@ -22,8 +22,8 @@ void Screen::Clear() {
 	auto memory = reinterpret_cast<UInt16*>(BasePointer);
 	auto offset = this->maxX * this->maxY;
 
-	UInt16 data = (ValueOf(this->background) << 12) |
-	              (ValueOf(this->foreground) << 8) | ' ';
+	UInt16 data = (ValueOf(this->background).value << 12) |
+	              (ValueOf(this->foreground).value << 8) | ' ';
 	for (UInt16 i = 0; i < offset; ++i) {
 		*(memory++) = data;
 	}
@@ -40,8 +40,8 @@ void Screen::ScrollUp() {
 		*(toMem++) = *(fromMem++);
 	}
 
-	UInt16 data = (ValueOf(this->background) << 12) |
-	              (ValueOf(this->foreground) << 8) | ' ';
+	UInt16 data = (ValueOf(this->background).value << 12) |
+	              (ValueOf(this->foreground).value << 8) | ' ';
 	for (UInt16 i = 0; i < this->maxX; ++i) {
 		*(toMem++) = data;
 	}

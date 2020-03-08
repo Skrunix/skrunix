@@ -19,6 +19,8 @@ struct [[gnu::packed]] UInt64 {
 	    : value(0) {}
 	const_inline UInt64(const BackingType& value)
 	    : value(value) {}
+	const_inline UInt64(const UInt8& value)
+	    : value(value.value) {}
 	const_inline UInt64(const USize& value)
 	    : value(value.value) {}
 
