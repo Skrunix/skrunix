@@ -1,8 +1,7 @@
 #include "BuddyAlloc.hpp"
 
 #include "Align.hpp"
-
-#include <ValueOf.hpp>
+#include "ValueOf.hpp"
 
 #define PageShift 12
 

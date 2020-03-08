@@ -1,8 +1,7 @@
 #include "Screen.hpp"
 
 #include "IO.hpp"
-
-#include <ValueOf.hpp>
+#include "ValueOf.hpp"
 
 UInt8* const BasePointer = reinterpret_cast<UInt8*>(0xB8000);
 

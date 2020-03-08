@@ -19,8 +19,6 @@
                 "-isystem",
                 "${workspaceFolder}/../Libraries/KLibC",
                 "-isystem",
-                "${workspaceFolder}/src/LibCPP",
-                "-isystem",
                 "${workspaceFolder}/../Libraries/KLibCPP",
                 "-ffreestanding",
                 "-O2",

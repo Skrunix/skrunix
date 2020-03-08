@@ -7,8 +7,7 @@
 #include "PIT.hpp"
 #include "Screen.hpp"
 #include "Serial.hpp"
-
-#include <ValueOf.hpp>
+#include "ValueOf.hpp"
 
 extern "C" {
 [[noreturn]] void main();
