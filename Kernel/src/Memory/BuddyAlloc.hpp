@@ -2,13 +2,15 @@
 
 #include "AddressRange.hpp"
 #include "BlockOrder.hpp"
+#include "Debug.hpp"
 #include "PageBlock.hpp"
 
 #include <Integers/Integers.hpp>
 
 class BuddyAlloc {
   public:
-	BuddyAlloc(AddressRange* rangeList, USize count, UIntPtr freePage);
+	BuddyAlloc(AddressRange* rangeList, USize count, UIntPtr freePage,
+	           const Debug& debugObj);
 	BuddyAlloc(const BuddyAlloc&) = delete;
 	~BuddyAlloc();
 
@@ -30,4 +32,6 @@ class BuddyAlloc {
 	PageBlock* freeBlocks[BlockOrderCount];
 	PageBlock* usedBlocks[BlockOrderCount];
 	PageBlock* unusedBlocks;
+
+	const Debug& debug;
 };

@@ -5,12 +5,11 @@
 
 #define PageShift 12
 
-#include "Serial.hpp"
-extern Serial* globalSerial;
-
-BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count, UIntPtr freePage)
+BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count, UIntPtr freePage,
+                       const Debug& debugObj)
     : pageCount(0)
-    , unusedBlocks(nullptr) {
+    , unusedBlocks(nullptr)
+    , debug(debugObj) {
 	freePage = Align(freePage);
 	for (UInt8 order = 0; order < BlockOrderCount; ++order) {
 		this->freeBlocks[order.value] = nullptr;
@@ -21,6 +20,26 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count, UIntPtr freePage)
 	for (USize i = 0; i < count; ++i) {
 		AddressRange range = rangeList[i.value];
 
+		this->debug.WriteHex(range.base);
+		this->debug.Write(" ");
+		this->debug.WriteHex(UInt64(range.length));
+		this->debug.Write(" ");
+		if (range.type == AddressRange::Type::Usable) {
+			this->debug.Write("Usable");
+		} else if (range.type == AddressRange::Type::Reserved) {
+			this->debug.Write("Reserved");
+		} else if (range.type == AddressRange::Type::ACPI_Reclaimable) {
+			this->debug.Write("ACPI reclaimable");
+		} else if (range.type == AddressRange::Type::ACPI_NVS) {
+			this->debug.Write("ACPI NVS");
+		} else if (range.type == AddressRange::Type::Bad) {
+			this->debug.Write("Bad");
+		} else {
+			this->debug.Write("? ");
+			this->debug.WriteHex(ValueOf(range.type));
+		}
+		this->debug.Write("\r\n");
+
 		if (range.type != AddressRange::Type::Usable) {
 			continue;
 		}
@@ -30,9 +49,12 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count, UIntPtr freePage)
 		this->pageCount += (endPage - startPage).value;
 	}
 
-	globalSerial->Write("Tentative allocAddress: ");
-	globalSerial->WriteHex(freePage);
-	globalSerial->Write("\r\n");
+	this->debug.Write("RAM Pages: ");
+	this->debug.WriteHex(this->pageCount);
+	this->debug.Write("\r\n");
+	this->debug.Write("Tentative allocAddress: ");
+	this->debug.WriteHex(freePage);
+	this->debug.Write("\r\n");
 
 	// Find a segment of RAM large enough to store all PageBlocks
 	bool   foundBufferLocation = false;
@@ -67,14 +89,14 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count, UIntPtr freePage)
 	}
 
 	if (foundBufferLocation == false) {
-		globalSerial->Write("Could not find space for allocAddress\r\n");
+		this->debug.Write("Could not find space for allocAddress\r\n");
 		while (true)
 			;
 	}
 
-	globalSerial->Write("Real allocAddress:      ");
-	globalSerial->WriteHex(freePage);
-	globalSerial->Write("\r\n");
+	this->debug.Write("Real allocAddress:      ");
+	this->debug.WriteHex(freePage);
+	this->debug.Write("\r\n");
 
 	// Create required this->unusedBlocks for all of RAM
 	PageBlock* blockBuffer = freePage.To<PageBlock*>();

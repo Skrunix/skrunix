@@ -1,4 +1,5 @@
 #include "Align.hpp"
+#include "Debug.hpp"
 #include "GDT/GDT.hpp"
 #include "IDT/IDT.hpp"
 #include "IO.hpp"
@@ -23,14 +24,24 @@ void*        KernelBSSSize2  = &KernelBSSSize;
 extern UInt64 KernelEnd; // Defined in linker script
 void*         kernelEndAddress = &KernelEnd;
 
-UInt8   screenData[sizeof(Screen)];
-Screen* screen;
-PIT*    globalPIT;
 Serial* globalSerial;
+Screen* globalScreen;
+PIT*    globalPIT;
+
+void nullWrite(char) {}
+void serialWrite(char character) { globalSerial->Write(character); }
+void screenWrite(char character) { globalScreen->Write(character); }
 
 void main() {
 	Serial serial;
 	globalSerial = &serial;
+	Screen screen;
+	globalScreen = &screen;
+
+	Debug nullDebug(nullWrite);
+	Debug serialDebug(serialWrite);
+	Debug screenDebug(screenWrite);
+
 	serial.Write("Skrunix\r\n");
 	serial.Write("Text size: ");
 	serial.WriteHex(UIntPtr::From(KernelTextSize2));
@@ -42,54 +53,44 @@ void main() {
 	serial.WriteHex(UIntPtr::From(KernelBSSSize2));
 	serial.Write("\r\n");
 
+	screen.Clear();
+
+	screen.SetForeground(Screen::Color::Red);
+	screen.setBackground(Screen::Color::Black);
+	screen.Write("\nSkrunix\r\n\n");
+	screen.ScrollUp();
+
+	screen.SetForeground(Screen::Color::Blue);
+	screen.setBackground(Screen::Color::Red);
+	screen.WriteRaw("Character test:");
+
+	screen.SetForeground(Screen::Color::Magenta);
+	screen.setBackground(Screen::Color::Cyan);
+	screen.WriteRaw('\0');
+	for (char i = 1; i != 0; ++i) {
+		screen.WriteRaw(i);
+	}
+
+	screen.Write("\r\n\n");
+	screen.SetForeground(Screen::Color::Blue);
+	screen.setBackground(Screen::Color::LightRed);
+	screen.WriteRaw("Color test:");
+	for (char fg = 0; fg < 0x10; ++fg) {
+		for (char bg = 0; bg < 0x10; ++bg) {
+			screen.SetForeground(static_cast<Screen::Color>(fg));
+			screen.setBackground(static_cast<Screen::Color>(bg));
+			screen.WriteRaw('E');
+		}
+	}
+	screen.Write("\r\n\n");
+
+	screen.SetForeground(Screen::Color::LightGray);
+	screen.setBackground(Screen::Color::Black);
+
 	USize*        rangesCount = reinterpret_cast<USize*>(0x9000);
 	AddressRange* ranges      = reinterpret_cast<AddressRange*>(0x9018);
 	BuddyAlloc    pageAllocator(ranges, *rangesCount,
-                             UIntPtr::From(kernelEndAddress));
-
-	uintptr_t screenByteAddress = reinterpret_cast<uintptr_t>(&screenData);
-	screen                      = reinterpret_cast<Screen*>(screenByteAddress);
-	*screen                     = Screen();
-	screen->Clear();
-
-	screen->SetForeground(Screen::Color::Red);
-	screen->setBackground(Screen::Color::Black);
-	screen->Write("\nSkrunix\r\n\n");
-	screen->ScrollUp();
-
-	screen->SetForeground(Screen::Color::Blue);
-	screen->setBackground(Screen::Color::Red);
-	screen->WriteRaw("Character test:");
-
-	screen->SetForeground(Screen::Color::Magenta);
-	screen->setBackground(Screen::Color::Cyan);
-	screen->WriteRaw('\0');
-	for (char i = 1; i != 0; ++i) {
-		screen->WriteRaw(i);
-	}
-
-	screen->Write("\r\n\n");
-	screen->SetForeground(Screen::Color::Blue);
-	screen->setBackground(Screen::Color::LightRed);
-	screen->WriteRaw("Color test:");
-	for (char fg = 0; fg < 0x10; ++fg) {
-		for (char bg = 0; bg < 0x10; ++bg) {
-			screen->SetForeground(static_cast<Screen::Color>(fg));
-			screen->setBackground(static_cast<Screen::Color>(bg));
-			screen->WriteRaw('E');
-		}
-	}
-
-	screen->SetForeground(Screen::Color::LightGray);
-	screen->setBackground(Screen::Color::Black);
-	screen->Write("\r\n\n");
-	screen->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(screen)));
-	screen->Write("\r\n");
-	screen->WriteHex(UIntPtr(reinterpret_cast<uintptr_t>(kernelEndAddress)));
-	screen->WriteHex(
-	    UIntPtr(reinterpret_cast<uintptr_t>(Align<void>(kernelEndAddress))));
-
-	screen->Write("\r\n\n");
+                             UIntPtr::From(kernelEndAddress), screenDebug);
 
 	GDT gdt;
 	IDT idt(pageAllocator.allocRegion(0, 1));
@@ -101,54 +102,6 @@ void main() {
 	serial.Write("RAM Pages: ");
 	serial.WriteHex(UInt64(pageAllocator.pageCount));
 	serial.Write("\r\n");
-
-	USize rangeCount = *rangesCount;
-	for (USize i = 0; i < rangeCount; ++i) {
-		AddressRange range = ranges[i.value];
-		screen->WriteHex(range.base);
-		screen->Write(" ");
-		screen->WriteHex(range.length);
-		screen->Write(" ");
-		if (range.type == AddressRange::Type::Usable) {
-			screen->Write("Usable");
-		} else if (range.type == AddressRange::Type::Reserved) {
-			screen->Write("Reserved");
-		} else if (range.type == AddressRange::Type::ACPI_Reclaimable) {
-			screen->Write("ACPI reclaimable");
-		} else if (range.type == AddressRange::Type::ACPI_NVS) {
-			screen->Write("ACPI NVS");
-		} else if (range.type == AddressRange::Type::Bad) {
-			screen->Write("Bad");
-		} else {
-			screen->Write("? ");
-			screen->WriteHex(UIntPtr(ValueOf(range.type).value));
-		}
-		screen->Write("\r\n");
-
-		globalSerial->WriteHex(range.base);
-		globalSerial->Write(" ");
-		globalSerial->WriteHex(UInt64(range.length));
-		globalSerial->Write(" ");
-		if (range.type == AddressRange::Type::Usable) {
-			globalSerial->Write("Usable");
-		} else if (range.type == AddressRange::Type::Reserved) {
-			globalSerial->Write("Reserved");
-		} else if (range.type == AddressRange::Type::ACPI_Reclaimable) {
-			globalSerial->Write("ACPI reclaimable");
-		} else if (range.type == AddressRange::Type::ACPI_NVS) {
-			globalSerial->Write("ACPI NVS");
-		} else if (range.type == AddressRange::Type::Bad) {
-			globalSerial->Write("Bad");
-		} else {
-			globalSerial->Write("? ");
-			globalSerial->WriteHex(ValueOf(range.type));
-		}
-		globalSerial->Write("\r\n");
-	}
-	screen->Write("RAM Pages: ");
-	screen->WriteHex(UIntPtr(pageAllocator.pageCount));
-	screen->Write("\r\n");
-	screen->Write("\r\n");
 
 	asm volatile("int $0x0");
 	asm volatile("int $0xff");
@@ -166,8 +119,8 @@ typedef struct {
 UInt64 timerCount = 0;
 
 void timerHandler(IRQRegisters) {
-	screen->Write("\r");
-	screen->WriteHex(UIntPtr((++timerCount).value));
+	globalScreen->Write("\r");
+	globalScreen->WriteHex(UIntPtr((++timerCount).value));
 	PIC::EOI1();
 }
 
@@ -216,15 +169,15 @@ void keyboardHandler(IRQRegisters) {
 				character = qwerty[keycode.value];
 			}
 			if (character != '\0') {
-				screen->Write(character);
+				globalScreen->Write(character);
 			} else if (keycode == 0x2A) { // LShift
 				shift = true;
 			} else if (keycode == 0x1C) { // Enter
-				screen->Write("\r\n");
+				globalScreen->Write("\r\n");
 			} else if (keycode == 0x0E) { // Backspace
-				screen->Write(8);
+				globalScreen->Write(8);
 			} else {
-				screen->WriteHex(keycode);
+				globalScreen->WriteHex(keycode);
 			}
 			if (character >= '0' && character <= '9') {
 				UInt16 frequency = NOTES[character - '0'];
@@ -248,8 +201,8 @@ void isrHandler(IRQRegisters registers) {
 		return keyboardHandler(registers);
 	}
 
-	screen->Write("Got interrupt: ");
-	screen->WriteHex(UIntPtr(registers.interruptNumber.value));
-	screen->Write("\r\n");
+	globalScreen->Write("Got interrupt: ");
+	globalScreen->WriteHex(UIntPtr(registers.interruptNumber.value));
+	globalScreen->Write("\r\n");
 }
 }
