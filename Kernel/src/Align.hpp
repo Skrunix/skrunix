@@ -32,11 +32,8 @@ static_assert(AlignDown<0x100>(UIntPtr(0x101)) == 0x100);
 // Align to upper boundary
 template <uintmax_t Alignment = 4096>
 [[gnu::always_inline]] inline constexpr UIntPtr AlignUp(UIntPtr pointer) {
-	auto aligned = Align<Alignment>(pointer);
-	if (aligned == pointer) {
-		return aligned + Alignment;
-	}
-	return aligned;
+	auto aligned = AlignDown<Alignment>(pointer);
+	return aligned + Alignment;
 }
 static_assert(AlignUp<0x100>(UIntPtr(0x100)) == 0x200);
 static_assert(AlignUp<0x100>(UIntPtr(0x101)) == 0x200);
