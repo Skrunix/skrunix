@@ -33,6 +33,8 @@ void serialWrite(char character) { globalSerial->Write(character); }
 void screenWrite(char character) { globalScreen->Write(character); }
 
 void main() {
+	UIntPtr kernelOffset = 0xFFFF800000000000;
+
 	Serial serial;
 	globalSerial = &serial;
 	Screen screen;
@@ -90,11 +92,11 @@ void main() {
 	USize*        rangesCount = reinterpret_cast<USize*>(0x9000);
 	AddressRange* ranges      = reinterpret_cast<AddressRange*>(0x9018);
 	BuddyAlloc    pageAllocator(ranges, *rangesCount,
-                             UIntPtr::From(kernelEndAddress),
-                             0xFFFF800000000000, screenDebug);
+                             UIntPtr::From(kernelEndAddress), kernelOffset,
+                             screenDebug);
 
 	GDT gdt;
-	IDT idt(pageAllocator.allocRegion(0, 1));
+	IDT idt(kernelOffset + UIntPtr::From(pageAllocator.allocRegion(0, 1)));
 	PIC pic;
 	PIT pit(0x20);
 

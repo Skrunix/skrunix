@@ -4,8 +4,8 @@
 
 Start:
 	# Setup stack
-	MOVL $0x10000, %EAX
-	MOVL %EAX, %ESP
-	MOVL %EAX, %EBP
+	MOVQ $0xFFFF800000010000, %RAX
+	MOVQ %RAX, %RSP
+	MOVQ %RAX, %RBP
 
 	JMP main

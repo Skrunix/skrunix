@@ -29,9 +29,9 @@ GDT::GDT() {
 	UInt8 flagsCode = flags | FLAGS_SIZE_64_CODE;
 	UInt8 flagsData = flags | FLAGS_SIZE_64_DATA;
 
-	this->SetEntry(0, UINT32_MAX, 0, 0, 0);                  // Null
-	this->SetEntry(1, UINT32_MAX, 0, accessCode, flagsCode); // Code
-	this->SetEntry(2, UINT32_MAX, 0, accessData, flagsData); // Data
+	this->SetEntry(0, UInt32::Max, 0, 0, 0);                  // Null
+	this->SetEntry(1, UInt32::Max, 0, accessCode, flagsCode); // Code
+	this->SetEntry(2, UInt32::Max, 0, accessData, flagsData); // Data
 
 	loadGDT(&gdt);
 }

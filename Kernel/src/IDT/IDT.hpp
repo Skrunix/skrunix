@@ -7,7 +7,7 @@
 
 class IDT {
   public:
-	IDT(void* buffer);
+	IDT(UIntPtr buffer);
 	IDT(const IDT&) = delete;
 	~IDT();
 
