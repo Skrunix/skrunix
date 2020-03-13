@@ -101,6 +101,7 @@ CPPFLAGS := \
 	-mno-mmx \
 	-mno-sse \
 	-mno-sse2 \
+	-fno-asynchronous-unwind-tables \
 	-fno-exceptions \
 	-fno-rtti
 LDFLAGS := \
