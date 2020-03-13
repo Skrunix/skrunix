@@ -6,7 +6,8 @@
 loadGDT:
 	LGDT (%RDI)
 	PUSHQ $0x08
-	PUSHQ $loadGDTEnd
+	MOVABSQ $loadGDTEnd, %RAX
+	PUSHQ %RAX
 	LRETQ
 
 loadGDTEnd:

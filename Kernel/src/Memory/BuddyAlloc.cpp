@@ -6,11 +6,13 @@
 #define PageShift 12
 
 BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count, UIntPtr freePage,
-                       const Debug& debugObj)
+                       UIntPtr kernelOffset, const Debug& debugObj)
     : pageCount(0)
     , unusedBlocks(nullptr)
     , debug(debugObj) {
-	freePage = Align(freePage);
+	freePage =
+	    Align(freePage) - kernelOffset; // Convert to physical address while
+	                                    // working with the memory map
 	for (UInt8 order = 0; order < BlockOrderCount; ++order) {
 		this->freeBlocks[order.value] = nullptr;
 		this->usedBlocks[order.value] = nullptr;
@@ -93,7 +95,8 @@ BuddyAlloc::BuddyAlloc(AddressRange* rangeList, USize count, UIntPtr freePage,
 		while (true)
 			;
 	}
-
+	freePage += kernelOffset; // Convert back to virtual address now that we
+	                          // found free physical pages
 	this->debug.Write("Real allocAddress:      ");
 	this->debug.WriteHex(freePage);
 	this->debug.Write("\r\n");

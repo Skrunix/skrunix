@@ -10,7 +10,7 @@
 class BuddyAlloc {
   public:
 	BuddyAlloc(AddressRange* rangeList, USize count, UIntPtr freePage,
-	           const Debug& debugObj);
+	           UIntPtr kernelOffset, const Debug& debugObj);
 	BuddyAlloc(const BuddyAlloc&) = delete;
 	~BuddyAlloc();
 
