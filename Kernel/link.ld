@@ -2,6 +2,7 @@ OUTPUT_FORMAT(binary)
 
 SECTIONS {
 	. = 0xFFFF800000010000;
+	KernelStart = .;
 	_KernelTextSizeStart = .;
 	.text : {
 		*boot.o(.text)

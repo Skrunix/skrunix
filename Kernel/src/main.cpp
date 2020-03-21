@@ -3,7 +3,7 @@
 #include "GDT/GDT.hpp"
 #include "IDT/IDT.hpp"
 #include "IO.hpp"
-#include "Memory/BuddyAlloc.hpp"
+#include "Memory/PhysAlloc.hpp"
 #include "PIC.hpp"
 #include "PIT.hpp"
 #include "Screen.hpp"
@@ -21,8 +21,10 @@ void*        KernelTextSize2 = &KernelTextSize;
 void*        KernelDataSize2 = &KernelDataSize;
 void*        KernelBSSSize2  = &KernelBSSSize;
 
-extern UInt64 KernelEnd; // Defined in linker script
-void*         kernelEndAddress = &KernelEnd;
+extern UInt64 KernelStart; // Defined in linker script
+extern UInt64 KernelEnd;   // Defined in linker script
+void*         kernelStartAddress = &KernelStart;
+void*         kernelEndAddress   = &KernelEnd;
 
 Serial* globalSerial;
 Screen* globalScreen;
@@ -91,20 +93,20 @@ void main() {
 
 	USize*        rangesCount = reinterpret_cast<USize*>(0x9000);
 	AddressRange* ranges      = reinterpret_cast<AddressRange*>(0x9018);
-	BuddyAlloc    pageAllocator(ranges, *rangesCount,
-                             UIntPtr::From(kernelEndAddress), kernelOffset,
-                             screenDebug);
+	PhysAlloc     pageAllocator(
+        ranges, *rangesCount, UIntPtr::From(kernelStartAddress),
+        UIntPtr::From(kernelEndAddress), kernelOffset, serialDebug);
 
 	GDT gdt;
-	IDT idt(kernelOffset + UIntPtr::From(pageAllocator.allocRegion(0, 1)));
+	IDT idt(kernelOffset + pageAllocator.reserve(0, 1));
 	PIC pic;
 	PIT pit(0x20);
 
 	globalPIT = &pit;
 
-	serial.Write("RAM Pages: ");
-	serial.WriteHex(UInt64(pageAllocator.pageCount));
-	serial.Write("\r\n");
+	serialDebug.Write("RAM Pages: ");
+	serialDebug.WriteHex(pageAllocator.getTotalPageCount());
+	serialDebug.Write("\r\n");
 
 	asm volatile("int $0x0");
 	asm volatile("int $0xff");

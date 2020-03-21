@@ -41,7 +41,6 @@ CPPFLAGS := \
 	-Wextra \
 	-Werror \
 	-Weffc++ \
-	-Waggregate-return \
 	-Wcast-align \
 	-Wcast-qual \
 	-Wchar-subscripts \
