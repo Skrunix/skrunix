@@ -108,6 +108,21 @@ void main() {
 	serialDebug.WriteHex(pageAllocator.getTotalPageCount());
 	serialDebug.Write("\r\n");
 
+	// Page 0 is reserved
+	auto alloc1 = pageAllocator.alloc();  // Page 1
+	auto alloc2 = pageAllocator.alloc(2); // Page 2 - 3
+	auto alloc3 = pageAllocator.alloc();  // Page 4
+	screenDebug.Write("Alloc 1: ");
+	screenDebug.WriteHex(alloc1);
+	screenDebug.Write("\r\n");
+	screenDebug.Write("Alloc 2: ");
+	screenDebug.WriteHex(alloc2);
+	screenDebug.Write("\r\n");
+	screenDebug.Write("Alloc 3: ");
+	screenDebug.WriteHex(alloc3);
+	screenDebug.Write("\r\n");
+	screenDebug.Write("\r\n");
+
 	asm volatile("int $0x0");
 	asm volatile("int $0xff");
 	asm volatile("sti");

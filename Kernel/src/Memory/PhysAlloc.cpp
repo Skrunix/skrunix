@@ -3,6 +3,7 @@
 #include "Align.hpp"
 #include "ValueOf.hpp"
 
+#define PageSize 4096
 #define PageShift 12
 
 struct PageBlock {
@@ -145,8 +146,36 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 PhysAlloc::~PhysAlloc() {}
 
 UIntPtr PhysAlloc::alloc(const USize count) {
-	// TODO: Implement
-	(void)count;
+	this->debug.Write("Alloc ");
+	this->debug.WriteHex(count);
+	this->debug.Write(" pages...\r\n");
+
+	PageBlock* block = this->freeBlocks;
+	while (true) {
+		if (block == nullptr) {
+			this->debug.Write("Alloc failed! - no free memory\r\n");
+			return UIntPtr(0);
+		}
+
+		UIntPtr address = block->address;
+
+		// Try to reserve memory
+		if (this->reserve(address, count)) {
+			return address;
+		}
+
+		// Find the next contiguous segment
+		block = block->next;
+		while (block != nullptr) {
+			UIntPtr newAddress = block->address;
+			if (newAddress != address + PageSize) {
+				break;
+			}
+		}
+	}
+
+	// TODO: Assert not reached
+	this->debug.Write("Alloc failed! - ASSERTION FAILURE\r\n");
 	return UIntPtr(0);
 }
 
