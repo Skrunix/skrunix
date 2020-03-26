@@ -171,6 +171,7 @@ UIntPtr PhysAlloc::alloc(const USize count) {
 			if (newAddress != address + PageSize) {
 				break;
 			}
+			block = block->next;
 		}
 	}
 
@@ -182,9 +183,85 @@ UIntPtr PhysAlloc::alloc(const USize count) {
 void PhysAlloc::free(const UIntPtr address, const USize count) {
 	// TODO: Assert aligned address
 
-	// TODO: Implement
-	(void)address;
-	(void)count;
+	this->debug.Write("Free ");
+	this->debug.WriteHex(count);
+	this->debug.Write(" pages at ");
+	this->debug.WriteHex(address);
+	this->debug.Write("\r\n");
+
+	// Find the block for the address
+	PageBlock* previousUsed = nullptr;
+	PageBlock* usedBlock    = this->usedBlocks;
+	while (usedBlock != nullptr) {
+		if (usedBlock->address < address) {
+			previousUsed = usedBlock;
+			usedBlock    = usedBlock->next;
+			continue;
+		}
+		if (usedBlock->address > address) {
+			usedBlock = nullptr;
+		}
+		break;
+	}
+	if (usedBlock == nullptr) {
+		// TODO: Assertion failure
+		this->debug.Write("Free failed! - ASSERTION FAILURE\r\n");
+		return;
+	}
+
+	PageBlock* startBlock = usedBlock; // Save for later
+
+	// Check if there are enough used contiguous blocks
+	UIntPtr targetAddress = address;
+	for (USize i = 1; i < count; ++i) {
+		if (usedBlock == nullptr) {
+			// TODO: Assertion failure
+			this->debug.Write("Free failed! - NOT ENOUGH USED PAGES\r\n");
+			return;
+		}
+		usedBlock = usedBlock->next;
+		targetAddress += PageAlignment;
+	}
+	if (usedBlock->address != targetAddress) {
+		// TODO: Assertion failure
+		this->debug.Write(
+		    "Free failed! - NOT ENOUGH CONTIGUOUS USED PAGES\r\n");
+		return;
+	}
+
+	PageBlock* endBlock = usedBlock;       // Save for later
+	PageBlock* nextUsed = usedBlock->next; // Save for later
+
+	// Find where to insert the block in the used list
+	PageBlock* previousFree = nullptr;
+	PageBlock* nextFree     = this->freeBlocks;
+	while (nextFree != nullptr) {
+		if (nextFree->address < address) {
+			previousFree = nextFree;
+			nextFree     = nextFree->next;
+			continue;
+		}
+		if (nextFree->address > address) {
+			break;
+		}
+	}
+
+	// Remove from used blocks
+	if (previousUsed == nullptr) {
+		this->usedBlocks = nextUsed;
+	} else {
+		previousUsed->next = nextUsed;
+	}
+	// Insert into free blocks
+	if (previousFree == nullptr) {
+		this->freeBlocks = startBlock;
+	} else {
+		previousFree->next = startBlock;
+	}
+	endBlock->next = nextFree;
+
+	// Update page count
+	this->freePageCount += count;
 }
 
 bool PhysAlloc::reserve(const UIntPtr address, const USize count) {

@@ -122,6 +122,23 @@ void main() {
 	screenDebug.WriteHex(alloc3);
 	screenDebug.Write("\r\n");
 	screenDebug.Write("\r\n");
+	
+	// Free and allocate a bigger block
+	pageAllocator.free(alloc1);
+	pageAllocator.free(alloc2, 2);
+	auto alloc4 = pageAllocator.alloc(4); // Page 5 - 8
+	auto alloc5 = pageAllocator.alloc(3); // Page 1 - 3
+	auto alloc6 = pageAllocator.alloc();  // Page 9
+	screenDebug.Write("Alloc 4: ");
+	screenDebug.WriteHex(alloc4);
+	screenDebug.Write("\r\n");
+	screenDebug.Write("Alloc 5: ");
+	screenDebug.WriteHex(alloc5);
+	screenDebug.Write("\r\n");
+	screenDebug.Write("Alloc 6: ");
+	screenDebug.WriteHex(alloc6);
+	screenDebug.Write("\r\n");
+	screenDebug.Write("\r\n");
 
 	asm volatile("int $0x0");
 	asm volatile("int $0xff");
