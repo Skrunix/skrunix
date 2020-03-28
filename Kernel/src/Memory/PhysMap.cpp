@@ -7,15 +7,27 @@ struct PageMap {
 	UIntPtr virt;
 };
 
-PhysMap::PhysMap(PhysAlloc* allocator, const UIntPtr kernelOffset,
+PhysMap::PhysMap(PhysAlloc* allocator, const UIntPtr kernelStart,
+                 const UIntPtr kernelEnd, const UIntPtr kernelOffset,
                  const Debug& debugObj)
     : debug(debugObj)
     , mapCount(0)
     , mapSize(allocator->getTotalPageCount())
     , mapStart(nullptr) {
+	// Convert to physical address since the rangeList is all physical
+	UIntPtr kernelStartVirt = AlignDown(kernelStart);
+	UIntPtr kernelStartPhys = kernelStartVirt - kernelOffset;
+	USize   kernelPageCount =
+	    (Align(kernelEnd) - kernelStartVirt).value >> PageShift;
+
 	auto pageCount = Align(this->mapSize) >> PageShift;
-	auto virtPtr   = allocator->alloc(pageCount) + kernelOffset;
+	auto physPtr   = allocator->alloc(pageCount);
+	auto virtPtr   = physPtr + kernelOffset;
 	this->mapStart = virtPtr.To<PageMap*>();
+
+	// Map pages we know are in use
+	this->map(kernelStartPhys, kernelStartVirt, kernelPageCount);
+	this->map(physPtr, virtPtr, pageCount);
 }
 
 PhysMap ::~PhysMap() {}

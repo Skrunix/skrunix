@@ -9,7 +9,9 @@ struct PageMap;
 
 class PhysMap {
   public:
-	PhysMap(PhysAlloc* allocator, UIntPtr kernelOffset, const Debug& debugObj);
+	PhysMap(PhysAlloc* allocator, const UIntPtr kernelStart,
+	        const UIntPtr kernelEnd, UIntPtr kernelOffset,
+	        const Debug& debugObj);
 	~PhysMap();
 
 	PhysMap(const PhysMap&) = delete;

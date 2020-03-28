@@ -109,49 +109,9 @@ void main() {
 	serialDebug.WriteHex(pageAllocator.getTotalPageCount());
 	serialDebug.Write("\r\n");
 
-	PhysMap pageMap(&pageAllocator, kernelOffset, serialDebug);
-
-	// Pages 0 + 1 to 8 are reserved
-	auto alloc1 = pageAllocator.alloc();  // Page 9
-	auto alloc2 = pageAllocator.alloc(2); // Page A - B
-	auto alloc3 = pageAllocator.alloc();  // Page C
-	screenDebug.Write("Alloc 1: ");
-	screenDebug.WriteHex(alloc1);
-	screenDebug.Write("\r\n");
-	screenDebug.Write("Alloc 2: ");
-	screenDebug.WriteHex(alloc2);
-	screenDebug.Write("\r\n");
-	screenDebug.Write("Alloc 3: ");
-	screenDebug.WriteHex(alloc3);
-	screenDebug.Write("\r\n");
-	screenDebug.Write("\r\n");
-
-	pageMap.map(alloc1, alloc2);
-	pageMap.map(alloc2, alloc1);
-	pageMap.map(alloc3, alloc3);
-	screenDebug.Write("Map1-2: ");
-	screenDebug.WriteHex(pageMap.Physical(alloc1)); // Alloc2
-	screenDebug.Write("\r\n");
-	screenDebug.Write("Map2-1: ");
-	screenDebug.WriteHex(pageMap.Virtual(alloc1)); // Alloc2
-	screenDebug.Write("\r\n");
-	screenDebug.Write("Map3-3: ");
-	screenDebug.WriteHex(pageMap.Physical(alloc3)); // Alloc3
-	screenDebug.Write("\r\n");
-	screenDebug.Write("\r\n");
-
-	pageMap.unmap(alloc1, alloc2);
-	pageMap.unmap(alloc2, alloc1);
-	screenDebug.Write("Map1-2: ");
-	screenDebug.WriteHex(pageMap.Physical(alloc1)); // Invalid (0)
-	screenDebug.Write("\r\n");
-	screenDebug.Write("Map2-1: ");
-	screenDebug.WriteHex(pageMap.Virtual(alloc1)); // Invalid (0)
-	screenDebug.Write("\r\n");
-	screenDebug.Write("Map3-3: ");
-	screenDebug.WriteHex(pageMap.Physical(alloc3)); // Alloc3
-	screenDebug.Write("\r\n");
-	screenDebug.Write("\r\n");
+	PhysMap pageMap(&pageAllocator, UIntPtr::From(kernelStartAddress),
+	                UIntPtr::From(kernelEndAddress), kernelOffset, serialDebug);
+	pageMap.map(0, kernelOffset);
 
 	asm volatile("int $0x0");
 	asm volatile("int $0xff");
