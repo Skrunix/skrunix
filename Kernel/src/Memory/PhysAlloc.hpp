@@ -5,6 +5,9 @@
 
 #include <Integers/Integers.hpp>
 
+#define PageShift 12
+#define PageSize 4096
+
 struct PageBlock;
 
 class PhysAlloc {

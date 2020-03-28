@@ -4,6 +4,7 @@
 #include "IDT/IDT.hpp"
 #include "IO.hpp"
 #include "Memory/PhysAlloc.hpp"
+#include "Memory/PhysMap.hpp"
 #include "PIC.hpp"
 #include "PIT.hpp"
 #include "Screen.hpp"
@@ -108,10 +109,12 @@ void main() {
 	serialDebug.WriteHex(pageAllocator.getTotalPageCount());
 	serialDebug.Write("\r\n");
 
-	// Page 0 is reserved
-	auto alloc1 = pageAllocator.alloc();  // Page 1
-	auto alloc2 = pageAllocator.alloc(2); // Page 2 - 3
-	auto alloc3 = pageAllocator.alloc();  // Page 4
+	PhysMap pageMap(&pageAllocator, kernelOffset, serialDebug);
+
+	// Pages 0 + 1 to 8 are reserved
+	auto alloc1 = pageAllocator.alloc();  // Page 9
+	auto alloc2 = pageAllocator.alloc(2); // Page A - B
+	auto alloc3 = pageAllocator.alloc();  // Page C
 	screenDebug.Write("Alloc 1: ");
 	screenDebug.WriteHex(alloc1);
 	screenDebug.Write("\r\n");
@@ -122,21 +125,31 @@ void main() {
 	screenDebug.WriteHex(alloc3);
 	screenDebug.Write("\r\n");
 	screenDebug.Write("\r\n");
-	
-	// Free and allocate a bigger block
-	pageAllocator.free(alloc1);
-	pageAllocator.free(alloc2, 2);
-	auto alloc4 = pageAllocator.alloc(4); // Page 5 - 8
-	auto alloc5 = pageAllocator.alloc(3); // Page 1 - 3
-	auto alloc6 = pageAllocator.alloc();  // Page 9
-	screenDebug.Write("Alloc 4: ");
-	screenDebug.WriteHex(alloc4);
+
+	pageMap.map(alloc1, alloc2);
+	pageMap.map(alloc2, alloc1);
+	pageMap.map(alloc3, alloc3);
+	screenDebug.Write("Map1-2: ");
+	screenDebug.WriteHex(pageMap.Physical(alloc1)); // Alloc2
 	screenDebug.Write("\r\n");
-	screenDebug.Write("Alloc 5: ");
-	screenDebug.WriteHex(alloc5);
+	screenDebug.Write("Map2-1: ");
+	screenDebug.WriteHex(pageMap.Virtual(alloc1)); // Alloc2
 	screenDebug.Write("\r\n");
-	screenDebug.Write("Alloc 6: ");
-	screenDebug.WriteHex(alloc6);
+	screenDebug.Write("Map3-3: ");
+	screenDebug.WriteHex(pageMap.Physical(alloc3)); // Alloc3
+	screenDebug.Write("\r\n");
+	screenDebug.Write("\r\n");
+
+	pageMap.unmap(alloc1, alloc2);
+	pageMap.unmap(alloc2, alloc1);
+	screenDebug.Write("Map1-2: ");
+	screenDebug.WriteHex(pageMap.Physical(alloc1)); // Invalid (0)
+	screenDebug.Write("\r\n");
+	screenDebug.Write("Map2-1: ");
+	screenDebug.WriteHex(pageMap.Virtual(alloc1)); // Invalid (0)
+	screenDebug.Write("\r\n");
+	screenDebug.Write("Map3-3: ");
+	screenDebug.WriteHex(pageMap.Physical(alloc3)); // Alloc3
 	screenDebug.Write("\r\n");
 	screenDebug.Write("\r\n");
 

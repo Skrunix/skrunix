@@ -3,9 +3,6 @@
 #include "Align.hpp"
 #include "ValueOf.hpp"
 
-#define PageSize 4096
-#define PageShift 12
-
 struct PageBlock {
 	PageBlock* next;
 	UIntPtr    address;
