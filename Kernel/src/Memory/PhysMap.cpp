@@ -12,7 +12,7 @@ PhysMap::PhysMap(PhysAlloc* allocator, const UIntPtr kernelStart,
                  const Debug& debugObj)
     : debug(debugObj)
     , mapCount(0)
-    , mapSize(allocator->getTotalPageCount())
+    , mapSize(allocator->totalPageCount)
     , mapStart(nullptr) {
 	// Convert to physical address since the rangeList is all physical
 	UIntPtr kernelStartVirt = AlignDown(kernelStart);

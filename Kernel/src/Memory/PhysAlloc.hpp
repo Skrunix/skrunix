@@ -2,37 +2,14 @@
 
 #include "AddressRange.hpp"
 #include "Debug.hpp"
+#include "PageAlloc.hpp"
 
 #include <Integers/Integers.hpp>
 
-#define PageShift 12
-#define PageSize 4096
-
-struct PageBlock;
-
-class PhysAlloc {
+class PhysAlloc : public PageAlloc {
   public:
 	PhysAlloc(AddressRange* rangeList, USize rangeListCount,
 	          UIntPtr kernelStart, UIntPtr kernelEnd, UIntPtr kernelOffset,
 	          const Debug& debugObj);
 	~PhysAlloc();
-
-	PhysAlloc(const PhysAlloc&) = delete;
-	PhysAlloc& operator=(const PhysAlloc&) = delete;
-
-	UIntPtr alloc(USize count = 1);
-	void    free(UIntPtr address, USize count = 1);
-	bool    reserve(UIntPtr address, USize count = 1);
-
-	USize getFreePageCount() const noexcept { return this->freePageCount; }
-	USize getTotalPageCount() const noexcept { return this->totalPageCount; }
-
-  private:
-	const Debug& debug;
-
-	USize freePageCount;
-	USize totalPageCount;
-
-	PageBlock* freeBlocks;
-	PageBlock* usedBlocks;
 };

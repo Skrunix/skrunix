@@ -106,7 +106,7 @@ void main() {
 	globalPIT = &pit;
 
 	serialDebug.Write("RAM Pages: ");
-	serialDebug.WriteHex(pageAllocator.getTotalPageCount());
+	serialDebug.WriteHex(pageAllocator.totalPageCount);
 	serialDebug.Write("\r\n");
 
 	PhysMap pageMap(&pageAllocator, UIntPtr::From(kernelStartAddress),
