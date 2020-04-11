@@ -35,7 +35,7 @@ UIntPtr PageAlloc::alloc(const USize count) {
 		block = block->next;
 		while (block != nullptr) {
 			UIntPtr newAddress = block->address;
-			if (newAddress != address + PageSize) {
+			if (newAddress != (address += PageSize)) {
 				break;
 			}
 			block = block->next;
