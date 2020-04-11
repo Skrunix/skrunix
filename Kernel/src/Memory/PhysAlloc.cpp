@@ -6,7 +6,7 @@
 PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
                      const UIntPtr kernelStart, const UIntPtr kernelEnd,
                      const UIntPtr kernelOffset, const Debug& debugObj)
-    : PageAlloc(debugObj) {
+    : PageAlloc("Phys", debugObj) {
 
 	// Convert to physical address since the rangeList is all physical
 	UIntPtr kernelStartPhys = AlignDown(kernelStart) - kernelOffset;

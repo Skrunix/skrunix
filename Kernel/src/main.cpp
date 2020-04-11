@@ -5,6 +5,7 @@
 #include "IO.hpp"
 #include "Memory/PhysAlloc.hpp"
 #include "Memory/PhysMap.hpp"
+#include "Memory/VirtAlloc.hpp"
 #include "PIC.hpp"
 #include "PIT.hpp"
 #include "Screen.hpp"
@@ -94,9 +95,10 @@ void main() {
 
 	USize*        rangesCount = reinterpret_cast<USize*>(0x9000);
 	AddressRange* ranges      = reinterpret_cast<AddressRange*>(0x9018);
-	PhysAlloc     pageAllocator(
-        ranges, *rangesCount, UIntPtr::From(kernelStartAddress),
-        UIntPtr::From(kernelEndAddress), kernelOffset, serialDebug);
+
+	PhysAlloc pageAllocator(
+	    ranges, *rangesCount, UIntPtr::From(kernelStartAddress),
+	    UIntPtr::From(kernelEndAddress), kernelOffset, serialDebug);
 
 	GDT gdt;
 	IDT idt(kernelOffset + pageAllocator.reserve(0, 1));
@@ -108,6 +110,11 @@ void main() {
 	serialDebug.Write("RAM Pages: ");
 	serialDebug.WriteHex(pageAllocator.totalPageCount);
 	serialDebug.Write("\r\n");
+
+	VirtAlloc virtualAllocator(
+	    pageAllocator, UIntPtr(0xFFFF800000000000),
+	    pageAllocator.totalPageCount, UIntPtr::From(kernelStartAddress),
+	    UIntPtr::From(kernelEndAddress), kernelOffset, serialDebug);
 
 	PhysMap pageMap(&pageAllocator, UIntPtr::From(kernelStartAddress),
 	                UIntPtr::From(kernelEndAddress), kernelOffset, serialDebug);

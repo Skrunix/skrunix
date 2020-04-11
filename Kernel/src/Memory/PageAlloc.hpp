@@ -14,7 +14,7 @@ struct PageBlock {
 
 class PageAlloc {
   public:
-	PageAlloc(const Debug& debugObj);
+	PageAlloc(const char* allocName, const Debug& debugObj);
 
 	PageAlloc(const PageAlloc&) = delete;
 	PageAlloc& operator=(const PageAlloc&) = delete;
@@ -23,6 +23,7 @@ class PageAlloc {
 	void    free(UIntPtr address, USize count = 1);
 	bool    reserve(UIntPtr address, USize count = 1);
 
+	const char*  name;
 	const Debug& debug;
 
 	USize freePageCount;

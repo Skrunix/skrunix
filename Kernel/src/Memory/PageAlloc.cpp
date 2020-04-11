@@ -2,8 +2,9 @@
 
 #include "Align.hpp"
 
-PageAlloc::PageAlloc(const Debug& debugObj)
-    : debug(debugObj)
+PageAlloc::PageAlloc(const char* allocName, const Debug& debugObj)
+    : name(allocName)
+    , debug(debugObj)
     , freePageCount(0)
     , totalPageCount(0)
     , freeBlocks(nullptr)
@@ -11,7 +12,8 @@ PageAlloc::PageAlloc(const Debug& debugObj)
 PageAlloc::~PageAlloc() {}
 
 UIntPtr PageAlloc::alloc(const USize count) {
-	this->debug.Write("Alloc ");
+	this->debug.Write(this->name);
+	this->debug.Write(":Alloc ");
 	this->debug.WriteHex(count);
 	this->debug.Write(" pages...\r\n");
 
@@ -48,7 +50,8 @@ UIntPtr PageAlloc::alloc(const USize count) {
 void PageAlloc::free(const UIntPtr address, const USize count) {
 	// TODO: Assert aligned address
 
-	this->debug.Write("Free ");
+	this->debug.Write(this->name);
+	this->debug.Write(":Free ");
 	this->debug.WriteHex(count);
 	this->debug.Write(" pages at ");
 	this->debug.WriteHex(address);
@@ -133,7 +136,8 @@ bool PageAlloc::reserve(const UIntPtr address, const USize count) {
 	// TODO: Assert aligned address
 	// TODO: Assert count > 0
 
-	this->debug.Write("Reserve ");
+	this->debug.Write(this->name);
+	this->debug.Write(":Reserve ");
 	this->debug.WriteHex(count);
 	this->debug.Write(" pages at ");
 	this->debug.WriteHex(address);
