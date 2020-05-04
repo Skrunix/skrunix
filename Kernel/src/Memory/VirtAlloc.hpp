@@ -9,4 +9,6 @@ class VirtAlloc : public PageAlloc {
 	          UIntPtr kernelStart, UIntPtr kernelEnd, UIntPtr kernelOffset,
 	          const Debug& debugObj);
 	~VirtAlloc();
+
+	ContiguousPages pages;
 };

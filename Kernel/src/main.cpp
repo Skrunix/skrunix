@@ -112,13 +112,26 @@ void main() {
 	serialDebug.Write("\r\n");
 
 	VirtAlloc virtualAllocator(
-	    pageAllocator, UIntPtr(0xFFFF800000000000),
-	    pageAllocator.totalPageCount, UIntPtr::From(kernelStartAddress),
-	    UIntPtr::From(kernelEndAddress), kernelOffset, serialDebug);
+	    pageAllocator, UIntPtr(kernelOffset), pageAllocator.totalPageCount,
+	    UIntPtr::From(kernelStartAddress), UIntPtr::From(kernelEndAddress),
+	    kernelOffset, serialDebug);
+	virtualAllocator.reserve(kernelOffset);
 
 	PhysMap pageMap(&pageAllocator, UIntPtr::From(kernelStartAddress),
 	                UIntPtr::From(kernelEndAddress), kernelOffset, serialDebug);
 	pageMap.map(0, kernelOffset);
+
+	auto physMem = pageAllocator.pages;
+	auto virtMem = virtualAllocator.pages;
+	auto mapMem  = pageMap.pages;
+	// TODO: Assert true
+	virtualAllocator.reserve(physMem.virt, physMem.count);
+	// TODO: Assert true
+	virtualAllocator.reserve(mapMem.virt, mapMem.count);
+	// TODO: Assert true
+	pageMap.map(physMem.phys, physMem.virt, physMem.count);
+	// TODO: Assert true
+	pageMap.map(virtMem.phys, virtMem.virt, virtMem.count);
 
 	asm volatile("int $0x0");
 	asm volatile("int $0xff");

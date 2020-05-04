@@ -23,6 +23,8 @@ class PhysMap {
 	UIntPtr Virtual(UIntPtr phys);
 	UIntPtr Physical(UIntPtr virt);
 
+	ContiguousPages pages;
+
   private:
 	const Debug& debug;
 

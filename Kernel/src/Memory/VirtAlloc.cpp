@@ -6,7 +6,8 @@ VirtAlloc::VirtAlloc(PhysAlloc& allocator, UIntPtr rangeStart,
                      USize rangePageCount, UIntPtr kernelStart,
                      UIntPtr kernelEnd, UIntPtr kernelOffset,
                      const Debug& debugObj)
-    : PageAlloc("Virt", debugObj) {
+    : PageAlloc("Virt", debugObj)
+    , pages({}) {
 	this->freePageCount  = rangePageCount;
 	this->totalPageCount = rangePageCount;
 
@@ -15,11 +16,16 @@ VirtAlloc::VirtAlloc(PhysAlloc& allocator, UIntPtr rangeStart,
 
 	// Create all PageBlocks as free pages
 	UIntPtr    bufferPhys  = allocator.alloc(requiredBufferPages);
-	PageBlock* blockBuffer = (bufferPhys + kernelOffset).To<PageBlock*>();
+	UIntPtr    bufferVirt  = bufferPhys + kernelOffset;
+	PageBlock* blockBuffer = bufferVirt.To<PageBlock*>();
 	USize      index       = USize::Max;
 
+	this->pages.phys  = bufferPhys;
+	this->pages.virt  = bufferVirt;
+	this->pages.count = requiredBufferPages;
+
 	UIntPtr start = Align(rangeStart);
-	UIntPtr end   = AlignDown(rangeStart + rangePageCount);
+	UIntPtr end   = AlignDown(rangeStart + (rangePageCount << PageShift));
 	for (; start != end; start += PageAlignment) {
 		++index;
 		blockBuffer[index.value].address = start;
@@ -38,7 +44,7 @@ VirtAlloc::VirtAlloc(PhysAlloc& allocator, UIntPtr rangeStart,
 	// TODO: Assert true
 	this->reserve(kernelStartVirt, kernelPageCount);
 	// TODO: Assert true
-	this->reserve(kernelStartVirt, kernelPageCount);
+	this->reserve(bufferVirt, requiredBufferPages);
 }
 
 VirtAlloc::~VirtAlloc() {}

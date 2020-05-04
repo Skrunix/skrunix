@@ -10,7 +10,8 @@ struct PageMap {
 PhysMap::PhysMap(PhysAlloc* allocator, const UIntPtr kernelStart,
                  const UIntPtr kernelEnd, const UIntPtr kernelOffset,
                  const Debug& debugObj)
-    : debug(debugObj)
+    : pages({})
+    , debug(debugObj)
     , mapCount(0)
     , mapSize(allocator->totalPageCount)
     , mapStart(nullptr) {
@@ -24,6 +25,10 @@ PhysMap::PhysMap(PhysAlloc* allocator, const UIntPtr kernelStart,
 	auto physPtr   = allocator->alloc(pageCount);
 	auto virtPtr   = physPtr + kernelOffset;
 	this->mapStart = virtPtr.To<PageMap*>();
+
+	this->pages.phys  = physPtr;
+	this->pages.virt  = virtPtr;
+	this->pages.count = pageCount;
 
 	// Map pages we know are in use
 	this->map(kernelStartPhys, kernelStartVirt, kernelPageCount);

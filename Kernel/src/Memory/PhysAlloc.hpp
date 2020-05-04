@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AddressRange.hpp"
+#include "ContiguousPages.hpp"
 #include "Debug.hpp"
 #include "PageAlloc.hpp"
 
@@ -12,4 +13,6 @@ class PhysAlloc : public PageAlloc {
 	          UIntPtr kernelStart, UIntPtr kernelEnd, UIntPtr kernelOffset,
 	          const Debug& debugObj);
 	~PhysAlloc();
+
+	ContiguousPages pages;
 };

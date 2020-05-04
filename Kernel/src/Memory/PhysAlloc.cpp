@@ -6,7 +6,8 @@
 PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
                      const UIntPtr kernelStart, const UIntPtr kernelEnd,
                      const UIntPtr kernelOffset, const Debug& debugObj)
-    : PageAlloc("Phys", debugObj) {
+    : PageAlloc("Phys", debugObj)
+    , pages({}) {
 
 	// Convert to physical address since the rangeList is all physical
 	UIntPtr kernelStartPhys = AlignDown(kernelStart) - kernelOffset;
@@ -59,6 +60,7 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 	// Find a segment of RAM large enough to store all PageBlocks
 	bool   foundBufferLocation = false;
 	USize  requiredBufferSize  = this->totalPageCount * sizeof(PageBlock);
+	USize  requiredBufferPages = requiredBufferSize >> PageShift;
 	UInt64 allocPage           = freePage.value >> PageShift;
 	for (USize i = 0; i < rangeListCount; ++i) {
 		AddressRange range = rangeList[i.value];
@@ -72,7 +74,7 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 
 		// Check if the range contains allocAddress
 		if (startPage <= allocPage && endPage > allocPage) {
-			if (((endPage - allocPage) << PageShift) >= requiredBufferSize) {
+			if ((endPage - allocPage) >= requiredBufferPages) {
 				// We can fit the data after the kernel
 				foundBufferLocation = true;
 				break;
@@ -81,7 +83,7 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 		}
 
 		// We are checking some other range than where the kernel is loaded
-		if (((endPage - startPage) << PageShift) >= requiredBufferSize) {
+		if ((endPage - startPage) >= requiredBufferPages) {
 			freePage            = startPage << PageShift;
 			foundBufferLocation = true;
 			break;
@@ -99,7 +101,10 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 	this->debug.Write("\r\n");
 
 	// Convert back to virtual address
+	this->pages.phys = freePage;
 	freePage += kernelOffset;
+	this->pages.virt  = freePage;
+	this->pages.count = requiredBufferPages;
 
 	// Create all PageBlocks as free pages
 	PageBlock* blockBuffer = freePage.To<PageBlock*>();
