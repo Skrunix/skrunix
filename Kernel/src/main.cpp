@@ -1,4 +1,5 @@
 #include "Align.hpp"
+#include "CPU.hpp"
 #include "Debug.hpp"
 #include "GDT/GDT.hpp"
 #include "IDT/IDT.hpp"
@@ -132,6 +133,16 @@ void main() {
 	pageMap.map(physMem.phys, physMem.virt, physMem.count);
 	// TODO: Assert true
 	pageMap.map(virtMem.phys, virtMem.virt, virtMem.count);
+
+	serial.Write("CR3: ");
+	serial.WriteHex(CPU::GetCR3());
+	serial.Write("\r\n");
+
+	// TODO: Change CR3
+
+	serial.Write("CR3: ");
+	serial.WriteHex(CPU::GetCR3());
+	serial.Write("\r\n");
 
 	asm volatile("int $0x0");
 	asm volatile("int $0xff");
