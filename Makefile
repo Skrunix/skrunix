@@ -24,6 +24,7 @@ $(DISK): Bootloader/bin/stage1.bin Bootloader/bin/stage2.bin Kernel/bin/kernel.b
 
 ## Run
 # -S -s -D log -d int --no-reboot -no-shutdown
+# -m 2G -cpu Broadwell
 
 .PHONY: run
 run: $(DISK) qemu-bios/bin/a20on.bin
