@@ -4,6 +4,7 @@
 #include "GDT/GDT.hpp"
 #include "IDT/IDT.hpp"
 #include "IO.hpp"
+#include "Memory/PageTable.hpp"
 #include "Memory/PhysAlloc.hpp"
 #include "Memory/PhysMap.hpp"
 #include "Memory/VirtAlloc.hpp"
@@ -42,12 +43,14 @@ void main() {
 
 	Serial serial;
 	globalSerial = &serial;
-	Screen screen;
+	Screen screen(reinterpret_cast<UInt8*>(0xB8000));
 	globalScreen = &screen;
 
 	Debug nullDebug(nullWrite);
 	Debug serialDebug(serialWrite);
 	Debug screenDebug(screenWrite);
+
+	PageTable::PageTableEntryTest(serialDebug);
 
 	serial.Write("Skrunix\r\n");
 	serial.Write("Text size: ");
@@ -101,6 +104,16 @@ void main() {
 	    ranges, *rangesCount, UIntPtr::From(kernelStartAddress),
 	    UIntPtr::From(kernelEndAddress), kernelOffset, serialDebug);
 
+	// Reserve Page Table
+	pageAllocator.reserve(0xA000, 1);
+	pageAllocator.reserve(0xB000, 1);
+	pageAllocator.reserve(0xC000, 1);
+	pageAllocator.reserve(0xD000, 1);
+	pageAllocator.reserve(0xE000, 1);
+	pageAllocator.reserve(0xF000, 1);
+	// Reserve Screen
+	pageAllocator.reserve(0xB8000, 1);
+
 	GDT gdt;
 	IDT idt(kernelOffset + pageAllocator.reserve(0, 1));
 	PIC pic;
@@ -116,7 +129,17 @@ void main() {
 	    pageAllocator, UIntPtr(kernelOffset), pageAllocator.totalPageCount,
 	    UIntPtr::From(kernelStartAddress), UIntPtr::From(kernelEndAddress),
 	    kernelOffset, serialDebug);
+
 	virtualAllocator.reserve(kernelOffset);
+	// Reserve Page Table
+	virtualAllocator.reserve(0xFFFF80000000A000, 1);
+	virtualAllocator.reserve(0xFFFF80000000B000, 1);
+	virtualAllocator.reserve(0xFFFF80000000C000, 1);
+	virtualAllocator.reserve(0xFFFF80000000D000, 1);
+	virtualAllocator.reserve(0xFFFF80000000E000, 1);
+	virtualAllocator.reserve(0xFFFF80000000F000, 1);
+	// Reserve Screen
+	pageAllocator.reserve(0xFFFF8000000B8000, 1);
 
 	PhysMap pageMap(&pageAllocator, UIntPtr::From(kernelStartAddress),
 	                UIntPtr::From(kernelEndAddress), kernelOffset, serialDebug);
@@ -133,13 +156,26 @@ void main() {
 	pageMap.map(physMem.phys, physMem.virt, physMem.count);
 	// TODO: Assert true
 	pageMap.map(virtMem.phys, virtMem.virt, virtMem.count);
+	// TODO: Assert true
+	pageMap.map(0xB8000, 0xFFFF8000000B8000, 1);
+
+	PageTable pageTable(pageAllocator, virtualAllocator, pageMap,
+	                    UIntPtr::From(kernelStartAddress),
+	                    UIntPtr::From(kernelEndAddress), kernelOffset,
+	                    serialDebug);
+	pageTable.initMap(physMem.phys, physMem.virt, physMem.count);
+	pageTable.initMap(virtMem.phys, virtMem.virt, virtMem.count);
+	pageTable.initMap(mapMem.phys, mapMem.virt, mapMem.count);
+	pageTable.initMap(0, 0xFFFF800000000000, 1);       // IDT
+	pageTable.initMap(0xE000, 0xFFFF80000000E000, 2);  // Stack
+	pageTable.initMap(0xB8000, 0xFFFF8000000B8000, 1); // Screen
+
+	screen.rebase(reinterpret_cast<UInt8*>(0xFFFF8000000B8000));
 
 	serial.Write("CR3: ");
 	serial.WriteHex(CPU::GetCR3());
 	serial.Write("\r\n");
-
-	// TODO: Change CR3
-
+	pageTable.activate();
 	serial.Write("CR3: ");
 	serial.WriteHex(CPU::GetCR3());
 	serial.Write("\r\n");

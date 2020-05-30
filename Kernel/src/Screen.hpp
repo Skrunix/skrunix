@@ -4,8 +4,13 @@
 
 class Screen {
   public:
-	Screen();
+	Screen(UInt8* base);
+	Screen(const Screen&) = delete;
 	~Screen();
+
+	Screen& operator=(const Screen&) = delete;
+
+	void rebase(UInt8* base);
 
 	void Clear();
 	void ScrollUp();
@@ -42,6 +47,8 @@ class Screen {
 	void setBackground(Color);
 
   private:
+	UInt8* basePointer;
+
 	UInt16 x;
 	UInt16 y;
 

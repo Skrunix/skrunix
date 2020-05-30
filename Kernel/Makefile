@@ -58,7 +58,6 @@ CPPFLAGS := \
 	-Winline \
 	-Winvalid-pch \
 	-Wunsafe-loop-optimizations \
-	-Wlong-long \
 	-Wmaybe-uninitialized \
 	-Wmissing-braces \
 	-Wmissing-field-initializers \

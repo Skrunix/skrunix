@@ -32,8 +32,9 @@ struct [[gnu::packed]] UIntPtr {
 	}
 
 	template <typename T>
-	const_inline std::enable_if_t<std::is_pointer_v<T>, T> To() const noexcept {
-		return reinterpret_cast<T>(this->value);
+	const_inline std::enable_if_t<std::is_pointer_v<T>, T> To(USize offset = 0)
+	    const noexcept {
+		return reinterpret_cast<T>(this->value) + offset.value;
 	}
 
 	// Int conversion

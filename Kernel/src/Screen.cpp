@@ -3,10 +3,9 @@
 #include "IO.hpp"
 #include "ValueOf.hpp"
 
-UInt8* const BasePointer = reinterpret_cast<UInt8*>(0xB8000);
-
-Screen::Screen()
-    : x(0)
+Screen::Screen(UInt8* base)
+    : basePointer(base)
+    , x(0)
     , y(0)
     , maxX(80)
     , maxY(25)
@@ -14,11 +13,13 @@ Screen::Screen()
     , background(Color::Black) {}
 Screen::~Screen() {}
 
+void Screen::rebase(UInt8* base) { this->basePointer = base; }
+
 void Screen::Clear() {
 	this->SetForeground(Color::LightGray);
 	this->setBackground(Color::Black);
 
-	auto memory = reinterpret_cast<UInt16*>(BasePointer);
+	auto memory = reinterpret_cast<UInt16*>(this->basePointer);
 	auto offset = this->maxX * this->maxY;
 
 	UInt16 data = (ValueOf(this->background).value << 12) |
@@ -31,9 +32,10 @@ void Screen::Clear() {
 }
 
 void Screen::ScrollUp() {
-	auto toMem   = reinterpret_cast<UInt16*>(BasePointer);
-	auto fromMem = reinterpret_cast<UInt16*>(BasePointer) + this->maxX.value;
-	auto offset  = this->maxX * (this->maxY - 1);
+	auto toMem = reinterpret_cast<UInt16*>(this->basePointer);
+	auto fromMem =
+	    reinterpret_cast<UInt16*>(this->basePointer) + this->maxX.value;
+	auto offset = this->maxX * (this->maxY - 1);
 
 	for (UInt16 i = 0; i < offset; ++i) {
 		*(toMem++) = *(fromMem++);
@@ -103,7 +105,7 @@ void Screen::WriteRaw(char character) {
 	}
 
 	auto offset = this->y * this->maxX + this->x;
-	auto memory = BasePointer + 2 * offset.value;
+	auto memory = this->basePointer + 2 * offset.value;
 
 	*(memory + 0) = character;
 	*(memory + 1) =

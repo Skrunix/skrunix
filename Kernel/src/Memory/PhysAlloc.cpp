@@ -104,7 +104,7 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 	this->pages.phys = freePage;
 	freePage += kernelOffset;
 	this->pages.virt  = freePage;
-	this->pages.count = requiredBufferPages;
+	this->pages.count = Align(requiredBufferSize) >> PageShift;
 
 	// Create all PageBlocks as free pages
 	PageBlock* blockBuffer = freePage.To<PageBlock*>();
