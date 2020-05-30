@@ -6,6 +6,7 @@ AlwaysBreakTemplateDeclarations: Yes
 BreakConstructorInitializers: BeforeComma
 DerivePointerAlignment: false
 IncludeBlocks: Regroup
+IndentCaseLabels: true
 IndentWidth: 4
 PointerAlignment: Left
 SortIncludes: true
