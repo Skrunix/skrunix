@@ -14,8 +14,8 @@ endif
 
 
 SENTINELS :=
-BINUTILS := binutils-2.33.1
-GCC := gcc-9.2.0
+BINUTILS := binutils-2.34
+GCC := gcc-10.1.0
 
 .PHONY: all
 all:
