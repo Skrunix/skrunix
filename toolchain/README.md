@@ -9,10 +9,10 @@
 
 ###### Ubuntu
 - `apt-get -qq update`
-- `apt-get -qq --no-install-recommends install wget ca-certificates build-essential`
+- `apt-get -qq --no-install-recommends install wget ca-certificates build-essential texinfo`
 
 ## Docker
 
 Might require more ram
 
-- ``docker run --volume `pwd`:/Skrunix/toolchain -w/Skrunix/toolchain -it ubuntu:18.04 bash``
+- ``docker run --volume `pwd`:/Skrunix/toolchain -w/Skrunix/toolchain -it ubuntu:20.04 bash``

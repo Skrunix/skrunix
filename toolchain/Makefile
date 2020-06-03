@@ -63,19 +63,9 @@ SENTINELS += .gcc-native.sentinel
 	$(MAKE) TARGET=$(MACHINE) .gcc
 	@touch $@
 
-SENTINELS += .binutils-i386-elf.sentinel
-.binutils-i386-elf.sentinel: .gcc-native.sentinel
-	$(MAKE) TARGET=i386-elf .binutils
-	@touch $@
-
 SENTINELS += .binutils-x86_64-elf.sentinel
 .binutils-x86_64-elf.sentinel: .gcc-native.sentinel
 	$(MAKE) TARGET=x86_64-elf .binutils
-	@touch $@
-
-SENTINELS += .gcc-i386-elf.sentinel
-.gcc-i386-elf.sentinel: .binutils-i386-elf.sentinel
-	$(MAKE) TARGET=i386-elf .gcc
 	@touch $@
 
 SENTINELS += .gcc-x86_64-elf.sentinel
