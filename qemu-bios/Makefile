@@ -1,6 +1,6 @@
 # Toolchain location
 TOOLCHAIN_PATH := $(abspath $(dir $(abspath $(firstword $(MAKEFILE_LIST))))/../toolchain)
-TOOLCHAIN_ROOT := $(TOOLCHAIN_PATH)/root
+TOOLCHAIN_ROOT := $(TOOLCHAIN_PATH)/root/x86_64-elf
 TOOLCHAIN_BIN  := $(TOOLCHAIN_ROOT)/bin
 
 export PATH := $(TOOLCHAIN_BIN):$(PATH)
@@ -34,15 +34,15 @@ $(SEABIOS): $(SEABIOS).tar.gz
 
 .NOTPARALLEL: .build/a20on/bios.bin
 .build/a20on/bios.bin: $(SEABIOS)
-	$(MAKE) -C $(SEABIOS) CROSS_PREFIX=i386-elf- defconfig
+	$(MAKE) -C $(SEABIOS) CROSS_PREFIX=x86_64-elf- defconfig
 	cd $(SEABIOS) && ./scripts/kconfig/merge_config.sh -m .config ../configs/a20on
-	$(MAKE) -C $(SEABIOS) CROSS_PREFIX=i386-elf- EXTRAVERSION="-skrunix-a20on" OUT=../.build/a20on/
+	$(MAKE) -C $(SEABIOS) CROSS_PREFIX=x86_64-elf- EXTRAVERSION="-skrunix-a20on" OUT=../.build/a20on/
 
 .NOTPARALLEL: .build/a20off/bios.bin
 .build/a20off/bios.bin: $(SEABIOS)
-	$(MAKE) -C $(SEABIOS) CROSS_PREFIX=i386-elf- defconfig
+	$(MAKE) -C $(SEABIOS) CROSS_PREFIX=x86_64-elf- defconfig
 	cd $(SEABIOS) && ./scripts/kconfig/merge_config.sh -m .config ../configs/a20off
-	$(MAKE) -C $(SEABIOS) CROSS_PREFIX=i386-elf- EXTRAVERSION="-skrunix-a20off" OUT=../.build/a20off/
+	$(MAKE) -C $(SEABIOS) CROSS_PREFIX=x86_64-elf- EXTRAVERSION="-skrunix-a20off" OUT=../.build/a20off/
 
 
 ## Copy

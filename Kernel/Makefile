@@ -2,7 +2,7 @@
 
 # Toolchain location
 TOOLCHAIN_PATH := $(abspath $(dir $(abspath $(firstword $(MAKEFILE_LIST))))/../toolchain)
-TOOLCHAIN_ROOT := $(TOOLCHAIN_PATH)/root
+TOOLCHAIN_ROOT := $(TOOLCHAIN_PATH)/root/x86_64-elf
 TOOLCHAIN_BIN  := $(TOOLCHAIN_ROOT)/bin
 
 export PATH := $(TOOLCHAIN_BIN):$(PATH)
@@ -16,7 +16,7 @@ LD := x86_64-elf-gcc
 ASFLAGS := \
 	--fatal-warnings
 CFLAGS := \
-	-std=c11 \
+	-std=c18 \
 	-nostdinc \
 	-ffreestanding \
 	-O2 \
@@ -29,7 +29,7 @@ CFLAGS := \
 	-mno-sse \
 	-mno-sse2
 CPPFLAGS := \
-	-std=c++17 \
+	-std=c++20 \
 	-nostdinc \
 	-iquote src \
 	-isystem ../Libraries/ \

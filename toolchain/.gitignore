@@ -1,5 +1,3 @@
-.build
-gcc-*
-binutils-*
-*.sentinel
+.build*
 root*
+sources*

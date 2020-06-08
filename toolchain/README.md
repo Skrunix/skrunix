@@ -1,5 +1,9 @@
 # Skrunix toolchain
 
+```
+MAKEFLAGS=-j12 ./build.sh
+```
+
 ## Requirements
 
 ###### macOS

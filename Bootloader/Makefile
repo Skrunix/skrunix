@@ -2,7 +2,7 @@
 
 # Toolchain location
 TOOLCHAIN_PATH := $(abspath $(dir $(abspath $(firstword $(MAKEFILE_LIST))))/../toolchain)
-TOOLCHAIN_ROOT := $(TOOLCHAIN_PATH)/root
+TOOLCHAIN_ROOT := $(TOOLCHAIN_PATH)/root/x86_64-elf
 TOOLCHAIN_BIN  := $(TOOLCHAIN_ROOT)/bin
 
 export PATH := $(TOOLCHAIN_BIN):$(PATH)
