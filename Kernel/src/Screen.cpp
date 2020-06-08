@@ -7,6 +7,7 @@ Screen::Screen(UInt8* base)
     : basePointer(base)
     , x(0)
     , y(0)
+    , moveCursor(true)
     , maxX(80)
     , maxY(25)
     , foreground(Color::LightGray)
@@ -124,6 +125,16 @@ void Screen::WriteRaw(const char* string) {
 void Screen::SetForeground(Color color) { this->foreground = color; }
 void Screen::setBackground(Color color) { this->background = color; }
 
+UInt16 Screen::getX() { return this->x; }
+
+UInt16 Screen::getY() { return this->y; }
+
+void Screen::SetXY(UInt16 newX, UInt16 newY, bool newMoveCursor) {
+	this->x          = newX;
+	this->y          = newY;
+	this->moveCursor = newMoveCursor;
+}
+
 void Screen::IncrementY() {
 	++this->y;
 	if (this->y >= this->maxY) {
@@ -139,6 +150,9 @@ void Screen::MoveCursor(UInt16 newX, UInt16 newY) {
 }
 
 void Screen::UpdateCursor() {
+	if (this->moveCursor == false) {
+		return;
+	}
 	auto offset = this->y * this->maxX + this->x;
 
 	// Write cursor position

@@ -46,11 +46,16 @@ class Screen {
 	void SetForeground(Color);
 	void setBackground(Color);
 
+	UInt16 getX();
+	UInt16 getY();
+	void   SetXY(UInt16 newX, UInt16 newY, bool newMoveCursor);
+
   private:
 	UInt8* basePointer;
 
 	UInt16 x;
 	UInt16 y;
+	bool   moveCursor;
 
 	UInt16 maxX;
 	UInt16 maxY;

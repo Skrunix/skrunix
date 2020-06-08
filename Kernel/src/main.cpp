@@ -182,6 +182,9 @@ void main() {
 
 	asm volatile("int $0x0");
 	asm volatile("int $0xff");
+
+	screen.Write("\r\n");
+
 	asm volatile("sti");
 
 	while (1)
@@ -196,8 +199,15 @@ typedef struct {
 UInt64 timerCount = 0;
 
 void timerHandler(IRQRegisters) {
+	UInt16 x = globalScreen->getX();
+	UInt16 y = globalScreen->getY();
+
+	globalScreen->SetXY(0, 1, false);
 	globalScreen->Write("\r");
 	globalScreen->WriteHex(UIntPtr((++timerCount).value));
+
+	globalScreen->SetXY(x, y, true);
+
 	PIC::EOI1();
 }
 
