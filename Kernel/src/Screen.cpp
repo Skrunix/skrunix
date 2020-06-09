@@ -129,7 +129,7 @@ UInt16 Screen::getX() { return this->x; }
 
 UInt16 Screen::getY() { return this->y; }
 
-void Screen::SetXY(UInt16 newX, UInt16 newY, bool newMoveCursor) {
+void Screen::SetXY(UInt16 newX, UInt16 newY, Bool newMoveCursor) {
 	this->x          = newX;
 	this->y          = newY;
 	this->moveCursor = newMoveCursor;

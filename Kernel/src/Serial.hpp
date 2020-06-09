@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Boolean/Boolean.hpp>
 #include <Integers/Integers.hpp>
 
 class Serial {
@@ -15,5 +16,5 @@ class Serial {
 	void WriteHex(UIntPtr);
 
   private:
-	bool CanWrite();
+	Bool CanWrite();
 };

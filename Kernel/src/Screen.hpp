@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Boolean/Boolean.hpp>
 #include <Integers/Integers.hpp>
 
 class Screen {
@@ -48,14 +49,14 @@ class Screen {
 
 	UInt16 getX();
 	UInt16 getY();
-	void   SetXY(UInt16 newX, UInt16 newY, bool newMoveCursor);
+	void   SetXY(UInt16 newX, UInt16 newY, Bool newMoveCursor);
 
   private:
 	UInt8* basePointer;
 
 	UInt16 x;
 	UInt16 y;
-	bool   moveCursor;
+	Bool   moveCursor;
 
 	UInt16 maxX;
 	UInt16 maxY;

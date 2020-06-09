@@ -14,6 +14,8 @@
 #include "Serial.hpp"
 #include "ValueOf.hpp"
 
+#include <Boolean/Boolean.hpp>
+
 extern "C" {
 [[noreturn]] void main();
 }
@@ -114,8 +116,9 @@ void main() {
 	// Reserve Screen
 	pageAllocator.reserve(0xB8000, 1);
 
+	pageAllocator.reserve(0, 1);
 	GDT gdt;
-	IDT idt(kernelOffset + pageAllocator.reserve(0, 1));
+	IDT idt(kernelOffset);
 	PIC pic;
 	PIT pit(0x20);
 
@@ -240,7 +243,7 @@ char QWERTY[256] = {
     'B',  'N',  'M',  '<',  '>',  '?',  '\0', '\0',
     '\0', ' ',  '\0', '\0', '\0', '\0', '\0', '\0',
 };
-bool shift = false;
+Bool shift = false;
 
 UInt16 NOTES[10] = {261, 294, 330, 349, 392, 440, 493, 523, 587, 659};
 

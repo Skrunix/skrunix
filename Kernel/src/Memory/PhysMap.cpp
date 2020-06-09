@@ -68,7 +68,7 @@ void PhysMap::unmap(UIntPtr phys, UIntPtr virt, const USize count) {
 	this->debug.WriteHex(virt);
 	this->debug.Write("\r\n");
 	for (USize i = 0; i < count; ++i) {
-		bool found = false;
+		Bool found = false;
 		for (USize j = 0; j < this->mapCount; ++j) {
 			if (this->mapStart[j.value].phys != phys) {
 				continue;

@@ -2,6 +2,7 @@
 
 #include "Debug.hpp"
 
+#include <Boolean/Boolean.hpp>
 #include <Integers/Integers.hpp>
 
 #define PageShift 12
@@ -21,7 +22,7 @@ class PageAlloc {
 
 	UIntPtr alloc(USize count = 1);
 	void    free(UIntPtr address, USize count = 1);
-	bool    reserve(UIntPtr address, USize count = 1);
+	Bool    reserve(UIntPtr address, USize count = 1);
 
 	const char*  name;
 	const Debug& debug;

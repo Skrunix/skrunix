@@ -58,7 +58,7 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 	this->debug.Write("\r\n");
 
 	// Find a segment of RAM large enough to store all PageBlocks
-	bool   foundBufferLocation = false;
+	Bool   foundBufferLocation = false;
 	USize  requiredBufferSize  = this->totalPageCount * sizeof(PageBlock);
 	USize  requiredBufferPages = requiredBufferSize >> PageShift;
 	UInt64 allocPage           = freePage.value >> PageShift;

@@ -132,7 +132,7 @@ void PageAlloc::free(const UIntPtr address, const USize count) {
 	this->freePageCount += count;
 }
 
-bool PageAlloc::reserve(const UIntPtr address, const USize count) {
+Bool PageAlloc::reserve(const UIntPtr address, const USize count) {
 	// TODO: Assert aligned address
 	// TODO: Assert count > 0
 

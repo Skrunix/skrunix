@@ -56,4 +56,4 @@ void Serial::WriteHex(UIntPtr value) {
 	this->Write(lookup[value.value & 0xF]);
 }
 
-bool Serial::CanWrite() { return (IO::in(COM1 + 5) & 0x20) != 0; }
+Bool Serial::CanWrite() { return (IO::in(COM1 + 5) & 0x20) != 0; }
