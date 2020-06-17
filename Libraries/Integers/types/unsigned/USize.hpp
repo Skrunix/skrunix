@@ -1,11 +1,11 @@
 #pragma once
 
-#include <stdint.h>
+#include <stddef.h>
 
 struct [[gnu::packed]] USize {
 	using BackingType = size_t;
 
-	constexpr static BackingType Min = SIZE_MIN;
+	constexpr static BackingType Min = 0;
 	constexpr static BackingType Max = SIZE_MAX;
 
 	constexpr static int BitWidth = 64ull;

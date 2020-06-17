@@ -7,7 +7,7 @@
 struct [[gnu::packed]] UInt64 {
 	using BackingType = uint64_t;
 
-	constexpr static BackingType Min = UINT64_MIN;
+	constexpr static BackingType Min = 0;
 	constexpr static BackingType Max = UINT64_MAX;
 
 	constexpr static int         BitWidth = 64ull;

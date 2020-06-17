@@ -8,7 +8,7 @@
 struct [[gnu::packed]] UIntPtr {
 	using BackingType = uintptr_t;
 
-	constexpr static BackingType Min = UINTPTR_MIN;
+	constexpr static BackingType Min = 0;
 	constexpr static BackingType Max = UINTPTR_MAX;
 
 	constexpr static int BitWidth = 64ull;

@@ -17,7 +17,6 @@ ASFLAGS := \
 	--fatal-warnings
 CFLAGS := \
 	-std=c18 \
-	-nostdinc \
 	-ffreestanding \
 	-O2 \
 	-Wall \
@@ -30,7 +29,6 @@ CFLAGS := \
 	-mno-sse2
 CPPFLAGS := \
 	-std=c++20 \
-	-nostdinc \
 	-iquote src \
 	-isystem ../Libraries/ \
 	-isystem ../Libraries/KLibC \

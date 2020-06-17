@@ -6,7 +6,7 @@
 struct [[gnu::packed]] UInt32 {
 	using BackingType = uint32_t;
 
-	constexpr static BackingType Min = UINT32_MIN;
+	constexpr static BackingType Min = 0;
 	constexpr static BackingType Max = UINT32_MAX;
 
 	constexpr static int         BitWidth = 32ul;

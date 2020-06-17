@@ -5,7 +5,7 @@
 struct [[gnu::packed]] UInt8 {
 	using BackingType = uint8_t;
 
-	constexpr static BackingType Min = UINT8_MIN;
+	constexpr static BackingType Min = 0;
 	constexpr static BackingType Max = UINT8_MAX;
 
 	constexpr static int         BitWidth = 8u;

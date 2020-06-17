@@ -6,7 +6,7 @@
 struct [[gnu::packed]] UInt16 {
 	using BackingType = uint16_t;
 
-	constexpr static BackingType Min = UINT16_MIN;
+	constexpr static BackingType Min = 0;
 	constexpr static BackingType Max = UINT16_MAX;
 
 	constexpr static int         BitWidth = 16u;
