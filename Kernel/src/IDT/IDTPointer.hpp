@@ -4,7 +4,7 @@
 
 #include <Integers/Integers.hpp>
 
-struct [[gnu::packed]] IDTPointer {
+struct [[gnu::packed]] alignas(2) IDTPointer {
 	const UInt16    limit;
 	const IDTEntry* offset;
 

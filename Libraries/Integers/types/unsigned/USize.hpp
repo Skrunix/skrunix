@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-struct [[gnu::packed]] USize {
+struct [[gnu::packed]] alignas(alignof(size_t)) USize {
 	using BackingType = size_t;
 
 	constexpr static BackingType Min = 0;
@@ -133,4 +133,5 @@ struct [[gnu::packed]] USize {
 	const_inline USize operator++(int) noexcept { return this->value++; }
 	const_inline USize operator--(int) noexcept { return this->value--; }
 };
-static_assert(sizeof(USize) == 8);
+static_assert(sizeof(USize) == sizeof(size_t));
+static_assert(alignof(USize) == alignof(size_t));

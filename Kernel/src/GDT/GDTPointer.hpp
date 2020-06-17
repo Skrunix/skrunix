@@ -4,7 +4,7 @@
 
 #include <Integers/Integers.hpp>
 
-struct [[gnu::packed]] GDTPointer {
+struct [[gnu::packed]] alignas(2) GDTPointer {
 	const UInt16    limit;
 	const GDTEntry* base;
 

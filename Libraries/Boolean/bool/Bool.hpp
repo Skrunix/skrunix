@@ -1,26 +1,26 @@
 #pragma once
 
-struct Bool {
+struct [[gnu::packed]] alignas(alignof(bool)) Bool {
 	Bool()    = delete;
 	Bool(int) = delete;
 
 	[[gnu::always_inline]] inline constexpr Bool(bool value) noexcept
 	    : value(value){};
 
-	[[gnu::always_inline]] inline constexpr Bool&
-	operator=(bool value) noexcept {
+	[[gnu::always_inline]] inline constexpr Bool& operator=(
+	    bool value) noexcept {
 		this->value = value;
 		return *this;
 	}
 
-	[[gnu::always_inline]] inline constexpr Bool&
-	operator=(const Bool& other) noexcept {
+	[[gnu::always_inline]] inline constexpr Bool& operator=(
+	    const Bool& other) noexcept {
 		this->value = other.value;
 		return *this;
 	}
 
-	[[gnu::always_inline]] inline constexpr explicit
-	operator bool() const noexcept {
+	[[gnu::always_inline]] inline constexpr explicit operator bool()
+	    const noexcept {
 		return this->value;
 	}
 

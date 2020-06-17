@@ -4,7 +4,7 @@
 #include <Integers/types/unsigned/USize.hpp>
 #include <stdint.h>
 
-struct [[gnu::packed]] UInt64 {
+struct [[gnu::packed]] alignas(alignof(uint64_t)) UInt64 {
 	using BackingType = uint64_t;
 
 	constexpr static BackingType Min = 0;
@@ -145,4 +145,5 @@ struct [[gnu::packed]] UInt64 {
 	const_inline UInt64 operator++(int) noexcept { return this->value++; }
 	const_inline UInt64 operator--(int) noexcept { return this->value--; }
 };
-static_assert(sizeof(UInt64) == 8);
+static_assert(sizeof(UInt64) == sizeof(uint64_t));
+static_assert(alignof(UInt64) == alignof(uint64_t));

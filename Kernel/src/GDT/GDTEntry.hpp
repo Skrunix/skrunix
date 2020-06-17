@@ -2,7 +2,7 @@
 
 #include <Integers/Integers.hpp>
 
-struct [[gnu::packed]] GDTEntry {
+struct alignas(8) GDTEntry {
 	UInt16 limitLow; // Limit 0:15
 	UInt16 baseLow;  // Base 0:15
 	UInt8  baseMid;  // Base 16:23
@@ -19,3 +19,4 @@ struct [[gnu::packed]] GDTEntry {
 	    , baseHigh() {}
 };
 static_assert(sizeof(GDTEntry) == 8);
+static_assert(alignof(GDTEntry) == 8);

@@ -3,7 +3,7 @@
 #include <Integers/types/unsigned/UInt32.hpp>
 #include <stdint.h>
 
-struct [[gnu::packed]] UInt {
+struct [[gnu::packed]] alignas(alignof(uintmax_t)) UInt {
 	using BackingType = uintmax_t;
 
 	constexpr static BackingType Min = 0;
@@ -140,4 +140,5 @@ struct [[gnu::packed]] UInt {
 	const_inline UInt operator++(int) noexcept { return this->value++; }
 	const_inline UInt operator--(int) noexcept { return this->value--; }
 };
-static_assert(sizeof(UInt) == 8);
+static_assert(sizeof(UInt) == sizeof(uintmax_t));
+static_assert(alignof(UInt) == alignof(uintmax_t));

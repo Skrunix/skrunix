@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-struct [[gnu::packed]] UInt8 {
+struct [[gnu::packed]] alignas(alignof(uint8_t)) UInt8 {
 	using BackingType = uint8_t;
 
 	constexpr static BackingType Min = 0;
@@ -139,4 +139,5 @@ struct [[gnu::packed]] UInt8 {
 	const_inline UInt8 operator++(int) noexcept { return this->value++; }
 	const_inline UInt8 operator--(int) noexcept { return this->value--; }
 };
-static_assert(sizeof(UInt8) == 1);
+static_assert(sizeof(UInt8) == sizeof(uint8_t));
+static_assert(alignof(UInt8) == alignof(uint8_t));

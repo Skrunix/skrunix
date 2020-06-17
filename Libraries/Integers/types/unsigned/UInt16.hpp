@@ -3,7 +3,7 @@
 #include <Integers/types/unsigned/UInt8.hpp>
 #include <stdint.h>
 
-struct [[gnu::packed]] UInt16 {
+struct [[gnu::packed]] alignas(alignof(uint16_t)) UInt16 {
 	using BackingType = uint16_t;
 
 	constexpr static BackingType Min = 0;
@@ -140,4 +140,5 @@ struct [[gnu::packed]] UInt16 {
 	const_inline UInt16 operator++(int) noexcept { return this->value++; }
 	const_inline UInt16 operator--(int) noexcept { return this->value--; }
 };
-static_assert(sizeof(UInt16) == 2);
+static_assert(sizeof(UInt16) == sizeof(uint16_t));
+static_assert(alignof(UInt16) == alignof(uint16_t));

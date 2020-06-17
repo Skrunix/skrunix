@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <type_traits>
 
-struct [[gnu::packed]] UIntPtr {
+struct [[gnu::packed]] alignas(alignof(uintptr_t)) UIntPtr {
 	using BackingType = uintptr_t;
 
 	constexpr static BackingType Min = 0;
@@ -157,4 +157,5 @@ struct [[gnu::packed]] UIntPtr {
 	const_inline UIntPtr operator++(int) noexcept { return this->value++; }
 	const_inline UIntPtr operator--(int) noexcept { return this->value--; }
 };
-static_assert(sizeof(UIntPtr) == 8);
+static_assert(sizeof(UIntPtr) == sizeof(uintptr_t));
+static_assert(alignof(UIntPtr) == alignof(uintptr_t));

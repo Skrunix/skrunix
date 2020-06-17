@@ -2,7 +2,7 @@
 
 #include <Integers/Integers.hpp>
 
-struct [[gnu::packed]] IDTEntry {
+struct alignas(16) IDTEntry {
 	UInt16 offsetLow;
 	UInt16 selector;
 	UInt8  zero1;
@@ -21,3 +21,4 @@ struct [[gnu::packed]] IDTEntry {
 	    , zero2(0) {}
 };
 static_assert(sizeof(IDTEntry) == 16);
+static_assert(alignof(IDTEntry) == 16);

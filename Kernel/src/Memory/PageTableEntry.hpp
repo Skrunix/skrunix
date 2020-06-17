@@ -33,7 +33,7 @@ struct [[gnu::packed]] PageTableEntryFields {
 };
 static_assert(sizeof(PageTableEntryFields) == 8);
 
-union [[gnu::packed]] PageTableEntryValue {
+union PageTableEntryValue {
 	UInt64               value;
 	PageTableEntryFields fields;
 
@@ -43,7 +43,7 @@ union [[gnu::packed]] PageTableEntryValue {
 static_assert(sizeof(PageTableEntryValue::value) ==
               sizeof(PageTableEntryValue::fields));
 
-struct [[gnu::packed]] PageTableEntry {
+struct PageTableEntry {
 	PageTableEntryValue value;
 
 	constexpr PageTableEntry(UInt64 bitValue)
@@ -134,3 +134,4 @@ struct [[gnu::packed]] PageTableEntry {
 	}
 };
 static_assert(sizeof(PageTableEntry) == 8);
+static_assert(alignof(PageTableEntry) == 8);
