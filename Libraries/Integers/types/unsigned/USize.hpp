@@ -3,135 +3,171 @@
 #include <stddef.h>
 
 struct [[gnu::packed]] alignas(alignof(size_t)) USize {
-	using BackingType = size_t;
-
-	constexpr static BackingType Min = 0;
-	constexpr static BackingType Max = SIZE_MAX;
-
-	constexpr static int BitWidth = 64ull;
-
-	BackingType value;
-
-	const_inline USize()
+	[[gnu::always_inline]] inline constexpr USize()
 	    : value(0) {}
-	const_inline USize(const BackingType& value)
+	[[gnu::always_inline]] inline constexpr USize(const size_t& value)
 	    : value(value) {}
 
-	// Int conversion
-	const_inline explicit operator BackingType() const noexcept {
+	[[gnu::always_inline]] inline constexpr explicit operator size_t()
+	    const noexcept {
 		return this->value;
 	}
 
-	// Arithmetic
-	const_inline USize operator+(const USize& rhs) const noexcept {
-		return this->value + rhs.value;
-	};
-	const_inline USize operator-(const USize& rhs) const noexcept {
-		return this->value - rhs.value;
-	};
-	const_inline USize operator*(const USize& rhs) const noexcept {
-		return this->value * rhs.value;
-	};
-	const_inline USize operator/(const USize& rhs) const noexcept {
-		return this->value / rhs.value;
-	};
-
-	// Logical
-	const_inline USize operator&(const USize& rhs) const noexcept {
-		return this->value & rhs.value;
-	};
-	const_inline USize operator|(const USize& rhs) const noexcept {
-		return this->value | rhs.value;
-	};
-	const_inline USize operator^(const USize& rhs) const noexcept {
-		return this->value ^ rhs.value;
-	};
-
-	// Shift
-	const_inline USize operator<<(const USize& rhs) const noexcept {
-		return this->value << rhs.value;
-	};
-	const_inline USize operator>>(const USize& rhs) const noexcept {
-		return this->value >> rhs.value;
-	};
-
-	// Comparison
-	const_inline bool operator<(const USize& rhs) const noexcept {
-		return this->value < rhs.value;
-	};
-	const_inline bool operator>(const USize& rhs) const noexcept {
-		return this->value > rhs.value;
-	};
-	const_inline bool operator<=(const USize& rhs) const noexcept {
-		return this->value <= rhs.value;
-	};
-	const_inline bool operator>=(const USize& rhs) const noexcept {
-		return this->value >= rhs.value;
-	};
-	const_inline bool operator==(const USize& rhs) const noexcept {
-		return this->value == rhs.value;
-	};
-	const_inline bool operator!=(const USize& rhs) const noexcept {
-		return this->value != rhs.value;
-	};
-
-	// Arithmetic Assignment
-	const_inline USize& operator+=(const USize& rhs) noexcept {
-		this->value += rhs.value;
-		return *this;
-	};
-	const_inline USize& operator-=(const USize& rhs) noexcept {
-		this->value -= rhs.value;
-		return *this;
-	};
-	const_inline USize& operator*=(const USize& rhs) noexcept {
-		this->value *= rhs.value;
-		return *this;
-	};
-	const_inline USize& operator/=(const USize& rhs) noexcept {
-		this->value /= rhs.value;
-		return *this;
-	};
-
-	// Logical Assignment
-	const_inline USize& operator&=(const USize& rhs) noexcept {
-		this->value &= rhs.value;
-		return *this;
-	};
-	const_inline USize& operator|=(const USize& rhs) noexcept {
-		this->value |= rhs.value;
-		return *this;
-	};
-	const_inline USize& operator^=(const USize& rhs) noexcept {
-		this->value ^= rhs.value;
-		return *this;
-	};
-
-	// Shift Assignment
-	const_inline USize& operator<<=(const USize& rhs) noexcept {
-		this->value <<= rhs.value;
-		return *this;
-	};
-	const_inline USize& operator>>=(const USize& rhs) noexcept {
-		this->value >>= rhs.value;
-		return *this;
-	};
-
-	// Prefix
-	const_inline USize operator-() const noexcept { return -this->value; }
-	const_inline USize operator~() const noexcept { return ~this->value; }
-	const_inline USize& operator++() noexcept {
-		++this->value;
-		return *this;
-	}
-	const_inline USize& operator--() noexcept {
-		--this->value;
-		return *this;
-	}
-
-	// Postfix
-	const_inline USize operator++(int) noexcept { return this->value++; }
-	const_inline USize operator--(int) noexcept { return this->value--; }
+  private:
+	size_t value;
 };
 static_assert(sizeof(USize) == sizeof(size_t));
 static_assert(alignof(USize) == alignof(size_t));
+
+// Arithmetic
+[[gnu::always_inline]] inline constexpr USize
+operator+(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) + static_cast<size_t>(rhs);
+};
+[[gnu::always_inline]] inline constexpr USize
+operator-(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) - static_cast<size_t>(rhs);
+};
+[[gnu::always_inline]] inline constexpr USize
+operator*(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) * static_cast<size_t>(rhs);
+};
+[[gnu::always_inline]] inline constexpr USize
+operator/(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) / static_cast<size_t>(rhs);
+};
+
+// Logical
+[[gnu::always_inline]] inline constexpr USize
+operator&(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) & static_cast<size_t>(rhs);
+};
+[[gnu::always_inline]] inline constexpr USize
+operator|(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) | static_cast<size_t>(rhs);
+};
+[[gnu::always_inline]] inline constexpr USize
+operator^(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) ^ static_cast<size_t>(rhs);
+};
+
+// Shift
+[[gnu::always_inline]] inline constexpr USize
+operator<<(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) << static_cast<size_t>(rhs);
+};
+[[gnu::always_inline]] inline constexpr USize
+operator>>(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) >> static_cast<size_t>(rhs);
+};
+
+// Comparison
+[[gnu::always_inline]] inline constexpr bool
+operator<(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) < static_cast<size_t>(rhs);
+};
+[[gnu::always_inline]] inline constexpr bool
+operator>(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) > static_cast<size_t>(rhs);
+};
+[[gnu::always_inline]] inline constexpr bool
+operator<=(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) <= static_cast<size_t>(rhs);
+};
+[[gnu::always_inline]] inline constexpr bool
+operator>=(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) >= static_cast<size_t>(rhs);
+};
+[[gnu::always_inline]] inline constexpr bool
+operator==(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) == static_cast<size_t>(rhs);
+};
+[[gnu::always_inline]] inline constexpr bool
+operator!=(const USize& lhs, const USize& rhs) noexcept {
+	return static_cast<size_t>(lhs) != static_cast<size_t>(rhs);
+};
+
+// Arithmetic Assignment
+[[gnu::always_inline]] inline constexpr USize&
+operator+=(USize& lhs, const USize& rhs) noexcept {
+	lhs = lhs + rhs;
+	return lhs;
+};
+[[gnu::always_inline]] inline constexpr USize&
+operator-=(USize& lhs, const USize& rhs) noexcept {
+	lhs = lhs - rhs;
+	return lhs;
+};
+[[gnu::always_inline]] inline constexpr USize&
+operator*=(USize& lhs, const USize& rhs) noexcept {
+	lhs = lhs * rhs;
+	return lhs;
+};
+[[gnu::always_inline]] inline constexpr USize&
+operator/=(USize& lhs, const USize& rhs) noexcept {
+	lhs = lhs / rhs;
+	return lhs;
+};
+
+// Logical Assignment
+[[gnu::always_inline]] inline constexpr USize&
+operator&=(USize& lhs, const USize& rhs) noexcept {
+	lhs = lhs & rhs;
+	return lhs;
+};
+[[gnu::always_inline]] inline constexpr USize&
+operator|=(USize& lhs, const USize& rhs) noexcept {
+	lhs = lhs | rhs;
+	return lhs;
+};
+[[gnu::always_inline]] inline constexpr USize&
+operator^=(USize& lhs, const USize& rhs) noexcept {
+	lhs = lhs ^ rhs;
+	return lhs;
+};
+
+// Shift Assignment
+[[gnu::always_inline]] inline constexpr USize&
+operator<<=(USize& lhs, const USize& rhs) noexcept {
+	lhs = lhs << rhs;
+	return lhs;
+};
+[[gnu::always_inline]] inline constexpr USize&
+operator>>=(USize& lhs, const USize& rhs) noexcept {
+	lhs = lhs >> rhs;
+	return lhs;
+};
+
+// Prefix
+[[gnu::always_inline]] inline constexpr USize
+operator-(const USize& value) noexcept {
+	return -static_cast<size_t>(value);
+}
+[[gnu::always_inline]] inline constexpr USize
+operator~(const USize& value) noexcept {
+	return ~static_cast<size_t>(value);
+}
+[[gnu::always_inline]] inline constexpr USize&
+operator++(USize& value) noexcept {
+	value += 1;
+	return value;
+}
+[[gnu::always_inline]] inline constexpr USize&
+operator--(USize& value) noexcept {
+	value -= 1;
+	return value;
+}
+
+// Postfix
+[[gnu::always_inline]] inline constexpr USize operator++(USize& value,
+                                                         int) noexcept {
+	auto copy = value;
+	value += 1;
+	return copy;
+}
+[[gnu::always_inline]] inline constexpr USize operator--(USize& value,
+                                                         int) noexcept {
+	auto copy = value;
+	value -= 1;
+	return copy;
+}

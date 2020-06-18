@@ -13,12 +13,12 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 	UIntPtr kernelStartPhys = AlignDown(kernelStart) - kernelOffset;
 	UIntPtr kernelEndPhys   = Align(kernelEnd) - kernelOffset;
 	USize   kernelPageCount =
-	    (kernelEndPhys - kernelStartPhys).value >> PageShift;
+	    static_cast<uintptr_t>((kernelEndPhys - kernelStartPhys) >> PageShift);
 	UIntPtr freePage = kernelEndPhys;
 
 	// Count number of pages
 	for (USize i = 0; i < rangeListCount; ++i) {
-		AddressRange range = rangeList[i.value];
+		AddressRange range = rangeList[static_cast<size_t>(i)];
 
 		this->debug.WriteHex(range.base);
 		this->debug.Write(" ");
@@ -36,7 +36,7 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 			this->debug.Write("Bad");
 		} else {
 			this->debug.Write("? ");
-			this->debug.WriteHex(ValueOf(range.type));
+			this->debug.WriteHex(UInt32(ValueOf(range.type)));
 		}
 		this->debug.Write("\r\n");
 
@@ -46,7 +46,7 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 
 		UIntPtr startPage = Align(range.base) >> PageShift;
 		UIntPtr endPage   = AlignDown(range.base + range.length) >> PageShift;
-		this->totalPageCount += (endPage - startPage).value;
+		this->totalPageCount += static_cast<uintptr_t>(endPage - startPage);
 	}
 	this->freePageCount = this->totalPageCount;
 
@@ -58,12 +58,12 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 	this->debug.Write("\r\n");
 
 	// Find a segment of RAM large enough to store all PageBlocks
-	Bool   foundBufferLocation = false;
-	USize  requiredBufferSize  = this->totalPageCount * sizeof(PageBlock);
-	USize  requiredBufferPages = requiredBufferSize >> PageShift;
-	UInt64 allocPage           = freePage.value >> PageShift;
+	Bool    foundBufferLocation = false;
+	USize   requiredBufferSize  = this->totalPageCount * sizeof(PageBlock);
+	USize   requiredBufferPages = requiredBufferSize >> PageShift;
+	UIntPtr allocPage           = freePage >> PageShift;
 	for (USize i = 0; i < rangeListCount; ++i) {
-		AddressRange range = rangeList[i.value];
+		AddressRange range = rangeList[static_cast<size_t>(i)];
 
 		if (range.type != AddressRange::Type::Usable) {
 			continue;
@@ -108,9 +108,9 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 
 	// Create all PageBlocks as free pages
 	PageBlock* blockBuffer = freePage.To<PageBlock*>();
-	USize      index       = USize::Max;
+	USize      index       = -1;
 	for (USize i = 0; i < rangeListCount; ++i) {
-		AddressRange range = rangeList[i.value];
+		AddressRange range = rangeList[static_cast<size_t>(i)];
 
 		if (range.type != AddressRange::Type::Usable) {
 			continue;
@@ -120,11 +120,12 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 		UIntPtr end   = AlignDown(range.base + range.length);
 		for (; start != end; start += PageAlignment) {
 			++index;
-			blockBuffer[index.value].address = start;
-			blockBuffer[index.value].next    = &blockBuffer[(index + 1).value];
+			blockBuffer[static_cast<size_t>(index)].address = start;
+			blockBuffer[static_cast<size_t>(index)].next =
+			    &blockBuffer[static_cast<size_t>(index + 1)];
 		}
 	}
-	blockBuffer[index.value].next = nullptr;
+	blockBuffer[static_cast<size_t>(index)].next = nullptr;
 
 	this->freeBlocks = blockBuffer;
 

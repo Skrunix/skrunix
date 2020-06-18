@@ -29,9 +29,9 @@ GDT::GDT() {
 	UInt8 flagsCode = flags | FLAGS_SIZE_64_CODE;
 	UInt8 flagsData = flags | FLAGS_SIZE_64_DATA;
 
-	this->SetEntry(0, UInt32::Max, 0, 0, 0);                  // Null
-	this->SetEntry(1, UInt32::Max, 0, accessCode, flagsCode); // Code
-	this->SetEntry(2, UInt32::Max, 0, accessData, flagsData); // Data
+	this->SetEntry(0, -1, 0, 0, 0);                  // Null
+	this->SetEntry(1, -1, 0, accessCode, flagsCode); // Code
+	this->SetEntry(2, -1, 0, accessData, flagsData); // Data
 
 	loadGDT(&gdt);
 }
@@ -40,11 +40,15 @@ GDT::~GDT() {}
 
 void GDT::SetEntry(UInt8 number, UInt32 limit, UIntPtr base, UInt8 access,
                    UInt8 flags) {
-	this->gdtEntries[number.value].limitLow = limit.low();
-	this->gdtEntries[number.value].baseLow  = base.value & 0xFFFF;
-	this->gdtEntries[number.value].baseMid  = (base.value >> 16) & 0xFF;
-	this->gdtEntries[number.value].access   = access;
-	this->gdtEntries[number.value].flags =
-	    (flags.value << 4) | ((limit.value >> 16) & 0x0F);
-	this->gdtEntries[number.value].baseHigh = (base.value >> 24) & 0xFF;
+	this->gdtEntries[static_cast<uint8_t>(number)].limitLow = limit.low();
+	this->gdtEntries[static_cast<uint8_t>(number)].baseLow =
+	    static_cast<uintptr_t>(base) & 0xFFFF;
+	this->gdtEntries[static_cast<uint8_t>(number)].baseMid =
+	    (static_cast<uintptr_t>(base) >> 16) & 0xFF;
+	this->gdtEntries[static_cast<uint8_t>(number)].access = access;
+	this->gdtEntries[static_cast<uint8_t>(number)].flags =
+	    (static_cast<uint8_t>(flags) << 4) |
+	    ((static_cast<uint32_t>(limit) >> 16) & 0x0F);
+	this->gdtEntries[static_cast<uint8_t>(number)].baseHigh =
+	    (static_cast<uintptr_t>(base) >> 24) & 0xFF;
 }

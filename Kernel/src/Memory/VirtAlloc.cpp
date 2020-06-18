@@ -18,7 +18,7 @@ VirtAlloc::VirtAlloc(PhysAlloc& allocator, UIntPtr rangeStart,
 	UIntPtr    bufferPhys  = allocator.alloc(requiredBufferPages);
 	UIntPtr    bufferVirt  = bufferPhys + kernelOffset;
 	PageBlock* blockBuffer = bufferVirt.To<PageBlock*>();
-	USize      index       = USize::Max;
+	USize      index       = -1;
 
 	this->pages.phys  = bufferPhys;
 	this->pages.virt  = bufferVirt;
@@ -28,17 +28,18 @@ VirtAlloc::VirtAlloc(PhysAlloc& allocator, UIntPtr rangeStart,
 	UIntPtr end   = AlignDown(rangeStart + (rangePageCount << PageShift));
 	for (; start != end; start += PageAlignment) {
 		++index;
-		blockBuffer[index.value].address = start;
-		blockBuffer[index.value].next    = &blockBuffer[(index + 1).value];
+		blockBuffer[static_cast<size_t>(index)].address = start;
+		blockBuffer[static_cast<size_t>(index)].next =
+		    &blockBuffer[static_cast<size_t>(index + 1)];
 	}
-	blockBuffer[index.value].next = nullptr;
+	blockBuffer[static_cast<size_t>(index)].next = nullptr;
 
 	this->freeBlocks = blockBuffer;
 
 	// Convert to physical address since the rangeList is all physical
 	UIntPtr kernelStartVirt = AlignDown(kernelStart);
-	USize   kernelPageCount =
-	    (Align(kernelEnd) - kernelStartVirt).value >> PageShift;
+	USize   kernelPageCount = static_cast<uintptr_t>(
+        (Align(kernelEnd) - kernelStartVirt) >> PageShift);
 
 	// Reserve pages that we know are in use
 	// TODO: Assert true

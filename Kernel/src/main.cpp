@@ -207,7 +207,7 @@ void timerHandler(IRQRegisters) {
 
 	globalScreen->SetXY(0, 1, false);
 	globalScreen->Write("\r");
-	globalScreen->WriteHex(UIntPtr((++timerCount).value));
+	globalScreen->WriteHex(++timerCount);
 
 	globalScreen->SetXY(x, y, true);
 
@@ -254,9 +254,9 @@ void keyboardHandler(IRQRegisters) {
 		if ((keycode & 0x80) == 0) {
 			char character = '\0';
 			if (shift) {
-				character = QWERTY[keycode.value];
+				character = QWERTY[static_cast<uint8_t>(keycode)];
 			} else {
-				character = qwerty[keycode.value];
+				character = qwerty[static_cast<uint8_t>(keycode)];
 			}
 			if (character != '\0') {
 				globalScreen->Write(character);
@@ -292,7 +292,8 @@ void isrHandler(IRQRegisters registers) {
 	}
 
 	globalScreen->Write("Got interrupt: ");
-	globalScreen->WriteHex(UIntPtr(registers.interruptNumber.value));
+	globalScreen->WriteHex(
+	    UIntPtr(static_cast<uint64_t>(registers.interruptNumber)));
 	globalScreen->Write("\r\n");
 }
 }

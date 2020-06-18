@@ -36,24 +36,28 @@ void Serial::WriteHex(UInt32 value) {
 	static char lookup[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 	                        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	this->Write("0x");
-	for (UInt8 i = 28; i > 0; i -= 4) {
-		UInt8 halfByte = (value.value >> i.value) & 0xF;
-		this->Write(lookup[halfByte.value]);
+	for (UInt8 i = (sizeof(UInt32) * 8 - 4); i > 0; i -= 4) {
+		UInt8 halfByte =
+		    (static_cast<uint32_t>(value) >> static_cast<uint8_t>(i)) & 0xF;
+		this->Write(lookup[static_cast<uint8_t>(halfByte)]);
 	}
-	this->Write(lookup[value.value & 0xF]);
+	this->Write(lookup[static_cast<uint32_t>(value) & 0xF]);
 }
 
-void Serial::WriteHex(UInt64 value) { this->WriteHex(UIntPtr(value)); }
+void Serial::WriteHex(UInt64 value) {
+	this->WriteHex(UIntPtr(static_cast<uint64_t>(value)));
+}
 
 void Serial::WriteHex(UIntPtr value) {
 	static char lookup[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 	                        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	this->Write("0x");
-	for (UInt8 i = 60; i > 0; i -= 4) {
-		UInt8 halfByte = (value.value >> i.value) & 0xF;
-		this->Write(lookup[halfByte.value]);
+	for (UInt8 i = (sizeof(UIntPtr) * 8 - 4); i > 0; i -= 4) {
+		UInt8 halfByte =
+		    (static_cast<uintptr_t>(value) >> static_cast<uint8_t>(i)) & 0xF;
+		this->Write(lookup[static_cast<uint8_t>(halfByte)]);
 	}
-	this->Write(lookup[value.value & 0xF]);
+	this->Write(lookup[static_cast<uintptr_t>(value) & 0xF]);
 }
 
 Bool Serial::CanWrite() { return (IO::in(COM1 + 5) & 0x20) != 0; }

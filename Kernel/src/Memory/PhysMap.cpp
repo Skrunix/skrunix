@@ -18,8 +18,8 @@ PhysMap::PhysMap(PhysAlloc* allocator, const UIntPtr kernelStart,
 	// Convert to physical address since the rangeList is all physical
 	UIntPtr kernelStartVirt = AlignDown(kernelStart);
 	UIntPtr kernelStartPhys = kernelStartVirt - kernelOffset;
-	USize   kernelPageCount =
-	    (Align(kernelEnd) - kernelStartVirt).value >> PageShift;
+	USize   kernelPageCount = static_cast<uintptr_t>(
+        (Align(kernelEnd) - kernelStartVirt) >> PageShift);
 
 	auto pageCount = Align(this->mapSize) >> PageShift;
 	auto physPtr   = allocator->alloc(pageCount);
@@ -48,8 +48,8 @@ void PhysMap::map(UIntPtr phys, UIntPtr virt, const USize count) {
 	this->debug.WriteHex(virt);
 	this->debug.Write("\r\n");
 	for (USize i = 0; i < count; ++i) {
-		this->mapStart[this->mapCount.value].phys = phys;
-		this->mapStart[this->mapCount.value].virt = virt;
+		this->mapStart[static_cast<size_t>(this->mapCount)].phys = phys;
+		this->mapStart[static_cast<size_t>(this->mapCount)].virt = virt;
 
 		phys += PageSize;
 		virt += PageSize;
@@ -70,15 +70,15 @@ void PhysMap::unmap(UIntPtr phys, UIntPtr virt, const USize count) {
 	for (USize i = 0; i < count; ++i) {
 		Bool found = false;
 		for (USize j = 0; j < this->mapCount; ++j) {
-			if (this->mapStart[j.value].phys != phys) {
+			if (this->mapStart[static_cast<size_t>(j)].phys != phys) {
 				continue;
 			}
-			if (this->mapStart[j.value].virt != virt) {
+			if (this->mapStart[static_cast<size_t>(j)].virt != virt) {
 				continue;
 			}
 
-			this->mapStart[j.value] =
-			    this->mapStart[(this->mapCount - 1).value];
+			this->mapStart[static_cast<size_t>(j)] =
+			    this->mapStart[static_cast<size_t>(this->mapCount - 1)];
 
 			phys += PageSize;
 			virt += PageSize;
@@ -95,8 +95,8 @@ void PhysMap::unmap(UIntPtr phys, UIntPtr virt, const USize count) {
 
 UIntPtr PhysMap::Virtual(UIntPtr phys) {
 	for (USize j = 0; j < this->mapCount; ++j) {
-		if (this->mapStart[j.value].phys == phys) {
-			return this->mapStart[j.value].virt;
+		if (this->mapStart[static_cast<size_t>(j)].phys == phys) {
+			return this->mapStart[static_cast<size_t>(j)].virt;
 		}
 	}
 	// TODO: Better error handling
@@ -108,8 +108,8 @@ UIntPtr PhysMap::Virtual(UIntPtr phys) {
 
 UIntPtr PhysMap::Physical(UIntPtr virt) {
 	for (USize j = 0; j < this->mapCount; ++j) {
-		if (this->mapStart[j.value].virt == virt) {
-			return this->mapStart[j.value].phys;
+		if (this->mapStart[static_cast<size_t>(j)].virt == virt) {
+			return this->mapStart[static_cast<size_t>(j)].phys;
 		}
 	}
 	// TODO: Better error handling

@@ -77,13 +77,14 @@ struct PageTableEntry {
 		this->value.fields._global = static_cast<bool>(newValue);
 	}
 	[[gnu::always_inline]] inline void SetUser1(UInt8 newValue) {
-		this->value.fields._user1 = newValue.value;
+		this->value.fields._user1 = static_cast<uint8_t>(newValue);
 	}
 	[[gnu::always_inline]] inline void SetPhysicalAddress(UIntPtr newValue) {
-		this->value.fields._physicalAddress = newValue.value >> PageShift;
+		this->value.fields._physicalAddress =
+		    static_cast<uintptr_t>(newValue) >> PageShift;
 	}
 	[[gnu::always_inline]] inline void SetUser2(UInt16 newValue) {
-		this->value.fields._user2 = newValue.value;
+		this->value.fields._user2 = static_cast<uint16_t>(newValue);
 	}
 	[[gnu::always_inline]] inline void SetNoExecute(Bool newValue) {
 		this->value.fields._noExecute = static_cast<bool>(newValue);

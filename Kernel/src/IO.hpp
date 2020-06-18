@@ -5,8 +5,8 @@
 class IO {
   public:
 	[[gnu::always_inline]] inline static UInt8 in(UInt16 port) {
-		UInt8 ret = 0;
-		asm volatile("inb %1, %0" : "=a"(ret.value) : "Nd"(port));
+		uint8_t ret = 0;
+		asm volatile("inb %1, %0" : "=a"(ret) : "Nd"(port));
 		return ret;
 	}
 

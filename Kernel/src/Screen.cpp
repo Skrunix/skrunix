@@ -23,8 +23,8 @@ void Screen::Clear() {
 	auto memory = reinterpret_cast<UInt16*>(this->basePointer);
 	auto offset = this->maxX * this->maxY;
 
-	UInt16 data = (ValueOf(this->background).value << 12) |
-	              (ValueOf(this->foreground).value << 8) | ' ';
+	UInt16 data = (ValueOf(this->background) << 12) |
+	              (ValueOf(this->foreground) << 8) | ' ';
 	for (UInt16 i = 0; i < offset; ++i) {
 		*(memory++) = data;
 	}
@@ -33,17 +33,17 @@ void Screen::Clear() {
 }
 
 void Screen::ScrollUp() {
-	auto toMem = reinterpret_cast<UInt16*>(this->basePointer);
-	auto fromMem =
-	    reinterpret_cast<UInt16*>(this->basePointer) + this->maxX.value;
+	auto toMem   = reinterpret_cast<UInt16*>(this->basePointer);
+	auto fromMem = reinterpret_cast<UInt16*>(this->basePointer) +
+	               static_cast<uint16_t>(this->maxX);
 	auto offset = this->maxX * (this->maxY - 1);
 
 	for (UInt16 i = 0; i < offset; ++i) {
 		*(toMem++) = *(fromMem++);
 	}
 
-	UInt16 data = (ValueOf(this->background).value << 12) |
-	              (ValueOf(this->foreground).value << 8) | ' ';
+	UInt16 data = (ValueOf(this->background) << 12) |
+	              (ValueOf(this->foreground) << 8) | ' ';
 	for (UInt16 i = 0; i < this->maxX; ++i) {
 		*(toMem++) = data;
 	}
@@ -84,19 +84,24 @@ void Screen::WriteHex(UInt8 value) {
 	static char lookup[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 	                        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	this->Write("0x");
-	this->Write(lookup[value.high().value]);
-	this->Write(lookup[value.low().value]);
+	this->Write(lookup[static_cast<uint8_t>(value.high())]);
+	this->Write(lookup[static_cast<uint8_t>(value.low())]);
+}
+
+void Screen::WriteHex(UInt64 value) {
+	this->WriteHex(UIntPtr(static_cast<uint64_t>(value)));
 }
 
 void Screen::WriteHex(UIntPtr value) {
 	static char lookup[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 	                        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	this->Write("0x");
-	for (UInt8 i = 60; i > 0; i -= 4) {
-		UInt8 halfByte = (value.value >> i.value) & 0xF;
-		this->Write(lookup[halfByte.value]);
+	for (UInt8 i = (sizeof(UIntPtr) * 8 - 4); i > 0; i -= 4) {
+		UInt8 halfByte =
+		    (static_cast<uintptr_t>(value) >> static_cast<uint8_t>(i)) & 0xF;
+		this->Write(lookup[static_cast<uint8_t>(halfByte)]);
 	}
-	this->Write(lookup[value.value & 0xF]);
+	this->Write(lookup[static_cast<uintptr_t>(value) & 0xF]);
 }
 
 void Screen::WriteRaw(char character) {
@@ -106,7 +111,7 @@ void Screen::WriteRaw(char character) {
 	}
 
 	auto offset = this->y * this->maxX + this->x;
-	auto memory = this->basePointer + 2 * offset.value;
+	auto memory = this->basePointer + 2 * static_cast<uint16_t>(offset);
 
 	*(memory + 0) = character;
 	*(memory + 1) =

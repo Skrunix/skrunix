@@ -30,7 +30,7 @@
 #define CMD_4BCD (0b1)
 
 PIT::PIT(UInt16 frequency) {
-	UInt16 divisor = UInt16((UInt32(1193180) / UInt32(frequency.value)).value);
+	UInt16 divisor = (UInt32(1193180) / UInt32(frequency)).low();
 
 	IO::out(PIT_COMMAND,
 	        CMD_CH0 | CMD_ACCESS_LOWHIGH | CMD_OP_SQUAREWAVE | CMD_16BIT);
@@ -41,7 +41,7 @@ PIT::PIT(UInt16 frequency) {
 PIT::~PIT() {}
 
 void PIT::Beep(UInt16 frequency) {
-	UInt16 divisor = 1193180 / frequency.value;
+	UInt16 divisor = (UInt32(1193180) / UInt32(frequency)).low();
 
 	IO::out(PIT_COMMAND,
 	        CMD_CH2 | CMD_ACCESS_LOWHIGH | CMD_OP_SQUAREWAVE | CMD_16BIT);

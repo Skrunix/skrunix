@@ -4,8 +4,8 @@
 
 struct CPU {
 	[[gnu::always_inline]] inline static UIntPtr GetCR3() {
-		UIntPtr cr3;
-		asm volatile("movq %%cr3, %%rax" : "=a"(cr3.value));
+		uintptr_t cr3;
+		asm volatile("movq %%cr3, %%rax" : "=a"(cr3));
 		return cr3;
 	}
 

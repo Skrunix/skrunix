@@ -3,7 +3,7 @@
 #include <Integers/Integers.hpp>
 
 struct AddressRange {
-	enum class Type : UInt32::BackingType {
+	enum class Type : uint32_t {
 		UNKNOWN          = 0,
 		Usable           = 1,
 		Reserved         = 2,

@@ -16,7 +16,7 @@ PageTable::PageTable(PhysAlloc& physAlloc, VirtAlloc& virtAlloc, PhysMap& map,
 	UIntPtr kernelStartPhys = AlignDown(kernelStart) - kernelOffset;
 	UIntPtr kernelEndPhys   = Align(kernelEnd) - kernelOffset;
 	USize   kernelPageCount =
-	    (kernelEndPhys - kernelStartPhys).value >> PageShift;
+	    static_cast<uintptr_t>((kernelEndPhys - kernelStartPhys) >> PageShift);
 
 	this->rootPhys = this->physicalAllocator.alloc();
 	auto rootVirt  = this->virtualAllocator.alloc();
@@ -60,10 +60,10 @@ void PageTable::initMap(UIntPtr phys, UIntPtr virt, const USize count) {
 
 	auto p4Table = this->physicalMap.Virtual(this->rootPhys);
 	for (USize i = 0; i < count; ++i, phys += PageSize, virt += PageSize) {
-		USize offset4 = (virt >> 39).value & 0x1FF;
-		USize offset3 = (virt >> 30).value & 0x1FF;
-		USize offset2 = (virt >> 21).value & 0x1FF;
-		USize offset1 = (virt >> 12).value & 0x1FF;
+		USize offset4 = static_cast<uintptr_t>((virt >> 39) & 0x1FF);
+		USize offset3 = static_cast<uintptr_t>((virt >> 30) & 0x1FF);
+		USize offset2 = static_cast<uintptr_t>((virt >> 21) & 0x1FF);
+		USize offset1 = static_cast<uintptr_t>((virt >> 12) & 0x1FF);
 
 		auto p3Entry = p4Table.To<PageTableEntry*>(offset4);
 		if (!p3Entry->GetPresent()) {
