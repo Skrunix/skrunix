@@ -12,10 +12,6 @@ struct [[gnu::packed]] alignas(alignof(bool)) Bool {
 		return this->value;
 	}
 
-	[[gnu::always_inline]] inline constexpr Bool operator!() const noexcept {
-		return Bool(!this->value);
-	}
-
   private:
 	bool value;
 };
@@ -23,20 +19,22 @@ static_assert(sizeof(Bool) == sizeof(bool));
 static_assert(alignof(Bool) == alignof(bool));
 
 [[gnu::always_inline]] inline constexpr Bool
+operator!(const Bool& value) noexcept {
+	return !static_cast<bool>(value);
+}
+
+[[gnu::always_inline]] inline constexpr Bool
 operator==(const Bool& lhs, const Bool& rhs) noexcept {
 	return static_cast<bool>(lhs) == static_cast<bool>(rhs);
 }
-
 [[gnu::always_inline]] inline constexpr Bool
 operator!=(const Bool& lhs, const Bool& rhs) noexcept {
 	return static_cast<bool>(lhs) != static_cast<bool>(rhs);
 }
-
 [[gnu::always_inline]] inline constexpr Bool
 operator&&(const Bool& lhs, const Bool& rhs) noexcept {
 	return static_cast<bool>(lhs) && static_cast<bool>(rhs);
 }
-
 [[gnu::always_inline]] inline constexpr Bool
 operator||(const Bool& lhs, const Bool& rhs) noexcept {
 	return static_cast<bool>(lhs) || static_cast<bool>(rhs);
@@ -46,17 +44,14 @@ operator||(const Bool& lhs, const Bool& rhs) noexcept {
 operator==(const Bool& lhs, const bool& rhs) noexcept {
 	return static_cast<bool>(lhs) == static_cast<bool>(rhs);
 }
-
 [[gnu::always_inline]] inline constexpr Bool
 operator!=(const Bool& lhs, const bool& rhs) noexcept {
 	return static_cast<bool>(lhs) != static_cast<bool>(rhs);
 }
-
 [[gnu::always_inline]] inline constexpr Bool
 operator&&(const Bool& lhs, const bool& rhs) noexcept {
 	return static_cast<bool>(lhs) && static_cast<bool>(rhs);
 }
-
 [[gnu::always_inline]] inline constexpr Bool
 operator||(const Bool& lhs, const bool& rhs) noexcept {
 	return static_cast<bool>(lhs) || static_cast<bool>(rhs);
@@ -66,17 +61,14 @@ operator||(const Bool& lhs, const bool& rhs) noexcept {
 operator==(const bool& lhs, const Bool& rhs) noexcept {
 	return static_cast<bool>(lhs) == static_cast<bool>(rhs);
 }
-
 [[gnu::always_inline]] inline constexpr Bool
 operator!=(const bool& lhs, const Bool& rhs) noexcept {
 	return static_cast<bool>(lhs) != static_cast<bool>(rhs);
 }
-
 [[gnu::always_inline]] inline constexpr Bool
 operator&&(const bool& lhs, const Bool& rhs) noexcept {
 	return static_cast<bool>(lhs) && static_cast<bool>(rhs);
 }
-
 [[gnu::always_inline]] inline constexpr Bool
 operator||(const bool& lhs, const Bool& rhs) noexcept {
 	return static_cast<bool>(lhs) || static_cast<bool>(rhs);
