@@ -16,6 +16,15 @@ Start:
 	LEAW strStage2, %SI
 	CALL PrintString
 
+	# Play with A20 line
+	CALL A20Status
+	CALL EnableA20
+	CALL A20Status
+	CALL DisableA20
+	CALL A20Status
+	CALL EnableA20
+	CALL A20Status
+
 	# Load kernel
 	MOVW $LOAD_SEGMENT, %AX
 	MOVW %AX, %CX
@@ -27,16 +36,6 @@ Start:
 	JC DiskReadError
 	LEAW strDiskRead, %SI
 	CALL PrintString
-
-	# Play with A20 line
-	CALL A20Status
-	CALL EnableA20
-	CALL A20Status
-	CALL DisableA20
-	CALL A20Status
-	CALL EnableA20
-	CALL A20Status
-
 	# Get memory map
 	CALL DetectMemory
 
