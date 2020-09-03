@@ -12,11 +12,14 @@
 .set WORDS_TO_RELOCATE, BYTES_PER_SECTOR >> 1
 
 # End of free space
-.set STACK_SEGMENT, 0x6FFF
+.set STACK_SEGMENT, 0x0070
+.set STACK_SIZE, 0x9900
 # Where the MBR is loaded
 .set BOOT_SEGMENT, 0x07C0
-# Offset by one sector
-.set RELOCATE_SEGMENT, 0x0600
+# Where to move stage1
+.set RELOCATE_SEGMENT, 0x0050
+# Where to load stage2
+.set STAGE2_SEGMENT, 0x0070
 
 Start:
 	CLI
@@ -41,7 +44,7 @@ Segmentation:
 	# Point `DS` to the new code location
 	MOVW %AX, %DS
 	# Prepare the stack
-	MOVW $0, %AX
+	MOVW $STACK_SIZE, %AX
 	MOVW %AX, %BP
 	MOVW %AX, %SP
 	MOVW $STACK_SEGMENT, %AX
@@ -61,7 +64,7 @@ Stage1:
 	CALL PrintString
 
 	# Load stage 2
-	MOVW $BOOT_SEGMENT, %AX
+	MOVW $STAGE2_SEGMENT, %AX
 	MOVW %AX, %CX
 	MOVW $0, %AX
 	MOVW %AX, %SI
@@ -73,7 +76,7 @@ Stage1:
 	CALL PrintString
 
 	# Call stage 2
-	JMP $BOOT_SEGMENT, $Start
+	JMP $STAGE2_SEGMENT, $Start
 
 DiskExtensionsError:
 	LEAW strDiskExtensionsError, %SI

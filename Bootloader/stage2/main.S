@@ -11,7 +11,7 @@
 .set LOAD_SEGMENT, 0x1000
 
 Start:
-	MOVW $0x07C0, %AX
+	MOVW $0x0070, %AX
 	MOVW %AX, %DS
 	LEAW strStage2, %SI
 	CALL PrintString
@@ -78,10 +78,6 @@ Start32:
 	MOVW %AX, %GS
 	MOVW %AX, %SS
 
-	MOVL $0x2400, %EAX
-	MOVL %EAX, %ESP
-	MOVL %EAX, %EBP
-
 	MOVL $1920, %EDX
 	LEAL strProtectedMode, %ESI
 	CALL PrintString32
@@ -119,11 +115,11 @@ Start32:
 	CLI
 	XORL %EAX, %EAX
 	# TODO: Get this value from DS somehow
-	MOVW $0x7C00, %AX
+	MOVW $0x0700, %AX
 	ADDL GDT64DescriptorStart, %EAX
 	MOVL %EAX, GDT64DescriptorStart
 	LGDT GDT64Descriptor
-	LJMP $0x08, $Start64+0x7c00
+	LJMP $0x08, $Start64+0x0700
 
 
 .code64
@@ -145,10 +141,10 @@ Start64:
 
 	MOVL $240, %EDX
 	MOVQ $strInLongMode, %RAX
-	ADDQ $0x7C00, %RAX # Data no longer uses segments
+	ADDQ $0x0700, %RAX # Data no longer uses segments
 	MOVQ %RAX, %RSI
 	MOVQ $PrintString64, %RAX
-	ADDQ $0x7C00, %RAX # Code no longer uses segments
+	ADDQ $0x0700, %RAX # Code no longer uses segments
 	CALL *%RAX
 
 	# Load kernel segments

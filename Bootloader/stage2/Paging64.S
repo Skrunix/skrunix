@@ -12,17 +12,17 @@
 Paging64:
 	PUSHA
 	# Clear the page tables
-	MOVL $0x2400, %EDI
+	MOVL $0x9900, %EDI
 	MOVL %EDI, %CR3
 	XORL %EAX, %EAX
 	MOVL $4096, %ECX
 	REP STOSL
 	MOVL %CR3, %EDI
 
-	# PML4T - 0x2400 (0xA000 real)
-	# PDPT  - 0x3400 (0xB000 real)
-	# PDT   - 0x5400 (0xC000 real)
-	# PT    - 0x7400 (0xD000 real) - Does not exist
+	# PML4T - 0x9900 (0xA000 real)
+	# PDPT  - 0xA900 (0xB000 real)
+	# PDT   - 0xB900 (0xC000 real)
+	# PT    - 0xC900 (0xD000 real) - Does not exist
 	MOVL $0xB003, (%EDI) # First low entry (present + writable)
 	ADDL $0x800, %EDI
 	MOVL $0xB003, (%EDI) # First high entry (present + writable)

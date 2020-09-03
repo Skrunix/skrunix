@@ -2,7 +2,7 @@
 .section .text
 .org 0x0
 
-.set VIDEO_MEMORY, 0xB8000 - 0x7C00
+.set VIDEO_MEMORY, 0xB8000 - 0x0700
 .set WHITE_ON_BLACK, 0x0F
 
 /// Print a null-terminated string
