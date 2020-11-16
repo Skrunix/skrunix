@@ -15,8 +15,8 @@ echo $MACHINE
 echo $ROOT
 
 # Versions
-BINUTILS=binutils-2.34
-GCC=gcc-10.1.0
+BINUTILS=binutils-2.35
+GCC=gcc-10.2.0
 
 echo $BINUTILS
 echo $GCC
