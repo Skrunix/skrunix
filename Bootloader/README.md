@@ -44,7 +44,9 @@ A larger block of code that:
 | 0x0000B000 | 0x0000BFFF | page table (r)  |
 | 0x0000C000 | 0x0000CFFF | page table (r)  |
 | 0x0000D000 | 0x0000DFFF | page table (r)  |
-| 0x0000E000 | 0x0008FFFF | free            |
+| 0x0000E000 | 0x0000FFFF | free            |
+| 0x00010000 | 0x0001FFFF | kernel load (f) |
+| 0x00020000 | 0x0008FFFF | free            |
 | 0x00090000 | 0x0009FFFF | scratch (f)     |
 | 0x000A0000 | 0x000BFFFF | video           |
 | 0x00100000 | -          | kernel          |

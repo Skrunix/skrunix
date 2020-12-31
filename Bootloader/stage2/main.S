@@ -3,12 +3,18 @@
 .org 0x0
 
 # TODO: Determine later
+.set BYTES_PER_SECTOR, 512
+# TODO: Determine later
 .set LBA_TO_LOAD, 11
 # TODO: Determine later
 .set SECTORS_TO_LOAD, 80
 
 # Where the kernel should be loaded
 .set LOAD_SEGMENT, 0x1000
+.set KERNEL_OLD, 0x10000 - 0x0700
+.set KERNEL_START, 0x100000 - 0x0700
+# Moving longs is four times as fast as moving bytes
+.set LONGS_TO_MOVE, SECTORS_TO_LOAD * (BYTES_PER_SECTOR >> 2)
 
 Start:
 	MOVW $0x0070, %AX
@@ -81,22 +87,39 @@ Start32:
 	LEAL strProtectedMode, %ESI
 	CALL PrintString32
 
+	# Copy kernel from $KERNEL_OLD to $KERNEL_START
+	MOVL $0, %EDX
+	LEAW strCopyKernelHigh, %SI
+	CALL PrintString32
+	# From address
+	MOVL $KERNEL_OLD, %EAX
+	MOVL %EAX, %ESI
+	# To address
+	MOVL $KERNEL_START, %EAX
+	MOVL %EAX, %EDI
+	# Set relocation counter
+	MOVL $LONGS_TO_MOVE, %ECX
+	# Do the move
+	REP MOVSL
+	# Restore ESI
+	XOR %ESI, %ESI
+
 	# Detect and use CPUID to detect long mode
 	CALL DetectCPUID
 	JC NoCPUID
-	MOVL $0, %EDX
+	MOVL $80, %EDX
 	LEAW strCPUID, %SI
 	CALL PrintString32
 
 	CALL DetectLongMode
 	JC NoLongMode
-	MOVL $80, %EDX
+	MOVL $160, %EDX
 	LEAW strLongMode, %SI
 	CALL PrintString32
 
 	# Setup Long mode paging
 	CALL Paging64
-	MOVL $160, %EDX
+	MOVL $240, %EDX
 	LEAW strPagingEnabled, %SI
 	CALL PrintString32
 
@@ -138,7 +161,7 @@ Start64:
 	MOVW %AX, %GS
 	MOVW %AX, %SS
 
-	MOVL $240, %EDX
+	MOVL $320, %EDX
 	MOVQ $strInLongMode, %RAX
 	ADDQ $0x0700, %RAX # Data no longer uses segments
 	MOVQ %RAX, %RSI
@@ -156,18 +179,18 @@ Start64:
 
 	# Jump to kernel
 	PUSHQ $0x18
-	MOVABSQ $0xFFFF800000010000, %RAX
+	MOVABSQ $0xFFFF800000100000, %RAX
 	PUSHQ %RAX
 	LRETQ
 
 NoCPUID:
-	MOVL $0, %EDX
+	MOVL $80, %EDX
 	LEAW strNoCPUID, %SI
 	CALL PrintString32
 	JMP Halt32
 
 NoLongMode:
-	MOVL $80, %EDX
+	MOVL $160, %EDX
 	LEAW strNoLongMode, %SI
 	CALL PrintString32
 	JMP Halt32
@@ -190,6 +213,8 @@ strDiskRead:
 	.asciz "Read kernel from disk\r\n"
 strDiskReadError:
 	.asciz "Disk read failed.\r\n"
+strCopyKernelHigh:
+	.asciz "Copying kernel to high memory..."
 strCPUID:
 	.asciz "CPUID supported"
 strNoCPUID:

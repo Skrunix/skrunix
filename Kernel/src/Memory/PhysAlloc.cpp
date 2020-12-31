@@ -68,6 +68,9 @@ PhysAlloc::PhysAlloc(AddressRange* const rangeList, const USize rangeListCount,
 		if (range.type != AddressRange::Type::Usable) {
 			continue;
 		}
+		if (range.base + range.length < kernelStartPhys) {
+			continue;
+		}
 
 		UIntPtr startPage = Align(range.base) >> PageShift;
 		UIntPtr endPage   = AlignDown(range.base + range.length) >> PageShift;

@@ -1,7 +1,7 @@
 OUTPUT_FORMAT(binary)
 
 SECTIONS {
-	. = 0xFFFF800000010000;
+	. = 0xFFFF800000100000;
 	KernelStart = .;
 	_KernelTextSizeStart = .;
 	.text : {
