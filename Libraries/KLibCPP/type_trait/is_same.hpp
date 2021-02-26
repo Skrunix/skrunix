@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_trait/bool_constant.hpp>
+
 namespace std {
 
 template <class T, class U>
