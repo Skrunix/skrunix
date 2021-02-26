@@ -118,7 +118,7 @@ $(1)_DEP := $$($(1)_SRC:$(1)/%.S=)
 $(1)_DEP := $$($(1)_DEP:$(1)/%.c=$(1)/.build/%.d)
 $(1)_DEP := $$($(1)_DEP:$(1)/%.cpp=$(1)/.build/%.d)
 
-$(1)_DEPFLAGS = -MT $$@ -MMD -MP -MF $(1)/.build/$$*.d
+$(1)_DEPFLAGS = -MT $$@ -MD -MP -MF $(1)/.build/$$*.d
 
 include $$($(1)_DEP)
 $$($(1)_DEP):
