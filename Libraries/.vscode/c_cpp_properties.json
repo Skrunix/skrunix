@@ -11,7 +11,7 @@
             "macFrameworkPath": [],
             "compilerPath": "${workspaceFolder}/../toolchain/root/x86_64-elf/bin/x86_64-elf-gcc",
             "intelliSenseMode": "gcc-x64",
-            "cStandard": "c18",
+            "cStandard": "c17",
             "cppStandard": "c++20",
             "compilerArgs": [
                 "-std=c++20",
