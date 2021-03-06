@@ -9,6 +9,8 @@ all: $(DISK)
 .PHONY: clean
 clean:
 	rm -f $(DISK)
+	$(MAKE) -C Bootloader clean
+	$(MAKE) -C Kernel clean
 
 
 ## Temporary: Just dd the bins into a larger file
