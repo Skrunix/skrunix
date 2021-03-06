@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Attributes.hpp"
 #include "GDTEntry.hpp"
 
 #include <Integers/Integers.hpp>
 
-struct [[gnu::packed]] alignas(2) GDTPointer {
+struct PACKED alignas(2) GDTPointer {
 	const UInt16    limit;
 	const GDTEntry* base;
 

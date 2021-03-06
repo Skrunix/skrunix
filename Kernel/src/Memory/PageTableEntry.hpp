@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Attributes.hpp"
 #include "PageAlloc.hpp"
 
 #include <Boolean/Boolean.hpp>
@@ -16,7 +17,7 @@
 #define GLOBAL 1ull << 8
 #define NOEXEC 1ull << 63
 
-struct [[gnu::packed]] PageTableEntryFields {
+struct PACKED PageTableEntryFields {
 	bool     _present : 1;
 	bool     _writable : 1;
 	bool     _userAccessible : 1;
@@ -49,90 +50,72 @@ struct PageTableEntry {
 	constexpr PageTableEntry(UInt64 bitValue)
 	    : value(bitValue) {}
 
-	[[gnu::always_inline]] inline void SetPresent(Bool newValue) {
+	ALWAY_INLINE void SetPresent(Bool newValue) {
 		this->value.fields._present = static_cast<bool>(newValue);
 	}
-	[[gnu::always_inline]] inline void SetWritable(Bool newValue) {
+	ALWAY_INLINE void SetWritable(Bool newValue) {
 		this->value.fields._writable = static_cast<bool>(newValue);
 	}
-	[[gnu::always_inline]] inline void SetUserAccessible(Bool newValue) {
+	ALWAY_INLINE void SetUserAccessible(Bool newValue) {
 		this->value.fields._userAccessible = static_cast<bool>(newValue);
 	}
-	[[gnu::always_inline]] inline void SetWriteThroughCaching(Bool newValue) {
+	ALWAY_INLINE void SetWriteThroughCaching(Bool newValue) {
 		this->value.fields._writeThroughCaching = static_cast<bool>(newValue);
 	}
-	[[gnu::always_inline]] inline void SetDisableCache(Bool newValue) {
+	ALWAY_INLINE void SetDisableCache(Bool newValue) {
 		this->value.fields._disableCache = static_cast<bool>(newValue);
 	}
-	[[gnu::always_inline]] inline void SetAccessed(Bool newValue) {
+	ALWAY_INLINE void SetAccessed(Bool newValue) {
 		this->value.fields._accessed = static_cast<bool>(newValue);
 	}
-	[[gnu::always_inline]] inline void SetDirty(Bool newValue) {
+	ALWAY_INLINE void SetDirty(Bool newValue) {
 		this->value.fields._dirty = static_cast<bool>(newValue);
 	}
-	[[gnu::always_inline]] inline void SetHugePage(Bool newValue) {
+	ALWAY_INLINE void SetHugePage(Bool newValue) {
 		this->value.fields._hugePage = static_cast<bool>(newValue);
 	}
-	[[gnu::always_inline]] inline void SetGlobal(Bool newValue) {
+	ALWAY_INLINE void SetGlobal(Bool newValue) {
 		this->value.fields._global = static_cast<bool>(newValue);
 	}
-	[[gnu::always_inline]] inline void SetUser1(UInt8 newValue) {
+	ALWAY_INLINE void SetUser1(UInt8 newValue) {
 		this->value.fields._user1 = static_cast<uint8_t>(newValue);
 	}
-	[[gnu::always_inline]] inline void SetPhysicalAddress(UIntPtr newValue) {
+	ALWAY_INLINE void SetPhysicalAddress(UIntPtr newValue) {
 		this->value.fields._physicalAddress =
 		    static_cast<uintptr_t>(newValue) >> PageShift;
 	}
-	[[gnu::always_inline]] inline void SetUser2(UInt16 newValue) {
+	ALWAY_INLINE void SetUser2(UInt16 newValue) {
 		this->value.fields._user2 = static_cast<uint16_t>(newValue);
 	}
-	[[gnu::always_inline]] inline void SetNoExecute(Bool newValue) {
+	ALWAY_INLINE void SetNoExecute(Bool newValue) {
 		this->value.fields._noExecute = static_cast<bool>(newValue);
 	}
 
-	[[gnu::always_inline]] inline Bool GetPresent() {
-		return this->value.fields._present;
-	}
-	[[gnu::always_inline]] inline Bool GetWritable() {
-		return this->value.fields._writable;
-	}
-	[[gnu::always_inline]] inline Bool GetUserAccessible() {
+	ALWAY_INLINE Bool GetPresent() { return this->value.fields._present; }
+	ALWAY_INLINE Bool GetWritable() { return this->value.fields._writable; }
+	ALWAY_INLINE Bool GetUserAccessible() {
 		return this->value.fields._userAccessible;
 	}
-	[[gnu::always_inline]] inline Bool GetWriteThroughCaching() {
+	ALWAY_INLINE Bool GetWriteThroughCaching() {
 		return this->value.fields._writeThroughCaching;
 	}
-	[[gnu::always_inline]] inline Bool GetDisableCache() {
+	ALWAY_INLINE Bool GetDisableCache() {
 		return this->value.fields._disableCache;
 	}
-	[[gnu::always_inline]] inline Bool GetAccessed() {
-		return this->value.fields._accessed;
-	}
-	[[gnu::always_inline]] inline Bool GetDirty() {
-		return this->value.fields._dirty;
-	}
-	[[gnu::always_inline]] inline Bool GetHugePage() {
-		return this->value.fields._hugePage;
-	}
-	[[gnu::always_inline]] inline Bool GetGlobal() {
-		return this->value.fields._global;
-	}
-	[[gnu::always_inline]] inline UInt8 GetUser1() {
-		return this->value.fields._user1;
-	}
-	[[gnu::always_inline]] inline UIntPtr GetPhysicalAddress() {
+	ALWAY_INLINE Bool    GetAccessed() { return this->value.fields._accessed; }
+	ALWAY_INLINE Bool    GetDirty() { return this->value.fields._dirty; }
+	ALWAY_INLINE Bool    GetHugePage() { return this->value.fields._hugePage; }
+	ALWAY_INLINE Bool    GetGlobal() { return this->value.fields._global; }
+	ALWAY_INLINE UInt8   GetUser1() { return this->value.fields._user1; }
+	ALWAY_INLINE UIntPtr GetPhysicalAddress() {
 		auto addr = this->value.fields._physicalAddress;
 		if (addr & (1ull << 39)) {
 			addr |= 0x000FFFF800000000;
 		}
 		return addr << PageShift;
 	}
-	[[gnu::always_inline]] inline UInt16 GetUser2() {
-		return this->value.fields._user2;
-	}
-	[[gnu::always_inline]] inline Bool GetNoExecute() {
-		return this->value.fields._noExecute;
-	}
+	ALWAY_INLINE UInt16 GetUser2() { return this->value.fields._user2; }
+	ALWAY_INLINE Bool   GetNoExecute() { return this->value.fields._noExecute; }
 };
 static_assert(sizeof(PageTableEntry) == 8);
 static_assert(alignof(PageTableEntry) == 8);

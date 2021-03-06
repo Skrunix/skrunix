@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Attributes.hpp"
 #include "IDTEntry.hpp"
 
 #include <Integers/Integers.hpp>
 
-struct [[gnu::packed]] alignas(2) IDTPointer {
+struct PACKED alignas(2) IDTPointer {
 	const UInt16    limit;
 	const IDTEntry* offset;
 
