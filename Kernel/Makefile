@@ -161,7 +161,7 @@ $(foreach _folder, $(SRC_FOLDERS), \
 
 ## Link
 
-bin/kernel.bin: $(src_OBJ)
+bin/kernel.bin: link.ld $(src_OBJ)
 	mkdir -p bin/
-	$(LD) $(LDFLAGS) -o $@ $^
+	$(LD) $(LDFLAGS) -o $@ $(filter-out $<,$^)
 	@echo "\033[0;32mKernel size: "$$((`wc -c <"$@"` +0))" bytes\033[0m"

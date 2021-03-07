@@ -4,6 +4,7 @@
 #include "GDT/GDT.hpp"
 #include "IDT/IDT.hpp"
 #include "IO.hpp"
+#include "LDSyms.hpp"
 #include "Memory/PageTable.hpp"
 #include "Memory/PhysAlloc.hpp"
 #include "Memory/PhysMap.hpp"
@@ -20,18 +21,6 @@ extern "C" {
 [[noreturn]] void main();
 }
 
-extern USize KernelTextSize;
-extern USize KernelDataSize;
-extern USize KernelBSSSize;
-void*        KernelTextSize2 = &KernelTextSize;
-void*        KernelDataSize2 = &KernelDataSize;
-void*        KernelBSSSize2  = &KernelBSSSize;
-
-extern UInt64 KernelStart; // Defined in linker script
-extern UInt64 KernelEnd;   // Defined in linker script
-void*         kernelStartAddress = &KernelStart;
-void*         kernelEndAddress   = &KernelEnd;
-
 Serial* globalSerial;
 Screen* globalScreen;
 PIT*    globalPIT;
@@ -41,8 +30,6 @@ void serialWrite(char character) { globalSerial->Write(character); }
 void screenWrite(char character) { globalScreen->Write(character); }
 
 void main() {
-	UIntPtr kernelOffset = 0xFFFF800000000000;
-
 	Serial serial;
 	globalSerial = &serial;
 	Screen screen(reinterpret_cast<UInt8*>(0xB8000));
@@ -55,14 +42,35 @@ void main() {
 	PageTable::PageTableEntryTest(serialDebug);
 
 	serial.Write("Skrunix\r\n");
-	serial.Write("Text size: ");
-	serial.WriteHex(UIntPtr::From(KernelTextSize2));
+	serial.Write("Text   size: ");
+	serial.WriteHex(KernelTextSize());
 	serial.Write("\r\n");
-	serial.Write("Data size: ");
-	serial.WriteHex(UIntPtr::From(KernelDataSize2));
+	serial.Write("ROData size: ");
+	serial.WriteHex(KernelRODataSize());
 	serial.Write("\r\n");
-	serial.Write("BSS  size: ");
-	serial.WriteHex(UIntPtr::From(KernelBSSSize2));
+	serial.Write("Data   size: ");
+	serial.WriteHex(KernelDataSize());
+	serial.Write("\r\n");
+	serial.Write("BSS    size: ");
+	serial.WriteHex(KernelBSSSize());
+	serial.Write("\r\n");
+	serial.Write("Kernel Start: ");
+	serial.WriteHex(KernelStart());
+	serial.Write("\r\n");
+	serial.Write("Kernel End: ");
+	serial.WriteHex(KernelEnd());
+	serial.Write("\r\n");
+	serial.Write("Text Start: ");
+	serial.WriteHex(KernelTextStart());
+	serial.Write("\r\n");
+	serial.Write("ROData Start: ");
+	serial.WriteHex(KernelRODataStart());
+	serial.Write("\r\n");
+	serial.Write("Data Start: ");
+	serial.WriteHex(KernelDataStart());
+	serial.Write("\r\n");
+	serial.Write("BSS Start: ");
+	serial.WriteHex(KernelBSSStart());
 	serial.Write("\r\n");
 
 	screen.Clear();
@@ -102,9 +110,8 @@ void main() {
 	USize*        rangesCount = reinterpret_cast<USize*>(0x9000);
 	AddressRange* ranges      = reinterpret_cast<AddressRange*>(0x9018);
 
-	PhysAlloc pageAllocator(
-	    ranges, *rangesCount, UIntPtr::From(kernelStartAddress),
-	    UIntPtr::From(kernelEndAddress), kernelOffset, serialDebug);
+	PhysAlloc pageAllocator(ranges, *rangesCount, KernelStart(), KernelEnd(),
+	                        KernelOffset(), serialDebug);
 
 	// Reserve Page Table
 	pageAllocator.reserve(0xA000, 1);
@@ -118,7 +125,7 @@ void main() {
 
 	pageAllocator.reserve(0, 1);
 	GDT gdt;
-	IDT idt(kernelOffset);
+	IDT idt(KernelOffset());
 	PIC pic;
 	PIT pit(0x20);
 
@@ -128,12 +135,11 @@ void main() {
 	serialDebug.WriteHex(pageAllocator.totalPageCount);
 	serialDebug.Write("\r\n");
 
-	VirtAlloc virtualAllocator(
-	    pageAllocator, UIntPtr(kernelOffset), pageAllocator.totalPageCount,
-	    UIntPtr::From(kernelStartAddress), UIntPtr::From(kernelEndAddress),
-	    kernelOffset, serialDebug);
+	VirtAlloc virtualAllocator(pageAllocator, KernelOffset(),
+	                           pageAllocator.totalPageCount, KernelStart(),
+	                           KernelEnd(), KernelOffset(), serialDebug);
 
-	virtualAllocator.reserve(kernelOffset);
+	virtualAllocator.reserve(KernelOffset());
 	// Reserve Page Table
 	virtualAllocator.reserve(0xFFFF80000000A000, 1);
 	virtualAllocator.reserve(0xFFFF80000000B000, 1);
@@ -144,9 +150,9 @@ void main() {
 	// Reserve Screen
 	pageAllocator.reserve(0xFFFF8000000B8000, 1);
 
-	PhysMap pageMap(&pageAllocator, UIntPtr::From(kernelStartAddress),
-	                UIntPtr::From(kernelEndAddress), kernelOffset, serialDebug);
-	pageMap.map(0, kernelOffset);
+	PhysMap pageMap(&pageAllocator, KernelStart(), KernelEnd(), KernelOffset(),
+	                serialDebug);
+	pageMap.map(0, KernelOffset());
 
 	auto physMem = pageAllocator.pages;
 	auto virtMem = virtualAllocator.pages;
@@ -162,10 +168,8 @@ void main() {
 	// TODO: Assert true
 	pageMap.map(0xB8000, 0xFFFF8000000B8000, 1);
 
-	PageTable pageTable(pageAllocator, virtualAllocator, pageMap,
-	                    UIntPtr::From(kernelStartAddress),
-	                    UIntPtr::From(kernelEndAddress), kernelOffset,
-	                    serialDebug);
+	PageTable pageTable(pageAllocator, virtualAllocator, pageMap, KernelStart(),
+	                    KernelEnd(), KernelOffset(), serialDebug);
 	pageTable.initMap(physMem.phys, physMem.virt, physMem.count);
 	pageTable.initMap(virtMem.phys, virtMem.virt, virtMem.count);
 	pageTable.initMap(mapMem.phys, mapMem.virt, mapMem.count);
