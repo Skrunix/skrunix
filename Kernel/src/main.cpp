@@ -41,43 +41,20 @@ void main() {
 
 	PageTable::PageTableEntryTest(serialDebug);
 
-	serial.Write("Skrunix\r\n");
-	serial.Write("Text   size: ");
-	serial.WriteHex(KernelTextSize());
-	serial.Write("\r\n");
-	serial.Write("ROData size: ");
-	serial.WriteHex(KernelRODataSize());
-	serial.Write("\r\n");
-	serial.Write("Data   size: ");
-	serial.WriteHex(KernelDataSize());
-	serial.Write("\r\n");
-	serial.Write("BSS    size: ");
-	serial.WriteHex(KernelBSSSize());
-	serial.Write("\r\n");
-	serial.Write("KRAP   size: ");
-	serial.WriteHex(KernelRemoveAfterPagingSize());
-	serial.Write("\r\n");
-	serial.Write("Kernel Start: ");
-	serial.WriteHex(KernelStart());
-	serial.Write("\r\n");
-	serial.Write("Kernel End: ");
-	serial.WriteHex(KernelEnd());
-	serial.Write("\r\n");
-	serial.Write("Text Start: ");
-	serial.WriteHex(KernelTextStart());
-	serial.Write("\r\n");
-	serial.Write("ROData Start: ");
-	serial.WriteHex(KernelRODataStart());
-	serial.Write("\r\n");
-	serial.Write("Data Start: ");
-	serial.WriteHex(KernelDataStart());
-	serial.Write("\r\n");
-	serial.Write("BSS Start: ");
-	serial.WriteHex(KernelBSSStart());
-	serial.Write("\r\n");
-	serial.Write("KRAP Start: ");
-	serial.WriteHex(KernelRemoveAfterPagingStart());
-	serial.Write("\r\n");
+	serial.Write("~~~Skrunix~~~\r\n");
+	serial.WriteFormat("Kernel Start : %\r\n", KernelStart());
+	serial.WriteFormat("Text Start   : %\r\n", KernelTextStart());
+	serial.WriteFormat("Text Size    : %\r\n", KernelTextSize());
+	serial.WriteFormat("RO Data Start: %\r\n", KernelRODataStart());
+	serial.WriteFormat("RO Data Size : %\r\n", KernelRODataSize());
+	serial.WriteFormat("Data Start   : %\r\n", KernelDataStart());
+	serial.WriteFormat("Data Size    : %\r\n", KernelDataSize());
+	serial.WriteFormat("BSS Start    : %\r\n", KernelBSSStart());
+	serial.WriteFormat("BSS Size     : %\r\n", KernelBSSSize());
+	serial.WriteFormat("KRAP Start   : %\r\n", KernelRemoveAfterPagingStart());
+	serial.WriteFormat("KRAP Size    : %\r\n", KernelRemoveAfterPagingSize());
+	serial.WriteFormat("Kernel End   : %\r\n", KernelEnd());
+	serial.Write("~~~~~~~~~~~~~\r\n");
 
 	screen.Clear();
 

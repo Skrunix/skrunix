@@ -15,6 +15,8 @@ class Serial {
 	void WriteHex(UInt64);
 	void WriteHex(UIntPtr);
 
+	void WriteFormat(const char*, UIntPtr);
+
   private:
 	Bool CanWrite();
 };

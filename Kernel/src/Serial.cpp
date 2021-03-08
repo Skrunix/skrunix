@@ -60,4 +60,15 @@ void Serial::WriteHex(UIntPtr value) {
 	this->Write(lookup[static_cast<uintptr_t>(value) & 0xF]);
 }
 
+void Serial::WriteFormat(const char* string, UIntPtr value) {
+	char character;
+	while ((character = *(string++))) {
+		if (character == '%') {
+			this->WriteHex(value);
+		} else {
+			this->Write(character);
+		}
+	}
+}
+
 Bool Serial::CanWrite() { return (IO::in(COM1 + 5) & 0x20) != 0; }
