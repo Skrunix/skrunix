@@ -54,6 +54,9 @@ void main() {
 	serial.Write("BSS    size: ");
 	serial.WriteHex(KernelBSSSize());
 	serial.Write("\r\n");
+	serial.Write("KRAP   size: ");
+	serial.WriteHex(KernelRemoveAfterPagingSize());
+	serial.Write("\r\n");
 	serial.Write("Kernel Start: ");
 	serial.WriteHex(KernelStart());
 	serial.Write("\r\n");
@@ -71,6 +74,9 @@ void main() {
 	serial.Write("\r\n");
 	serial.Write("BSS Start: ");
 	serial.WriteHex(KernelBSSStart());
+	serial.Write("\r\n");
+	serial.Write("KRAP Start: ");
+	serial.WriteHex(KernelRemoveAfterPagingStart());
 	serial.Write("\r\n");
 
 	screen.Clear();

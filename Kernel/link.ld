@@ -29,6 +29,11 @@ SECTIONS {
 		*(.bss*)
 	}
 
+	.remove_after_paging BLOCK(4K) : {
+		_KernelRemoveAfterPagingStart = .;
+		*(.remove_after_paging)
+	}
+
 	/DISCARD/ : {
 		*(.rela.text.startup)
 		*(.rela.text)
@@ -46,4 +51,5 @@ SECTIONS {
 	_KernelRODataSize = SIZEOF(.rodata);
 	_KernelDataSize = SIZEOF(.data);
 	_KernelBSSSize = SIZEOF(.bss);
+	_KernelRemoveAfterPagingSize = SIZEOF(.remove_after_paging);
 }

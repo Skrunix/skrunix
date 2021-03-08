@@ -42,3 +42,13 @@ extern Nothing _KernelBSSSize;
 
 constexpr UIntPtr KernelBSSStart() { return UIntPtr::From(&_KernelBSSStart); }
 constexpr UIntPtr KernelBSSSize() { return UIntPtr::From(&_KernelBSSSize); }
+
+extern Nothing _KernelRemoveAfterPagingStart;
+extern Nothing _KernelRemoveAfterPagingSize;
+
+constexpr UIntPtr KernelRemoveAfterPagingStart() {
+	return UIntPtr::From(&_KernelRemoveAfterPagingStart);
+}
+constexpr UIntPtr KernelRemoveAfterPagingSize() {
+	return UIntPtr::From(&_KernelRemoveAfterPagingSize);
+}
