@@ -16,9 +16,13 @@ DetectMemory:
 	LEAW strDetectMemory, %SI
 	CALL PrintString
 
-	MOVL $0x0900, %EAX
-	MOVW %AX, %ES
-	MOVW $24, %DI
+	LEAW DETECTED_MEMORY_START, %AX
+	LEAW DETECTED_MEMORY_PTR, %DI
+	ADDW $0x500, %AX
+	MOVW %AX, %ES:(%DI)
+
+	LEAW DETECTED_MEMORY_START, %DI
+	ADDW $24, %DI
 
 	XORL %EBX, %EBX
 	XORL %EBP, %EBP # Entry count
@@ -46,22 +50,16 @@ DetectMemory:
 	ANDB $0x0F, %BL
 	MOVB %BL, %DS:2(%SI)
 	ADDB $48, %DS:2(%SI)
-	POPA
-	PUSHA
 	LEAW strFoundBlock, %SI
 	SHRW $8, %BX
 	ANDB $0x0F, %BL
 	MOVB %BL, 3(%SI)
 	ADDB $48, %DS:3(%SI)
-	POPA
-	PUSHA
 	LEAW strFoundBlock, %SI
 	SHRW $4, %BX
 	ANDB $0x0F, %BL
 	MOVB %BL, 4(%SI)
 	ADDB $48, %DS:4(%SI)
-	POPA
-	PUSHA
 	LEAW strFoundBlock, %SI
 	ANDB $0x0F, %BL
 	MOVB %BL, 5(%SI)
@@ -87,7 +85,7 @@ DetectMemory:
 
 .DetectMemoryEnd:
 	// Write count
-	MOVW $0, %DI
+	LEAW DETECTED_MEMORY_START, %DI
 	MOVW %BP, %ES:(%DI)
 
 	LEAW strDetectMemoryDone, %SI

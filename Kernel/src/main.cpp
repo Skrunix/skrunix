@@ -90,10 +90,16 @@ void main() {
 	screen.SetForeground(Screen::Color::LightGray);
 	screen.setBackground(Screen::Color::Black);
 
-	USize*        rangesCount = reinterpret_cast<USize*>(0x9000);
-	AddressRange* ranges      = reinterpret_cast<AddressRange*>(0x9018);
+	UInt16* rangeAddressPointer = reinterpret_cast<UInt16*>(0xFFF8);
+	UInt16  rangeAddress        = *rangeAddressPointer;
 
-	PhysAlloc pageAllocator(ranges, *rangesCount, KernelStart(), KernelEnd(),
+	UInt16* rangeCountPointer = UIntPtr(rangeAddress).To<UInt16*>();
+	USize         rangesCount        = USize(*rangeCountPointer);
+
+	AddressRange** rangesPointer = reinterpret_cast<AddressRange**>(0xFFF8);
+	AddressRange*  ranges        = *rangesPointer + 1;
+
+	PhysAlloc pageAllocator(ranges, rangesCount, KernelStart(), KernelEnd(),
 	                        KernelOffset(), serialDebug);
 
 	// Reserve Page Table
