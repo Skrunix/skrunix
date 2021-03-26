@@ -49,9 +49,9 @@ $(foreach _folder, $(SRC_FOLDERS), \
 
 ## Link
 
-bin/stage1.bin: $(stage1_OBJ) $(common16_OBJ)
+bin/stage1.bin: link.ld $(stage1_OBJ) $(common16_OBJ)
 	mkdir -p bin/
-	x86_64-elf-ld --script link.ld -o $@ $^
+	x86_64-elf-ld --script link.ld -o $@ $(filter-out $<,$^)
 	@if [[ $$((`wc -c <"$@"` +0)) -gt 446 ]]; then \
 		echo "\033[0;31mERROR: stage1 too large: "$$((`wc -c <"$@"` +0))"/446 bytes\033[0m"; \
 		exit 1; \
@@ -59,7 +59,7 @@ bin/stage1.bin: $(stage1_OBJ) $(common16_OBJ)
 		echo "\033[0;32mStage1 size: "$$((`wc -c <"$@"` +0))"/446 bytes\033[0m"; \
 	fi
 
-bin/stage2.bin: $(stage2_OBJ) $(common16_OBJ)
+bin/stage2.bin: link.ld $(stage2_OBJ) $(common16_OBJ)
 	mkdir -p bin/
-	x86_64-elf-ld --script link.ld -o $@ $^
+	x86_64-elf-ld --script link.ld -o $@ $(filter-out $<,$^)
 	echo "\033[0;32mStage2 size: "$$((`wc -c <"$@"` +0))" bytes\033[0m"
