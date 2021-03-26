@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Integers/types/unsigned/UInt32.hpp>
 #include <stddef.h>
 
 struct [[gnu::packed]] alignas(alignof(size_t)) USize {
@@ -7,6 +8,12 @@ struct [[gnu::packed]] alignas(alignof(size_t)) USize {
 	    : value(0) {}
 	[[gnu::always_inline]] inline constexpr USize(const size_t& value)
 	    : value(value) {}
+	[[gnu::always_inline]] inline constexpr USize(const UInt8& value)
+	    : value(static_cast<uint8_t>(value)) {}
+	[[gnu::always_inline]] inline constexpr USize(const UInt16& value)
+	    : value(static_cast<uint16_t>(value)) {}
+	[[gnu::always_inline]] inline constexpr USize(const UInt32& value)
+	    : value(static_cast<uint32_t>(value)) {}
 
 	[[gnu::always_inline]] inline constexpr explicit operator size_t()
 	    const noexcept {
