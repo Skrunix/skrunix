@@ -38,15 +38,14 @@ A larger block of code that:
 |------------|------------|-----------------|
 | 0x00000000 | 0x000004FF | free            |
 | 0x00000500 | 0x000006FF | boot sector (f) |
-| 0x00000700 | - k-end    | stage 2 (f)     |
-| - k-end +1 | -          | mem map (f)     |
-| -          | 0x00009FFF | stack (f)       |
-| 0x0000A000 | 0x0000AFFF | page table (r)  |
-| 0x0000B000 | 0x0000BFFF | page table (r)  |
-| 0x0000C000 | 0x0000CFFF | page table (r)  |
-| 0x0000D000 | 0x0000DFFF | page table (r)  |
-| 0x0000E000 | 0x0000FFF7 | free            |
-| 0x0000FFF8 | 0x0000FFFF | mem map ptr (r) |
+|*0x00000500 | 0x00000508 | k-end ptr (r)   |
+| 0x00000700 | -          | stage 2 (f)     |
+| -          | - (4K)     | page table (r)  |
+| -          | - (4K)     | page table (r)  |
+| -          | - (4K)     | page table (r)  |
+| -          | - (4K)     | page table (r)  |
+| -          | -          | mem map (f)     |
+| -          | 0x0000FFFF | stack (f)       |
 | 0x00010000 | 0x0001FFFF | kernel load (f) |
 | 0x00020000 | 0x0008FFFF | free            |
 | 0x00090000 | 0x0009FFFF | scratch (f)     |

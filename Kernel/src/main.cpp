@@ -90,23 +90,25 @@ void main() {
 	screen.SetForeground(Screen::Color::LightGray);
 	screen.setBackground(Screen::Color::Black);
 
-	UInt16* rangeAddressPointer = reinterpret_cast<UInt16*>(0xFFF8);
-	UInt16  rangeAddress        = *rangeAddressPointer;
+	UIntPtr* dataPointerAddress = reinterpret_cast<UIntPtr*>(0x500);
+	UIntPtr  dataPointer        = *dataPointerAddress;
+	UIntPtr  pageTable1         = dataPointer + 0x0000;
+	UIntPtr  pageTable2         = dataPointer + 0x1000;
+	UIntPtr  pageTable3         = dataPointer + 0x2000;
+	UIntPtr  pageTable4         = dataPointer + 0x3000;
+	UIntPtr  rangeAddress       = dataPointer + 0x4000;
 
-	UInt16* rangeCountPointer = UIntPtr(rangeAddress).To<UInt16*>();
-	USize         rangesCount        = USize(*rangeCountPointer);
-
-	AddressRange** rangesPointer = reinterpret_cast<AddressRange**>(0xFFF8);
-	AddressRange*  ranges        = *rangesPointer + 1;
+	USize         rangesCount = *rangeAddress.To<USize*>();
+	AddressRange* ranges      = rangeAddress.To<AddressRange*>() + 1;
 
 	PhysAlloc pageAllocator(ranges, rangesCount, KernelStart(), KernelEnd(),
 	                        KernelOffset(), serialDebug);
 
 	// Reserve Page Table
-	pageAllocator.reserve(0xA000, 1);
-	pageAllocator.reserve(0xB000, 1);
-	pageAllocator.reserve(0xC000, 1);
-	pageAllocator.reserve(0xD000, 1);
+	pageAllocator.reserve(pageTable1, 1);
+	pageAllocator.reserve(pageTable2, 1);
+	pageAllocator.reserve(pageTable3, 1);
+	pageAllocator.reserve(pageTable4, 1);
 	pageAllocator.reserve(0xE000, 1);
 	pageAllocator.reserve(0xF000, 1);
 	// Reserve Screen
@@ -130,10 +132,10 @@ void main() {
 
 	virtualAllocator.reserve(KernelOffset());
 	// Reserve Page Table
-	virtualAllocator.reserve(0xFFFF80000000A000, 1);
-	virtualAllocator.reserve(0xFFFF80000000B000, 1);
-	virtualAllocator.reserve(0xFFFF80000000C000, 1);
-	virtualAllocator.reserve(0xFFFF80000000D000, 1);
+	virtualAllocator.reserve(0xFFFF800000000000 + pageTable1, 1);
+	virtualAllocator.reserve(0xFFFF800000000000 + pageTable2, 1);
+	virtualAllocator.reserve(0xFFFF800000000000 + pageTable3, 1);
+	virtualAllocator.reserve(0xFFFF800000000000 + pageTable4, 1);
 	virtualAllocator.reserve(0xFFFF80000000E000, 1);
 	virtualAllocator.reserve(0xFFFF80000000F000, 1);
 	// Reserve Screen

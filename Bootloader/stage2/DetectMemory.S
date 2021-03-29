@@ -16,9 +16,17 @@ DetectMemory:
 	LEAW strDetectMemory, %SI
 	CALL PrintString
 
-	LEAW DETECTED_MEMORY_START, %AX
-	LEAW DETECTED_MEMORY_PTR, %DI
-	ADDW $0x500, %AX
+	# Write the kernel end physical address to 0x500
+	LEAW KERNEL_END, %AX
+	ADDW $0x700, %AX
+	MOVW $0, %DI
+	MOVW %AX, %ES:(%DI)
+	XORW %AX, %AX
+	ADDW $2, %DI
+	MOVW %AX, %ES:(%DI)
+	ADDW $2, %DI
+	MOVW %AX, %ES:(%DI)
+	ADDW $2, %DI
 	MOVW %AX, %ES:(%DI)
 
 	LEAW DETECTED_MEMORY_START, %DI
@@ -50,16 +58,22 @@ DetectMemory:
 	ANDB $0x0F, %BL
 	MOVB %BL, %DS:2(%SI)
 	ADDB $48, %DS:2(%SI)
+	POPA
+	PUSHA
 	LEAW strFoundBlock, %SI
 	SHRW $8, %BX
 	ANDB $0x0F, %BL
 	MOVB %BL, 3(%SI)
 	ADDB $48, %DS:3(%SI)
+	POPA
+	PUSHA
 	LEAW strFoundBlock, %SI
 	SHRW $4, %BX
 	ANDB $0x0F, %BL
 	MOVB %BL, 4(%SI)
 	ADDB $48, %DS:4(%SI)
+	POPA
+	PUSHA
 	LEAW strFoundBlock, %SI
 	ANDB $0x0F, %BL
 	MOVB %BL, 5(%SI)
@@ -78,6 +92,7 @@ DetectMemory:
 	MOVL $0xE820, %EAX
 	MOVW $24, %CX
 	MOVW $1, %ES:20(%DI)
+
 	INT $0x15
 	JC .DetectMemoryEnd
 
@@ -87,6 +102,13 @@ DetectMemory:
 	// Write count
 	LEAW DETECTED_MEMORY_START, %DI
 	MOVW %BP, %ES:(%DI)
+	XORW %AX, %AX
+	ADDW $2, %DI
+	MOVW %AX, %ES:(%DI)
+	ADDW $2, %DI
+	MOVW %AX, %ES:(%DI)
+	ADDW $2, %DI
+	MOVW %AX, %ES:(%DI)
 
 	LEAW strDetectMemoryDone, %SI
 	CALL PrintString

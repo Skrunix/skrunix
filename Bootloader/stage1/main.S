@@ -13,7 +13,7 @@
 
 # End of free space
 .set STACK_SEGMENT, 0x0070
-.set STACK_SIZE, 0x9900
+.set STACK_SIZE, 0xF900
 # Where the MBR is loaded
 .set BOOT_SEGMENT, 0x07C0
 # Where to move stage1
